@@ -1,28 +1,32 @@
-use bevy::prelude::*;
-use bevy_tnua::builtins::{TnuaBuiltinCrouch, TnuaBuiltinDash, TnuaBuiltinJumpState};
-use bevy_tnua::math::Float;
-use bevy_tnua::prelude::*;
-use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective};
+use bevy::{animation::AnimationPlayer, ecs::system::Query};
+use bevy_tnua::{
+    builtins::{
+        TnuaBuiltinCrouch, TnuaBuiltinDash, TnuaBuiltinJump, TnuaBuiltinJumpState, TnuaBuiltinWalk,
+    },
+    controller::TnuaController,
+    math::Float,
+    TnuaAction, TnuaAnimatingState, TnuaAnimatingStateDirective,
+};
 
 use crate::util::animating::AnimationsHandler;
 
 #[derive(Debug)]
 pub enum AnimationState {
     Standing,
+    Walking(Float),
+    Crouching,
     Running(Float),
     Jumping,
     Falling,
-    Crouching,
     Crawling(Float),
-    Dashing,
 }
 
 #[allow(clippy::unnecessary_cast)]
-pub fn animate_platformer_character(
+pub fn animate_humanoids(
     mut animations_handlers_query: Query<(
         // `TnuaAnimatingState` is a helper for controlling the animations. The user system is
         // expected to provide it with an enum on every frame that describes the state of the
-        // character. The helper then tells the user system if the enum variant changed - which
+        // character. TAS then tells the user system if the enum variant changed - which
         // usually means the system should start a new animation - or remained the same, which
         // means that the system should not change the animation (but maybe change its speed based
         // on the enum's payload)
@@ -79,13 +83,13 @@ pub fn animate_platformer_character(
                     match (speed, is_crouching) {
                         (None, false) => AnimationState::Standing,
                         (None, true) => AnimationState::Crouching,
-                        (Some(speed), false) => AnimationState::Running(0.1 * speed),
+                        (Some(speed), false) => AnimationState::Walking(0.1 * speed),
                         (Some(speed), true) => AnimationState::Crawling(0.1 * speed),
                     }
                 }
                 // For the dash, we don't need the internal state of the dash action to determine
                 // the action - so there is no need to downcast.
-                Some(TnuaBuiltinDash::NAME) => AnimationState::Dashing,
+                // Some(TnuaBuiltinDash::NAME) => AnimationState::Running,
                 Some(other) => panic!("Unknown action {other}"),
                 None => {
                     // If there is no action going on, we'll base the animation on the state of the
@@ -99,7 +103,7 @@ pub fn animate_platformer_character(
                     } else {
                         let speed = basis_state.running_velocity.length();
                         if 0.01 < speed {
-                            AnimationState::Running(0.1 * speed)
+                            AnimationState::Walking(0.1 * speed)
                         } else {
                             AnimationState::Standing
                         }
@@ -113,20 +117,19 @@ pub fn animate_platformer_character(
                 // Some animation states have parameters, that we may want to use to control the
                 // animation (without necessarily replacing it). In this case - control the speed
                 // of the animation based on the speed of the movement.
-                AnimationState::Running(speed) | AnimationState::Crawling(speed) => {
+                AnimationState::Walking(speed)
+                | AnimationState::Crawling(speed)
+                | AnimationState::Running(speed) => {
                     for (_, active_animation) in player.playing_animations_mut() {
                         active_animation.set_speed(*speed as f32);
                     }
                 }
-                // Jumping and dashing can be chained, we want to start a new jump/dash animation
-                // when one jump/dash is chained to another.
-                AnimationState::Jumping | AnimationState::Dashing => {
+                AnimationState::Jumping => {
                     if controller.action_flow_status().just_starting().is_some() {
                         player.seek_all_by(0.0);
                     }
                 }
-                // For other animations we don't have anything special to do - so we just let them
-                // continue.
+                // Don't do anything special for other animations
                 _ => {}
             },
             // `Alter` means that the character animation state has changed, and thus we need to
@@ -143,6 +146,12 @@ pub fn animate_platformer_character(
                         player
                             .start(handler.animations["Standing"])
                             .set_speed(1.0)
+                            .repeat();
+                    }
+                    AnimationState::Walking(speed) => {
+                        player
+                            .start(handler.animations["Running"])
+                            .set_speed(*speed as f32)
                             .repeat();
                     }
                     AnimationState::Running(speed) => {
@@ -168,9 +177,6 @@ pub fn animate_platformer_character(
                             .start(handler.animations["Crawling"])
                             .set_speed(*speed as f32)
                             .repeat();
-                    }
-                    AnimationState::Dashing => {
-                        player.start(handler.animations["Dashing"]).set_speed(10.0);
                     }
                 }
             }

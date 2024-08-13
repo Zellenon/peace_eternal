@@ -5,7 +5,7 @@ use avian3d::{
     PhysicsPlugins,
 };
 use bevy::{
-    app::{App, FixedUpdate, PostUpdate, Startup, Update},
+    app::{App, FixedUpdate, Startup, Update},
     asset::AssetServer,
     core_pipeline::core_3d::Camera3dBundle,
     ecs::{
@@ -33,15 +33,14 @@ use bevy_tnua::{
 use bevy_tnua_avian3d::*;
 
 use app_setup_options::{AppSetupConfiguration, ScheduleToUse};
-use character_animating_systems::{animate_platformer_character, AnimationState};
+use character_animating_systems::{animate_humanoids, AnimationState};
 use character_control_systems::{
-    camera_controls::{apply_camera_controls, grab_ungrab_mouse},
     info_dumping_systems::character_control_info_dumping_system,
     platformer_control_systems::{
         apply_platformer_controls, CharacterMotionConfigForPlatformerDemo,
         FallingThroughControlScheme, ForwardFromCamera,
     },
-    Dimensionality,
+    ControlPlugin,
 };
 use level_mechanics::LevelMechanicsPlugin;
 use levels_setup::{level_switching::LevelSwitchingPlugin, IsPlayer, LayerNames};
@@ -102,12 +101,6 @@ fn main() {
             .with("Default", levels_setup::setup_level)
     });
     app.add_systems(Startup, setup_player);
-    app.add_systems(Update, grab_ungrab_mouse);
-    app.add_systems(PostUpdate, {
-        let system = apply_camera_controls;
-        let system = system.after(avian3d::prelude::PhysicsSet::Sync);
-        system.before(bevy::transform::TransformSystem::TransformPropagate)
-    });
     app.add_systems(
         match app_setup_configuration.schedule_to_use {
             ScheduleToUse::Update => Update.intern(),
@@ -117,10 +110,10 @@ fn main() {
         apply_platformer_controls.in_set(TnuaUserControlsSystemSet),
     );
     app.add_systems(Update, animation_patcher_system)
-        .add_systems(Update, animate_platformer_character)
+        .add_systems(Update, animate_humanoids)
         .add_plugins(LevelMechanicsPlugin);
 
-    app.add_plugins(OptionsPlugin);
+    app.add_plugins((OptionsPlugin, ControlPlugin));
     app.run();
 }
 
@@ -171,7 +164,6 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
     player.insert(TnuaControllerBundle::default());
 
     player.insert(CharacterMotionConfigForPlatformerDemo {
-        dimensionality: Dimensionality::Dim3,
         speed: 10.0,
         walk: TnuaBuiltinWalk {
             float_height: 2.0,

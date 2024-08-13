@@ -10,8 +10,6 @@ use bevy_tnua::{TnuaGhostSensor, TnuaProximitySensor};
 
 use crate::ui::tuning::UiTunable;
 
-use super::Dimensionality;
-
 #[allow(clippy::type_complexity)]
 #[allow(clippy::useless_conversion)]
 pub fn apply_platformer_controls(
@@ -96,12 +94,7 @@ pub fn apply_platformer_controls(
                 .adjust_precision();
         }
 
-        let jump = match config.dimensionality {
-            Dimensionality::Dim2 => {
-                keyboard.any_pressed([KeyCode::Space, KeyCode::ArrowUp, KeyCode::KeyW])
-            }
-            Dimensionality::Dim3 => keyboard.any_pressed([KeyCode::Space]),
-        };
+        let jump = keyboard.any_pressed([KeyCode::Space]);
         let dash = keyboard.any_pressed([KeyCode::ShiftLeft, KeyCode::ShiftRight]);
 
         let turn_in_place = forward_from_camera.is_none()
@@ -109,23 +102,10 @@ pub fn apply_platformer_controls(
 
         let crouch_pressed: bool;
         let crouch_just_pressed: bool;
-        match config.dimensionality {
-            Dimensionality::Dim2 => {
-                let crouch_buttons = [
-                    KeyCode::ControlLeft,
-                    KeyCode::ControlRight,
-                    KeyCode::ArrowDown,
-                    KeyCode::KeyS,
-                ];
-                crouch_pressed = keyboard.any_pressed(crouch_buttons);
-                crouch_just_pressed = keyboard.any_just_pressed(crouch_buttons);
-            }
-            Dimensionality::Dim3 => {
-                let crouch_buttons = [KeyCode::ControlLeft, KeyCode::ControlRight];
-                crouch_pressed = keyboard.any_pressed(crouch_buttons);
-                crouch_just_pressed = keyboard.any_just_pressed(crouch_buttons);
-            }
-        }
+
+        let crouch_buttons = [KeyCode::ControlLeft, KeyCode::ControlRight];
+        crouch_pressed = keyboard.any_pressed(crouch_buttons);
+        crouch_just_pressed = keyboard.any_just_pressed(crouch_buttons);
 
         // This needs to be called once per frame. It lets the air actions counter know about the
         // air status of the character. Specifically:
@@ -367,7 +347,6 @@ pub fn apply_platformer_controls(
 
 #[derive(Component)]
 pub struct CharacterMotionConfigForPlatformerDemo {
-    pub dimensionality: Dimensionality,
     pub speed: Float,
     pub walk: TnuaBuiltinWalk,
     pub actions_in_air: usize,
