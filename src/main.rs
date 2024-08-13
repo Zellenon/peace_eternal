@@ -172,16 +172,26 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     player.insert(CharacterMotionConfigForPlatformerDemo {
         dimensionality: Dimensionality::Dim3,
-        speed: 20.0,
+        speed: 10.0,
         walk: TnuaBuiltinWalk {
             float_height: 2.0,
             max_slope: float_consts::FRAC_PI_4,
             turning_angvel: Float::INFINITY,
+            acceleration: 50.,
+            air_acceleration: 10.,
+
+            // cling_distance: todo!(),
+            // spring_strengh: todo!(),
+            // spring_dampening: todo!(),
+            // coyote_time: todo!(),
+            // free_fall_extra_gravity: todo!(),
+            // tilt_offset_angvel: todo!(),
+            // tilt_offset_angacl: todo!(),
             ..Default::default()
         },
-        actions_in_air: 1,
+        actions_in_air: 0,
         jump: TnuaBuiltinJump {
-            height: 4.0,
+            height: 2.0,
             ..Default::default()
         },
         crouch: TnuaBuiltinCrouch {
