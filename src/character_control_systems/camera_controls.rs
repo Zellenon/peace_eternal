@@ -76,13 +76,13 @@ pub fn apply_camera_controls(
 
     for mut camera in camera_query.iter_mut() {
         camera.translation = player_transform.translation()
-            + -3.0 * forward_from_camera.forward.f32()
+            + -5.0 * forward_from_camera.forward.f32()
             + forward_from_camera.forward.cross(Vec3::Y).f32()
-            + 0.5 * Vec3::Y;
+            + 0.75 * Vec3::Y;
         camera.look_to(forward_from_camera.forward.f32(), Vec3::Y);
         let pitch_axis = camera.left();
         camera.rotate_around(
-            player_transform.translation(),
+            player_transform.translation() + -0.5 * Vec3::Y,
             Quat::from_axis_angle(*pitch_axis, forward_from_camera.pitch_angle.f32()),
         );
     }
