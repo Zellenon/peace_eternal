@@ -1,0 +1,1 @@
+- When turning quickly, camera zooms uncomfortably close to player face

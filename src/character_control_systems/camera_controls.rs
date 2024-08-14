@@ -1,4 +1,6 @@
+use bevy::ecs::system::ResMut;
 use bevy::prelude::Reflect;
+use bevy::prelude::Resource;
 use bevy::{
     ecs::{
         component::Component,
@@ -14,37 +16,56 @@ use bevy_tnua::math::{float_consts, AdjustPrecision, AsF32, Quaternion};
 use bevy_tnua_physics_integration_layer::math::{Float, Vector3};
 use leafwing_input_manager::action_state::ActionState;
 
+use crate::levels_setup::IsPlayer;
 use crate::options::controls::ControlOptions;
+use crate::util::smoothing::SmoothedTransform;
 
 use super::keyboard_receive::CameraAction;
 
 #[derive(Component, Reflect)]
-pub struct FollowingCamera {
+pub struct Facing {
     pub forward: Vector3,
     pub pitch_angle: Float,
-    pub distance: Float,
-    pub shoulder_shift: Float,
 }
 
-impl Default for FollowingCamera {
+impl Default for Facing {
     fn default() -> Self {
         Self {
             forward: Vector3::NEG_Z,
             pitch_angle: 0.0,
+        }
+    }
+}
+
+#[derive(Component, Reflect)]
+pub struct FPSCamera;
+
+#[derive(Component, Reflect)]
+pub struct TPSCamera;
+
+#[derive(Resource, Reflect)]
+pub struct CameraData {
+    pub distance: f32,
+    pub shoulder_shift: f32,
+}
+
+impl CameraData {
+    fn is_first_person(&self) -> bool {
+        self.distance < 2.
+    }
+}
+
+impl Default for CameraData {
+    fn default() -> Self {
+        Self {
             distance: 5.,
             shoulder_shift: 0.2,
         }
     }
 }
 
-impl FollowingCamera {
-    fn is_first_person(&self) -> bool {
-        self.distance < 2.
-    }
-}
-
-pub fn is_in_first_person(camera: Query<&FollowingCamera>) -> bool {
-    camera.get_single().unwrap().is_first_person()
+pub fn is_in_first_person(camera: Res<CameraData>) -> bool {
+    camera.is_first_person()
 }
 
 pub fn mouse_should_control_camera(
@@ -56,7 +77,7 @@ pub fn mouse_should_control_camera(
 }
 
 pub fn apply_mouse_camera_movement(
-    mut player_character_query: Query<(&mut FollowingCamera, &ActionState<CameraAction>)>,
+    mut player_character_query: Query<(&mut Facing, &ActionState<CameraAction>)>,
     control_options: Res<ControlOptions>,
 ) {
     if let Ok((mut forward_from_camera, action_state)) = player_character_query.get_single_mut() {
@@ -78,49 +99,68 @@ pub fn apply_mouse_camera_movement(
 }
 
 pub fn apply_scroll_zoom(
-    mut player_character_query: Query<(&mut FollowingCamera, &ActionState<CameraAction>)>,
+    player_character_query: Query<&ActionState<CameraAction>>,
+    mut camera_data: ResMut<CameraData>,
 ) {
-    if let Ok((mut forward_from_camera, action_state)) = player_character_query.get_single_mut() {
+    if let Ok(action_state) = player_character_query.get_single() {
         let zoom = action_state.clamped_value(&CameraAction::Zoom) * 0.75;
-        forward_from_camera.distance = (forward_from_camera.distance - zoom).clamp(0., 13.);
+        camera_data.distance = (camera_data.distance - zoom).clamp(1., 13.);
     }
 }
 
-pub(crate) fn camera_follow_player(
-    player_character_query: Query<(&GlobalTransform, &FollowingCamera)>,
-    mut camera_query: Query<&mut Transform, With<Camera>>,
+pub(crate) fn update_fps_camera(
+    player_character_query: Query<(&GlobalTransform, &Facing), With<IsPlayer>>,
+    mut camera_query: Query<&mut Transform, With<FPSCamera>>,
 ) {
-    if let Ok((player_transform, forward_from_camera)) = player_character_query.get_single() {
-        if forward_from_camera.is_first_person() {
-            for mut camera in camera_query.iter_mut() {
-                camera.translation = player_transform.translation() + 0.7 * Vec3::Y;
-                camera.look_to(forward_from_camera.forward.f32(), Vec3::Y);
-                let pitch_axis = camera.left();
-                camera.rotate_around(
-                    player_transform.translation() + -0.5 * Vec3::Y,
-                    Quat::from_axis_angle(*pitch_axis, forward_from_camera.pitch_angle.f32()),
-                );
-            }
+    if let Ok((player_transform, facing)) = player_character_query.get_single() {
+        for mut camera in camera_query.iter_mut() {
+            camera.translation = player_transform.translation() + 0.7 * Vec3::Y;
+            camera.look_to(facing.forward.f32(), Vec3::Y);
+            let pitch_axis = camera.left();
+            camera.rotate_around(
+                player_transform.translation() + -0.5 * Vec3::Y,
+                Quat::from_axis_angle(*pitch_axis, facing.pitch_angle.f32()),
+            );
+        }
+    }
+}
+
+pub(crate) fn update_tps_camera(
+    player_character_query: Query<(&GlobalTransform, &Facing), With<IsPlayer>>,
+    camera_data: Res<CameraData>,
+    mut camera_query: Query<&mut SmoothedTransform, With<TPSCamera>>,
+) {
+    if let Ok((player_transform, facing)) = player_character_query.get_single() {
+        if camera_data.is_first_person() {
         } else {
             for mut camera in camera_query.iter_mut() {
-                let distance_from_player =
-                    -1.0 * forward_from_camera.distance * forward_from_camera.forward.f32();
-                let shoulder_shift = forward_from_camera.shoulder_shift
-                    * forward_from_camera.distance
-                    * forward_from_camera.forward.cross(Vec3::Y).f32();
-                camera.translation = player_transform.translation()
+                let distance_from_player = -1.0 * camera_data.distance * facing.forward.f32();
+                let shoulder_shift = camera_data.shoulder_shift
+                    * camera_data.distance
+                    * facing.forward.cross(Vec3::Y).f32();
+                camera.goal.translation = player_transform.translation()
                     + distance_from_player
                     + shoulder_shift
                     + 0.7 * Vec3::Y;
-                camera.look_to(forward_from_camera.forward.f32(), Vec3::Y);
-                let pitch_axis = camera.left();
-                camera.rotate_around(
+                camera.goal.look_to(facing.forward.f32(), Vec3::Y);
+                let pitch_axis = camera.goal.left();
+                camera.goal.rotate_around(
                     player_transform.translation() + -0.5 * Vec3::Y,
-                    Quat::from_axis_angle(*pitch_axis, forward_from_camera.pitch_angle.f32()),
+                    Quat::from_axis_angle(*pitch_axis, facing.pitch_angle.f32()),
                 );
             }
         }
     } else {
         return;
     };
+}
+
+pub(crate) fn switch_first_third_person(
+    camera_data: Res<CameraData>,
+    mut cameras: Query<(&mut Camera, Option<&FPSCamera>, Option<&TPSCamera>)>,
+) {
+    let first_person = camera_data.is_first_person();
+    for (mut camera, fps, tps) in cameras.iter_mut() {
+        camera.is_active = (first_person && fps.is_some()) || (!first_person && tps.is_some());
+    }
 }

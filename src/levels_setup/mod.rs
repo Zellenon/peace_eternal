@@ -1,4 +1,3 @@
-use bevy_atmosphere::plugin::AtmosphereCamera;
 pub use level_switching::{IsPlayer, LevelObject, PositionPlayer};
 
 use avian3d::prelude::PhysicsLayer;
@@ -16,6 +15,7 @@ use crate::level_mechanics::MovingPlatform;
 
 use helper::{LevelSetupHelper3d, LevelSetupHelper3dEntityCommandsExtension};
 
+pub mod camera;
 mod helper;
 pub mod level_switching;
 pub mod player;
@@ -129,15 +129,7 @@ pub fn setup_level(mut helper: LevelSetupHelper3d) {
         .make_kinematic_with_angular_velocity(Vector3::Y);
 }
 
-pub fn setup_camera_and_lights(mut commands: Commands) {
-    commands
-        .spawn(Camera3dBundle {
-            transform: Transform::from_xyz(0.0, 16.0, 40.0)
-                .looking_at(Vec3::new(0.0, 10.0, 0.0), Vec3::Y),
-            ..Default::default()
-        })
-        .insert(AtmosphereCamera::default());
-
+pub fn setup_lights(mut commands: Commands) {
     commands.spawn(PointLightBundle {
         transform: Transform::from_xyz(5.0, 5.0, 5.0),
         ..default()

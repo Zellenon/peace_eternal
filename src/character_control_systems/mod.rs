@@ -7,8 +7,8 @@ use bevy::{
 use leafwing_input_manager::plugin::InputManagerPlugin;
 
 use self::camera_controls::{
-    apply_mouse_camera_movement, apply_scroll_zoom, camera_follow_player,
-    mouse_should_control_camera, FollowingCamera,
+    apply_mouse_camera_movement, apply_scroll_zoom, mouse_should_control_camera,
+    switch_first_third_person, update_fps_camera, update_tps_camera, CameraData, Facing,
 };
 use self::keyboard_receive::{CameraAction, PlayerAction, UiAction};
 use self::mouse_grabbing::{
@@ -34,8 +34,11 @@ impl Plugin for ControlPlugin {
                 InputManagerPlugin::<UiAction>::default(),
             ));
 
-        app.register_type::<FollowingCamera>();
-        app.insert_resource(MouseGrabbed(false));
+        app.register_type::<Facing>().register_type::<CameraData>();
+
+        app.insert_resource(MouseGrabbed(false))
+            .insert_resource(CameraData::default());
+
         app.add_systems(
             Update,
             sync_mouse_grab.run_if(resource_changed::<MouseGrabbed>),
@@ -45,14 +48,14 @@ impl Plugin for ControlPlugin {
             (
                 (grab_mouse_on_click, release_mouse_in_inventory).before(sync_mouse_grab),
                 (apply_mouse_camera_movement, apply_scroll_zoom)
-                    .before(camera_follow_player)
                     .run_if(mouse_should_control_camera),
+                (switch_first_third_person).after(apply_scroll_zoom),
             ),
         );
 
         app.add_systems(
             PostUpdate,
-            camera_follow_player
+            (update_fps_camera, update_tps_camera)
                 .before(bevy::transform::TransformSystem::TransformPropagate)
                 .after(avian3d::prelude::PhysicsSet::Sync),
         );

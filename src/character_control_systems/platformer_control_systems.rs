@@ -1,4 +1,4 @@
-use crate::character_control_systems::camera_controls::FollowingCamera;
+use crate::character_control_systems::camera_controls::Facing;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 use bevy_tnua::builtins::{TnuaBuiltinCrouch, TnuaBuiltinCrouchState, TnuaBuiltinDash};
@@ -48,7 +48,7 @@ pub fn apply_platformer_controls(
         &ActionState<PlayerAction>,
         // This is used in the shooter-like demo to control the forward direction of the
         // character.
-        &FollowingCamera,
+        &Facing,
     )>,
 ) {
     if egui_context.ctx_mut().wants_keyboard_input() {

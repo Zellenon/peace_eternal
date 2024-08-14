@@ -24,11 +24,12 @@ use character_control_systems::{
 use dev::DevModePlugin;
 use level_mechanics::LevelMechanicsPlugin;
 use levels_setup::{
-    level_switching::LevelSwitchingPlugin, player::setup_player, setup_camera_and_lights,
+    camera::setup_cameras, level_switching::LevelSwitchingPlugin, player::setup_player,
+    setup_lights,
 };
 use options::OptionsPlugin;
 use ui::DemoInfoUpdateSystemSet;
-use util::animating::animation_patcher_system;
+use util::{animating::animation_patcher_system, UtilPlugin};
 
 mod app_setup_options;
 mod character_animating_systems;
@@ -75,12 +76,11 @@ fn main() {
     );
     app.add_plugins(ui::DemoUi::<CharacterMotionConfigForPlatformerDemo>::default());
     app.add_plugins(AtmospherePlugin);
-    app.add_systems(Startup, setup_camera_and_lights);
     app.add_plugins({
         LevelSwitchingPlugin::new(app_setup_configuration.level_to_load.as_ref())
             .with("Default", levels_setup::setup_level)
     });
-    app.add_systems(Startup, setup_player);
+    app.add_systems(Startup, (setup_player, setup_lights, setup_cameras));
     app.add_systems(
         match app_setup_configuration.schedule_to_use {
             ScheduleToUse::Update => Update.intern(),
@@ -93,7 +93,7 @@ fn main() {
         .add_systems(Update, animate_humanoids)
         .add_plugins(LevelMechanicsPlugin);
 
-    app.add_plugins((OptionsPlugin, ControlPlugin));
+    app.add_plugins((ControlPlugin, OptionsPlugin, UtilPlugin));
     app.add_plugins(DevModePlugin);
     app.run();
 }
