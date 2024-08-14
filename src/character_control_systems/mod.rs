@@ -8,7 +8,7 @@ use leafwing_input_manager::plugin::InputManagerPlugin;
 
 use self::camera_controls::{
     apply_mouse_camera_movement, apply_scroll_zoom, camera_follow_player,
-    mouse_should_control_camera,
+    mouse_should_control_camera, FollowingCamera,
 };
 use self::keyboard_receive::{CameraAction, PlayerAction, UiAction};
 use self::mouse_grabbing::{
@@ -34,6 +34,7 @@ impl Plugin for ControlPlugin {
                 InputManagerPlugin::<UiAction>::default(),
             ));
 
+        app.register_type::<FollowingCamera>();
         app.insert_resource(MouseGrabbed(false));
         app.add_systems(
             Update,

@@ -1,3 +1,4 @@
+use bevy::prelude::Reflect;
 use bevy::{
     ecs::{
         component::Component,
@@ -17,7 +18,7 @@ use crate::options::controls::ControlOptions;
 
 use super::keyboard_receive::CameraAction;
 
-#[derive(Component)]
+#[derive(Component, Reflect)]
 pub struct FollowingCamera {
     pub forward: Vector3,
     pub pitch_angle: Float,
@@ -34,6 +35,16 @@ impl Default for FollowingCamera {
             shoulder_shift: 0.2,
         }
     }
+}
+
+impl FollowingCamera {
+    fn is_first_person(&self) -> bool {
+        self.distance < 2.
+    }
+}
+
+pub fn is_in_first_person(camera: Query<&FollowingCamera>) -> bool {
+    camera.get_single().unwrap().is_first_person()
 }
 
 pub fn mouse_should_control_camera(
@@ -70,7 +81,7 @@ pub fn apply_scroll_zoom(
     mut player_character_query: Query<(&mut FollowingCamera, &ActionState<CameraAction>)>,
 ) {
     if let Ok((mut forward_from_camera, action_state)) = player_character_query.get_single_mut() {
-        let zoom = action_state.clamped_value(&CameraAction::Zoom);
+        let zoom = action_state.clamped_value(&CameraAction::Zoom) * 0.75;
         forward_from_camera.distance = (forward_from_camera.distance - zoom).clamp(0., 13.);
     }
 }
@@ -80,22 +91,34 @@ pub(crate) fn camera_follow_player(
     mut camera_query: Query<&mut Transform, With<Camera>>,
 ) {
     if let Ok((player_transform, forward_from_camera)) = player_character_query.get_single() {
-        for mut camera in camera_query.iter_mut() {
-            let distance_from_player =
-                -1.0 * forward_from_camera.distance * forward_from_camera.forward.f32();
-            let shoulder_shift = forward_from_camera.shoulder_shift
-                * forward_from_camera.distance
-                * forward_from_camera.forward.cross(Vec3::Y).f32();
-            camera.translation = player_transform.translation()
-                + distance_from_player
-                + shoulder_shift
-                + 0.7 * Vec3::Y;
-            camera.look_to(forward_from_camera.forward.f32(), Vec3::Y);
-            let pitch_axis = camera.left();
-            camera.rotate_around(
-                player_transform.translation() + -0.5 * Vec3::Y,
-                Quat::from_axis_angle(*pitch_axis, forward_from_camera.pitch_angle.f32()),
-            );
+        if forward_from_camera.is_first_person() {
+            for mut camera in camera_query.iter_mut() {
+                camera.translation = player_transform.translation() + 0.7 * Vec3::Y;
+                camera.look_to(forward_from_camera.forward.f32(), Vec3::Y);
+                let pitch_axis = camera.left();
+                camera.rotate_around(
+                    player_transform.translation() + -0.5 * Vec3::Y,
+                    Quat::from_axis_angle(*pitch_axis, forward_from_camera.pitch_angle.f32()),
+                );
+            }
+        } else {
+            for mut camera in camera_query.iter_mut() {
+                let distance_from_player =
+                    -1.0 * forward_from_camera.distance * forward_from_camera.forward.f32();
+                let shoulder_shift = forward_from_camera.shoulder_shift
+                    * forward_from_camera.distance
+                    * forward_from_camera.forward.cross(Vec3::Y).f32();
+                camera.translation = player_transform.translation()
+                    + distance_from_player
+                    + shoulder_shift
+                    + 0.7 * Vec3::Y;
+                camera.look_to(forward_from_camera.forward.f32(), Vec3::Y);
+                let pitch_axis = camera.left();
+                camera.rotate_around(
+                    player_transform.translation() + -0.5 * Vec3::Y,
+                    Quat::from_axis_angle(*pitch_axis, forward_from_camera.pitch_angle.f32()),
+                );
+            }
         }
     } else {
         return;
