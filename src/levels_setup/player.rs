@@ -1,11 +1,15 @@
 use avian3d::{
     collision::{Collider, CollisionLayers, LayerMask},
     dynamics::rigid_body::{LockedAxes, RigidBody},
+    math::PI,
 };
 use bevy::{
     asset::AssetServer,
     ecs::system::{Commands, Res},
+    hierarchy::BuildChildren,
+    math::Quat,
     scene::SceneBundle,
+    transform::components::Transform,
 };
 use bevy_tnua::{
     builtins::{TnuaBuiltinCrouch, TnuaBuiltinJump, TnuaBuiltinWalk},
@@ -192,4 +196,24 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
         create_camera_action_input_manager_bundle(),
         create_ui_action_input_manager_bundle(),
     ));
+
+    player.with_children(|w| {
+        w.spawn(())
+            .insert(SceneBundle {
+                scene: asset_server.load("gun.glb#Scene0"),
+                transform: Transform {
+                    translation: bevy::math::Vec3 {
+                        x: 0.,
+                        y: 0.,
+                        z: 0.,
+                    },
+                    rotation: Quat::from_rotation_y(PI / 2.),
+                    ..Default::default()
+                },
+                ..Default::default()
+            })
+            .insert(GltfSceneHandler {
+                names_from: asset_server.load("gun.glb"),
+            });
+    });
 }

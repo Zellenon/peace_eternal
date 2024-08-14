@@ -1,3 +1,4 @@
+use bevy_atmosphere::plugin::AtmosphereCamera;
 pub use level_switching::{IsPlayer, LevelObject, PositionPlayer};
 
 use avian3d::prelude::PhysicsLayer;
@@ -129,11 +130,13 @@ pub fn setup_level(mut helper: LevelSetupHelper3d) {
 }
 
 pub fn setup_camera_and_lights(mut commands: Commands) {
-    commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(0.0, 16.0, 40.0)
-            .looking_at(Vec3::new(0.0, 10.0, 0.0), Vec3::Y),
-        ..Default::default()
-    });
+    commands
+        .spawn(Camera3dBundle {
+            transform: Transform::from_xyz(0.0, 16.0, 40.0)
+                .looking_at(Vec3::new(0.0, 10.0, 0.0), Vec3::Y),
+            ..Default::default()
+        })
+        .insert(AtmosphereCamera::default());
 
     commands.spawn(PointLightBundle {
         transform: Transform::from_xyz(5.0, 5.0, 5.0),

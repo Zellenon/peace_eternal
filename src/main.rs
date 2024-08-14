@@ -1,3 +1,4 @@
+use app_setup_options::{AppSetupConfiguration, ScheduleToUse};
 use avian3d::{
     schedule::{Physics, PhysicsSchedule},
     PhysicsPlugins,
@@ -9,10 +10,9 @@ use bevy::{
     time::Time,
     DefaultPlugins,
 };
+use bevy_atmosphere::plugin::AtmospherePlugin;
 use bevy_tnua::{control_helpers::TnuaCrouchEnforcerPlugin, prelude::*};
 use bevy_tnua_avian3d::*;
-
-use app_setup_options::{AppSetupConfiguration, ScheduleToUse};
 use character_animating_systems::animate_humanoids;
 use character_control_systems::{
     info_dumping_systems::character_control_info_dumping_system,
@@ -21,6 +21,7 @@ use character_control_systems::{
     },
     ControlPlugin,
 };
+use dev::DevModePlugin;
 use level_mechanics::LevelMechanicsPlugin;
 use levels_setup::{
     level_switching::LevelSwitchingPlugin, player::setup_player, setup_camera_and_lights,
@@ -32,6 +33,7 @@ use util::animating::animation_patcher_system;
 mod app_setup_options;
 mod character_animating_systems;
 mod character_control_systems;
+mod dev;
 mod level_mechanics;
 mod levels_setup;
 mod options;
@@ -44,7 +46,6 @@ fn main() {
 
     let app_setup_configuration = AppSetupConfiguration::from_environment();
     app.insert_resource(app_setup_configuration.clone());
-
     match app_setup_configuration.schedule_to_use {
         ScheduleToUse::Update => {
             app.add_plugins(PhysicsPlugins::default())
@@ -73,6 +74,7 @@ fn main() {
         character_control_info_dumping_system.in_set(DemoInfoUpdateSystemSet),
     );
     app.add_plugins(ui::DemoUi::<CharacterMotionConfigForPlatformerDemo>::default());
+    app.add_plugins(AtmospherePlugin);
     app.add_systems(Startup, setup_camera_and_lights);
     app.add_plugins({
         LevelSwitchingPlugin::new(app_setup_configuration.level_to_load.as_ref())
@@ -92,5 +94,6 @@ fn main() {
         .add_plugins(LevelMechanicsPlugin);
 
     app.add_plugins((OptionsPlugin, ControlPlugin));
+    app.add_plugins(DevModePlugin);
     app.run();
 }
