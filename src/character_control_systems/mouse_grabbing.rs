@@ -8,6 +8,9 @@ use bevy::{
     input::{mouse::MouseButton, ButtonInput},
     window::{CursorGrabMode, PrimaryWindow, Window},
 };
+use leafwing_input_manager::action_state::ActionState;
+
+use super::keyboard_receive::UiAction;
 
 #[derive(Resource)]
 pub struct MouseGrabbed(pub bool);
@@ -45,4 +48,17 @@ pub(crate) fn grab_mouse_on_click(
             return;
         }
     };
+}
+
+pub(crate) fn release_mouse_in_inventory(
+    ui_actions: Query<&ActionState<UiAction>>,
+    mut grab_resource: ResMut<MouseGrabbed>,
+) {
+    if ui_actions
+        .get_single()
+        .unwrap()
+        .just_pressed(&UiAction::ToggleInventory)
+    {
+        grab_resource.0 = false;
+    }
 }
