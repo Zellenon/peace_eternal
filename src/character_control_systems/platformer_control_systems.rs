@@ -7,14 +7,16 @@ use bevy_tnua::control_helpers::{
 use bevy_tnua::math::{AdjustPrecision, AsF32, Float, Vector3};
 use bevy_tnua::prelude::*;
 use bevy_tnua::{TnuaGhostSensor, TnuaProximitySensor};
+use leafwing_input_manager::action_state::ActionState;
 
 use crate::ui::tuning::UiTunable;
+
+use super::keyboard_receive::PlayerAction;
 
 #[allow(clippy::type_complexity)]
 #[allow(clippy::useless_conversion)]
 pub fn apply_platformer_controls(
     mut egui_context: EguiContexts,
-    keyboard: Res<ButtonInput<KeyCode>>,
     mut query: Query<(
         &CharacterMotionConfigForPlatformerDemo,
         // This is the main component used for interacting with Tnua. It is used for both issuing
@@ -42,9 +44,10 @@ pub fn apply_platformer_controls(
         // air dash per jump - only a single "pool" of air action "energy" shared by all air
         // actions.
         &mut TnuaSimpleAirActionsCounter,
+        &ActionState<PlayerAction>,
         // This is used in the shooter-like demo to control the forward direction of the
         // character.
-        Option<&ForwardFromCamera>,
+        &ForwardFromCamera,
     )>,
 ) {
     if egui_context.ctx_mut().wants_keyboard_input() {
@@ -65,47 +68,25 @@ pub fn apply_platformer_controls(
         ghost_sensor,
         mut fall_through_helper,
         mut air_actions_counter,
+        action_state,
         forward_from_camera,
     ) in query.iter_mut()
     {
-        // This part is just keyboard input processing. In a real game this would probably be done
-        // with a third party plugin.
-        let mut direction = Vector3::ZERO;
+        let mut direction = {
+            let wasd_input = action_state.axis_pair(&PlayerAction::Walk);
+            Vector3::new(wasd_input.x, 0., -1. * wasd_input.y)
+        };
 
-        if keyboard.any_pressed([KeyCode::ArrowUp, KeyCode::KeyW]) {
-            direction -= Vector3::Z;
-        }
-        if keyboard.any_pressed([KeyCode::ArrowDown, KeyCode::KeyS]) {
-            direction += Vector3::Z;
-        }
-        if keyboard.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]) {
-            direction -= Vector3::X;
-        }
-        if keyboard.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
-            direction += Vector3::X;
-        }
+        direction = Transform::default()
+            .looking_to(forward_from_camera.forward.f32(), Vec3::Y)
+            .transform_point(direction.f32())
+            .adjust_precision();
 
-        direction = direction.clamp_length_max(1.0);
+        let jump = action_state.pressed(&PlayerAction::Jump);
+        let dash = action_state.pressed(&PlayerAction::Sprint);
 
-        if let Some(forward_from_camera) = forward_from_camera {
-            direction = Transform::default()
-                .looking_to(forward_from_camera.forward.f32(), Vec3::Y)
-                .transform_point(direction.f32())
-                .adjust_precision();
-        }
-
-        let jump = keyboard.any_pressed([KeyCode::Space]);
-        let dash = keyboard.any_pressed([KeyCode::ShiftLeft, KeyCode::ShiftRight]);
-
-        let turn_in_place = forward_from_camera.is_none()
-            && keyboard.any_pressed([KeyCode::AltLeft, KeyCode::AltRight]);
-
-        let crouch_pressed: bool;
-        let crouch_just_pressed: bool;
-
-        let crouch_buttons = [KeyCode::ControlLeft, KeyCode::ControlRight];
-        crouch_pressed = keyboard.any_pressed(crouch_buttons);
-        crouch_just_pressed = keyboard.any_just_pressed(crouch_buttons);
+        let crouch_pressed = action_state.pressed(&PlayerAction::Crouch);
+        let crouch_just_pressed = action_state.just_pressed(&PlayerAction::Crouch);
 
         // This needs to be called once per frame. It lets the air actions counter know about the
         // air status of the character. Specifically:
@@ -269,19 +250,8 @@ pub fn apply_platformer_controls(
         // `desired_velocity` or `desired_forward` which we compute here based on the current
         // frame's input.
         controller.basis(TnuaBuiltinWalk {
-            desired_velocity: if turn_in_place {
-                Vector3::ZERO
-            } else {
-                direction * speed_factor * config.speed
-            },
-            desired_forward: if let Some(forward_from_camera) = forward_from_camera {
-                // With shooters, we want the character model to follow the camera.
-                forward_from_camera.forward
-            } else {
-                // For platformers, we only want ot change direction when the character tries to
-                // moves (or when the player explicitly wants to set the direction)
-                direction.normalize_or_zero()
-            },
+            desired_velocity: direction * speed_factor * config.speed,
+            desired_forward: forward_from_camera.forward,
             ..config.walk.clone()
         });
 
@@ -314,32 +284,6 @@ pub fn apply_platformer_controls(
                 allow_in_air: air_actions_counter.air_count_for(TnuaBuiltinJump::NAME)
                     <= config.actions_in_air,
                 ..config.jump.clone()
-            });
-        }
-
-        if dash {
-            controller.action(TnuaBuiltinDash {
-                // Dashing is also an action, but because it has directions we need to provide said
-                // directions. `displacement` is a vector that determines where the jump will bring
-                // us. Note that even after reaching the displacement, the character may still have
-                // some leftover velocity (configurable with the other parameters of the action)
-                //
-                // The displacement is "frozen" when the action starts - user code does not have to
-                // worry about storing the original direction.
-                displacement: direction.normalize() * config.dash_distance,
-                // When set, the `desired_forward` of the dash action "overrides" the
-                // `desired_forward` of the walk basis. Like the displacement, it gets "frozen" -
-                // allowing to easily maintain a forward direction during the dash.
-                desired_forward: if forward_from_camera.is_none() {
-                    direction.normalize()
-                } else {
-                    // For shooters, we want to allow rotating mid-dash if the player moves the
-                    // mouse.
-                    Vector3::ZERO
-                },
-                allow_in_air: air_actions_counter.air_count_for(TnuaBuiltinDash::NAME)
-                    <= config.actions_in_air,
-                ..config.dash.clone()
             });
         }
     }
