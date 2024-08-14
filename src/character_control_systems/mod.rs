@@ -11,7 +11,9 @@ use self::camera_controls::{
     mouse_should_control_camera,
 };
 use self::keyboard_receive::{CameraAction, PlayerAction, UiAction};
-use self::mouse_grabbing::{grab_mouse_on_click, sync_mouse_grab, MouseGrabbed};
+use self::mouse_grabbing::{
+    grab_mouse_on_click, release_mouse_in_inventory, sync_mouse_grab, MouseGrabbed,
+};
 
 pub mod camera_controls;
 pub mod info_dumping_systems;
@@ -40,7 +42,7 @@ impl Plugin for ControlPlugin {
         .add_systems(
             Update,
             (
-                grab_mouse_on_click.before(sync_mouse_grab),
+                (grab_mouse_on_click, release_mouse_in_inventory).before(sync_mouse_grab),
                 (apply_mouse_camera_movement, apply_scroll_zoom)
                     .before(camera_follow_player)
                     .run_if(mouse_should_control_camera),
