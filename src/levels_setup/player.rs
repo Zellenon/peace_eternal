@@ -5,6 +5,7 @@ use avian3d::{
 };
 use bevy::{
     asset::AssetServer,
+    core::Name,
     ecs::system::{Commands, Res},
     hierarchy::BuildChildren,
     math::Quat,
@@ -44,7 +45,7 @@ use crate::{
 use super::{IsPlayer, LayerNames};
 
 pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let mut player = commands.spawn(IsPlayer);
+    let mut player = commands.spawn((IsPlayer, Name::new("Player")));
     player.insert(SceneBundle {
         scene: asset_server.load("player.glb#Scene0"),
         ..Default::default()
@@ -198,7 +199,7 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
     ));
 
     player.with_children(|w| {
-        w.spawn(())
+        w.spawn(Name::new("Gun"))
             .insert(SceneBundle {
                 scene: asset_server.load("gun.glb#Scene0"),
                 transform: Transform {
