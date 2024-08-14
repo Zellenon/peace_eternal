@@ -5,8 +5,8 @@ use bevy::{
         query::With,
         system::{Query, Res, ResMut, Resource},
     },
-    input::{keyboard::KeyCode, mouse::MouseButton, ButtonInput},
-    window::{PrimaryWindow, Window},
+    input::{mouse::MouseButton, ButtonInput},
+    window::{CursorGrabMode, PrimaryWindow, Window},
 };
 
 #[derive(Resource)]

@@ -1,6 +1,3 @@
-mod helper;
-pub mod level_switching;
-
 pub use level_switching::{IsPlayer, LevelObject, PositionPlayer};
 
 use avian3d::prelude::PhysicsLayer;
@@ -17,6 +14,10 @@ use bevy_tnua::TnuaGhostPlatform;
 use crate::level_mechanics::MovingPlatform;
 
 use helper::{LevelSetupHelper3d, LevelSetupHelper3dEntityCommandsExtension};
+
+mod helper;
+pub mod level_switching;
+pub mod player;
 
 #[derive(PhysicsLayer)]
 pub enum LayerNames {
@@ -125,4 +126,27 @@ pub fn setup_level(mut helper: LevelSetupHelper3d) {
             0.5,
         )
         .make_kinematic_with_angular_velocity(Vector3::Y);
+}
+
+pub fn setup_camera_and_lights(mut commands: Commands) {
+    commands.spawn(Camera3dBundle {
+        transform: Transform::from_xyz(0.0, 16.0, 40.0)
+            .looking_at(Vec3::new(0.0, 10.0, 0.0), Vec3::Y),
+        ..Default::default()
+    });
+
+    commands.spawn(PointLightBundle {
+        transform: Transform::from_xyz(5.0, 5.0, 5.0),
+        ..default()
+    });
+
+    commands.spawn(DirectionalLightBundle {
+        directional_light: DirectionalLight {
+            illuminance: 4000.0,
+            shadows_enabled: true,
+            ..Default::default()
+        },
+        transform: Transform::default().looking_at(Vec3::new(-0.1, -1., -0.4), Vec3::Z),
+        ..Default::default()
+    });
 }
