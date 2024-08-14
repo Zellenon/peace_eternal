@@ -7,7 +7,8 @@ use bevy::{
 use leafwing_input_manager::plugin::InputManagerPlugin;
 
 use self::camera_controls::{
-    apply_mouse_camera_movement, camera_follow_player, mouse_should_control_camera,
+    apply_mouse_camera_movement, apply_scroll_zoom, camera_follow_player,
+    mouse_should_control_camera,
 };
 use self::keyboard_receive::{CameraAction, PlayerAction, UiAction};
 use self::mouse_grabbing::{grab_mouse_on_click, sync_mouse_grab, MouseGrabbed};
@@ -40,7 +41,7 @@ impl Plugin for ControlPlugin {
             Update,
             (
                 grab_mouse_on_click.before(sync_mouse_grab),
-                apply_mouse_camera_movement
+                (apply_mouse_camera_movement, apply_scroll_zoom)
                     .before(camera_follow_player)
                     .run_if(mouse_should_control_camera),
             ),

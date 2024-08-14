@@ -1,3 +1,4 @@
+use crate::character_control_systems::camera_controls::FollowingCamera;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 use bevy_tnua::builtins::{TnuaBuiltinCrouch, TnuaBuiltinCrouchState, TnuaBuiltinDash};
@@ -47,7 +48,7 @@ pub fn apply_platformer_controls(
         &ActionState<PlayerAction>,
         // This is used in the shooter-like demo to control the forward direction of the
         // character.
-        &ForwardFromCamera,
+        &FollowingCamera,
     )>,
 ) {
     if egui_context.ctx_mut().wants_keyboard_input() {
@@ -357,20 +358,5 @@ impl UiTunable for FallingThroughControlScheme {
                     }
                 }
             });
-    }
-}
-
-#[derive(Component)]
-pub struct ForwardFromCamera {
-    pub forward: Vector3,
-    pub pitch_angle: Float,
-}
-
-impl Default for ForwardFromCamera {
-    fn default() -> Self {
-        Self {
-            forward: Vector3::NEG_Z,
-            pitch_angle: 0.0,
-        }
     }
 }

@@ -21,12 +21,13 @@ use bevy_tnua_physics_integration_layer::math::{Float, Vector3};
 use crate::{
     character_animating_systems::AnimationState,
     character_control_systems::{
+        camera_controls::FollowingCamera,
         keyboard_receive::{
             create_camera_action_input_manager_bundle, create_player_action_input_manager_bundle,
             create_ui_action_input_manager_bundle,
         },
         platformer_control_systems::{
-            CharacterMotionConfigForPlatformerDemo, FallingThroughControlScheme, ForwardFromCamera,
+            CharacterMotionConfigForPlatformerDemo, FallingThroughControlScheme,
         },
     },
     ui::{
@@ -94,7 +95,7 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
         falling_through: FallingThroughControlScheme::SingleFall,
     });
 
-    player.insert(ForwardFromCamera::default());
+    player.insert(FollowingCamera::default());
 
     // An entity's Tnua behavior can be toggled individually with this component, if inserted.
     player.insert(TnuaToggle::default());

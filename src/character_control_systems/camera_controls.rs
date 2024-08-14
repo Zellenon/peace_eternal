@@ -1,5 +1,6 @@
 use bevy::{
     ecs::{
+        component::Component,
         query::With,
         system::{Query, Res},
     },
@@ -9,11 +10,31 @@ use bevy::{
     window::{PrimaryWindow, Window},
 };
 use bevy_tnua::math::{float_consts, AdjustPrecision, AsF32, Quaternion};
+use bevy_tnua_physics_integration_layer::math::{Float, Vector3};
 use leafwing_input_manager::action_state::ActionState;
 
 use crate::options::controls::ControlOptions;
 
-use super::{keyboard_receive::CameraAction, platformer_control_systems::ForwardFromCamera};
+use super::keyboard_receive::CameraAction;
+
+#[derive(Component)]
+pub struct FollowingCamera {
+    pub forward: Vector3,
+    pub pitch_angle: Float,
+    pub distance: Float,
+    pub shoulder_shift: Float,
+}
+
+impl Default for FollowingCamera {
+    fn default() -> Self {
+        Self {
+            forward: Vector3::NEG_Z,
+            pitch_angle: 0.0,
+            distance: 5.,
+            shoulder_shift: 0.2,
+        }
+    }
+}
 
 pub fn mouse_should_control_camera(
     player_camera_movement: Query<&Window, With<PrimaryWindow>>,
@@ -24,7 +45,7 @@ pub fn mouse_should_control_camera(
 }
 
 pub fn apply_mouse_camera_movement(
-    mut player_character_query: Query<(&mut ForwardFromCamera, &ActionState<CameraAction>)>,
+    mut player_character_query: Query<(&mut FollowingCamera, &ActionState<CameraAction>)>,
     control_options: Res<ControlOptions>,
 ) {
     if let Ok((mut forward_from_camera, action_state)) = player_character_query.get_single_mut() {
@@ -45,16 +66,30 @@ pub fn apply_mouse_camera_movement(
     }
 }
 
+pub fn apply_scroll_zoom(
+    mut player_character_query: Query<(&mut FollowingCamera, &ActionState<CameraAction>)>,
+) {
+    if let Ok((mut forward_from_camera, action_state)) = player_character_query.get_single_mut() {
+        let zoom = action_state.clamped_value(&CameraAction::Zoom);
+        forward_from_camera.distance = (forward_from_camera.distance - zoom).clamp(0., 13.);
+    }
+}
+
 pub(crate) fn camera_follow_player(
-    player_character_query: Query<(&GlobalTransform, &ForwardFromCamera)>,
+    player_character_query: Query<(&GlobalTransform, &FollowingCamera)>,
     mut camera_query: Query<&mut Transform, With<Camera>>,
 ) {
     if let Ok((player_transform, forward_from_camera)) = player_character_query.get_single() {
         for mut camera in camera_query.iter_mut() {
+            let distance_from_player =
+                -1.0 * forward_from_camera.distance * forward_from_camera.forward.f32();
+            let shoulder_shift = forward_from_camera.shoulder_shift
+                * forward_from_camera.distance
+                * forward_from_camera.forward.cross(Vec3::Y).f32();
             camera.translation = player_transform.translation()
-                + -5.0 * forward_from_camera.forward.f32()
-                + forward_from_camera.forward.cross(Vec3::Y).f32()
-                + 0.75 * Vec3::Y;
+                + distance_from_player
+                + shoulder_shift
+                + 0.7 * Vec3::Y;
             camera.look_to(forward_from_camera.forward.f32(), Vec3::Y);
             let pitch_axis = camera.left();
             camera.rotate_around(
