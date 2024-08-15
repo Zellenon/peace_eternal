@@ -22,6 +22,7 @@ use character_control_systems::{
     ControlPlugin,
 };
 use dev::DevModePlugin;
+use gunplay::GunplayPlugin;
 use level_mechanics::LevelMechanicsPlugin;
 use levels_setup::{
     camera::setup_cameras, level_switching::LevelSwitchingPlugin, player::setup_player,
@@ -35,6 +36,7 @@ mod app_setup_options;
 mod character_animating_systems;
 mod character_control_systems;
 mod dev;
+mod gunplay;
 mod level_mechanics;
 mod levels_setup;
 mod options;
@@ -93,7 +95,7 @@ fn main() {
         .add_systems(Update, animate_humanoids)
         .add_plugins(LevelMechanicsPlugin);
 
-    app.add_plugins((ControlPlugin, OptionsPlugin, UtilPlugin));
+    app.add_plugins((ControlPlugin, GunplayPlugin, OptionsPlugin, UtilPlugin));
     app.add_plugins(DevModePlugin);
     app.run();
 }

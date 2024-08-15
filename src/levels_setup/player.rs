@@ -7,8 +7,7 @@ use bevy::{
     asset::AssetServer,
     core::Name,
     ecs::system::{Commands, Res},
-    hierarchy::BuildChildren,
-    math::Quat,
+    math::{Quat, Vec3},
     scene::SceneBundle,
     transform::components::Transform,
 };
@@ -35,6 +34,7 @@ use crate::{
             CharacterMotionConfigForPlatformerDemo, FallingThroughControlScheme,
         },
     },
+    gunplay::arms::Arm,
     ui::{
         self, component_alterbation::CommandAlteringSelectors, info::InfoSource,
         plotting::PlotSource,
@@ -198,23 +198,14 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
         create_ui_action_input_manager_bundle(),
     ));
 
-    player.with_children(|w| {
-        w.spawn(Name::new("Gun"))
-            .insert(SceneBundle {
-                scene: asset_server.load("gun.glb#Scene0"),
-                transform: Transform {
-                    translation: bevy::math::Vec3 {
-                        x: 0.,
-                        y: 0.,
-                        z: 0.,
-                    },
-                    rotation: Quat::from_rotation_y(PI / 2.),
-                    ..Default::default()
-                },
-                ..Default::default()
-            })
-            .insert(GltfSceneHandler {
-                names_from: asset_server.load("gun.glb"),
-            });
-    });
+    let id = player.id();
+    let arm = commands
+        .spawn((Name::new("PlayerArm"), Arm::new(&id)))
+        .insert(SceneBundle {
+            scene: asset_server.load("gun.glb#Scene0"),
+            ..Default::default()
+        })
+        .insert(GltfSceneHandler {
+            names_from: asset_server.load("gun.glb"),
+        });
 }
