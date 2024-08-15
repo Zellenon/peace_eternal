@@ -48,7 +48,7 @@ bevy_framepace = { version = "0.17", optional = true }
 # oxidized_navigation = { version = "0.11", default-features=false, features = ["xpbd", "parry3d_015"] }
 iyes_progress = "0.12"
 leafwing-input-manager = { version = "0.15", features = ["egui"] }
-bevy_dolly = "0.0.4"
+# bevy_dolly = "0.0.4"
 bevy_editor_pls = { version = "0.9.0", optional = true }
 bevy_hanabi = { version = "0.12", default-features = false, features = ["3d"] }
 # bevy-tnua-xpbd3d = "0.5"

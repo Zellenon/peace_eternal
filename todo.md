@@ -1,1 +1,2 @@
 - When turning quickly, camera zooms uncomfortably close to player face
+- I think guns are turned the wrong way? positive z should be forward

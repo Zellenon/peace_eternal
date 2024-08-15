@@ -43,7 +43,6 @@ pub(crate) fn grab_mouse_on_click(
             && egui_context.ctx().is_pointer_over_area().not()
         {
             grab_resource.0 = true;
-            print!("Grabbing mouse!");
         } else {
             return;
         }

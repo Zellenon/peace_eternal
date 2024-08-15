@@ -1,4 +1,5 @@
 use bevy::{
+    input::mouse::MouseButton,
     prelude::{default, KeyCode, Vec2},
     reflect::Reflect,
 };
@@ -16,6 +17,7 @@ pub(crate) enum PlayerAction {
     Crouch,
     Jump,
     Interact,
+    Shoot,
 }
 
 impl Actionlike for PlayerAction {
@@ -58,6 +60,7 @@ pub(crate) fn create_player_action_input_manager_bundle() -> InputManagerBundle<
             (PlayerAction::Interact, KeyCode::KeyE),
             (PlayerAction::Crouch, KeyCode::ControlLeft),
         ])
+        .with(PlayerAction::Shoot, MouseButton::Left)
         .with_dual_axis(PlayerAction::Walk, KeyboardVirtualDPad::WASD),
         ..default()
     }
