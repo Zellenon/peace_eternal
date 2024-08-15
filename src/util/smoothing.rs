@@ -48,7 +48,7 @@ pub fn smooth_movement(time: Res<Time>, mut query: Query<(&mut Transform, &Smoot
         if do_rotate {
             transform.rotation = transform.rotation.slerp(
                 goal.rotation,
-                smoothing * time.delta().as_secs_f32() * rotation_mul,
+                (smoothing * time.delta().as_secs_f32() * rotation_mul).min(1.),
             );
         }
         if do_scale {
