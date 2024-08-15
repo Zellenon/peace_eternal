@@ -222,7 +222,8 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
                 gun.spawn((
                     Barrel,
                     SpatialBundle {
-                        transform: Transform::default().with_translation(Vec3::new(0., 0.3, -0.7)),
+                        transform: Transform::default()
+                            .with_translation(Vec3::new(-0.03, 0.2, -0.7)),
                         ..Default::default()
                     },
                 ));

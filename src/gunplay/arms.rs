@@ -37,7 +37,7 @@ impl Arm {
     pub fn new(entity: &Entity) -> Self {
         Self {
             parent: *entity,
-            offset: Transform::default().with_translation(Vec3::new(0.4, 0.4, -0.5)),
+            offset: Transform::default().with_translation(Vec3::new(0.35, 0.25, -0.6)),
         }
     }
 }

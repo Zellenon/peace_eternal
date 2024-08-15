@@ -2,7 +2,7 @@ use bevy::{
     core::Name,
     ecs::{
         component::Component,
-        event::EventReader,
+        event::{EventReader, EventWriter},
         query::With,
         system::{Commands, Query, Res},
     },
@@ -13,7 +13,7 @@ use bevy::{
     transform::components::{GlobalTransform, Transform},
 };
 
-use crate::util::primitives::Primitive_Resources;
+use crate::util::{camera_shake::TraumaEvent, primitives::Primitive_Resources};
 
 use super::arms::ServoActivated;
 
@@ -26,6 +26,7 @@ pub struct Barrel;
 pub fn fire_guns(
     mut commands: Commands,
     mut events: EventReader<ServoActivated>,
+    mut recoil: EventWriter<TraumaEvent>,
     guns: Query<&Children, With<Gun>>,
     barrels: Query<&GlobalTransform>,
     primitive_res: Res<Primitive_Resources>,
@@ -47,6 +48,7 @@ pub fn fire_guns(
                 },
                 ..Default::default()
             });
+            recoil.send(0.1.into());
         }
     }
 }

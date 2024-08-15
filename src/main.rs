@@ -29,6 +29,7 @@ use levels_setup::{
     setup_lights,
 };
 use options::OptionsPlugin;
+use sketchpad::sketchpad_system;
 use ui::DemoInfoUpdateSystemSet;
 use util::{animating::animation_patcher_system, UtilPlugin};
 
@@ -40,6 +41,7 @@ mod gunplay;
 mod level_mechanics;
 mod levels_setup;
 mod options;
+mod sketchpad;
 mod ui;
 mod util;
 
@@ -97,5 +99,8 @@ fn main() {
 
     app.add_plugins((ControlPlugin, GunplayPlugin, OptionsPlugin, UtilPlugin));
     app.add_plugins(DevModePlugin);
+
+    app.add_systems(Update, sketchpad_system);
+
     app.run();
 }

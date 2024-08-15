@@ -6,6 +6,8 @@ use bevy::{
 };
 use leafwing_input_manager::plugin::InputManagerPlugin;
 
+use crate::util::camera_shake::shake;
+
 use self::camera_controls::{
     apply_mouse_camera_movement, apply_scroll_zoom, mouse_should_control_camera,
     switch_first_third_person, update_fps_camera, update_tps_camera, CameraData, Facing,
@@ -56,6 +58,7 @@ impl Plugin for ControlPlugin {
         app.add_systems(
             PostUpdate,
             (update_fps_camera, update_tps_camera)
+                .before(shake)
                 .before(bevy::transform::TransformSystem::TransformPropagate)
                 .after(avian3d::prelude::PhysicsSet::Sync),
         );

@@ -110,14 +110,14 @@ pub fn apply_scroll_zoom(
 
 pub(crate) fn update_fps_camera(
     player_character_query: Query<(&GlobalTransform, &Facing), With<IsPlayer>>,
-    mut camera_query: Query<&mut Transform, With<FPSCamera>>,
+    mut camera_query: Query<&mut SmoothedTransform, With<FPSCamera>>,
 ) {
     if let Ok((player_transform, facing)) = player_character_query.get_single() {
         for mut camera in camera_query.iter_mut() {
-            camera.translation = player_transform.translation() + 0.7 * Vec3::Y;
-            camera.look_to(facing.forward.f32(), Vec3::Y);
-            let pitch_axis = camera.left();
-            camera.rotate_around(
+            camera.goal.translation = player_transform.translation() + 0.7 * Vec3::Y;
+            camera.goal.look_to(facing.forward.f32(), Vec3::Y);
+            let pitch_axis = camera.goal.left();
+            camera.goal.rotate_around(
                 player_transform.translation() + -0.5 * Vec3::Y,
                 Quat::from_axis_angle(*pitch_axis, facing.pitch_angle.f32()),
             );

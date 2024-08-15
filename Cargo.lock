@@ -3657,6 +3657,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2bf50223579dc7cdcfb3bfcacf7069ff68243f8c363f62ffa99cf000a6b9c451"
 
 [[package]]
+name = "noisy_bevy"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a498a5310e40540a941aca31ef341a0b229e11b04fb359c9c023ac412e34465b"
+dependencies = [
+ "bevy",
+]
+
+[[package]]
 name = "nom"
 version = "7.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4202,6 +4211,7 @@ dependencies = [
  "iyes_progress",
  "leafwing-input-manager",
  "log",
+ "noisy_bevy",
  "serde",
  "web-sys",
 ]

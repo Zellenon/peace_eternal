@@ -6,7 +6,7 @@ use bevy_atmosphere::plugin::AtmosphereCamera;
 
 use crate::{
     character_control_systems::camera_controls::{FPSCamera, TPSCamera},
-    util::smoothing::SmoothedTransform,
+    util::{camera_shake::Shake, smoothing::SmoothedTransform},
 };
 
 pub fn setup_cameras(mut commands: Commands) {
@@ -18,20 +18,30 @@ pub fn setup_cameras(mut commands: Commands) {
             },
             ..Default::default()
         })
-        .insert((Name::new("FPSCamera"), FPSCamera));
+        .insert((
+            Name::new("FPSCamera"),
+            FPSCamera,
+            Shake::default(),
+            AtmosphereCamera::default(),
+            SmoothedTransform {
+                smoothing: 0.5,
+                do_translate: true,
+                do_rotate: true,
+                ..Default::default()
+            },
+        ));
 
     commands
-        .spawn(Camera3dBundle {
-            transform: Transform::from_xyz(0.0, 16.0, 40.0)
-                .looking_at(Vec3::new(0.0, 10.0, 0.0), Vec3::Y),
-            ..Default::default()
-        })
+        .spawn(Camera3dBundle::default())
         .insert((Name::new("TPSCamera"), TPSCamera))
-        .insert(SmoothedTransform {
-            smoothing: 0.2,
-            do_translate: true,
-            do_rotate: true,
-            ..Default::default()
-        })
+        .insert((
+            SmoothedTransform {
+                smoothing: 0.2,
+                do_translate: true,
+                do_rotate: true,
+                ..Default::default()
+            },
+            Shake::default(),
+        ))
         .insert(AtmosphereCamera::default());
 }
