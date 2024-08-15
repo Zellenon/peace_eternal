@@ -27,7 +27,7 @@ pub fn setup_cameras(mut commands: Commands) {
                 smoothing: 15.,
                 do_translate: true,
                 do_rotate: true,
-                rotation_mul: 3.,
+                rotation_mul: 5.,
                 ..Default::default()
             },
         ));

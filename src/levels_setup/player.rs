@@ -212,7 +212,7 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
             smoothing: 8.,
             do_rotate: true,
             do_translate: true,
-            rotation_mul: 0.8,
+            rotation_mul: 1.,
             ..Default::default()
         },
     ));
