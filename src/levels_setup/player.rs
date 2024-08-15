@@ -44,7 +44,7 @@ use crate::{
         self, component_alterbation::CommandAlteringSelectors, info::InfoSource,
         plotting::PlotSource,
     },
-    util::animating::GltfSceneHandler,
+    util::{animating::GltfSceneHandler, smoothing::SmoothedTransform},
 };
 
 use super::{IsPlayer, LayerNames};
@@ -208,6 +208,13 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
         Name::new("PlayerArm"),
         Arm::new(&id),
         SpatialBundle::default(),
+        SmoothedTransform {
+            smoothing: 8.,
+            do_rotate: true,
+            do_translate: true,
+            rotation_mul: 0.8,
+            ..Default::default()
+        },
     ));
     arm.with_children(|w| {
         w.spawn((Name::new("Gun"), Gun, Servo::default()))
@@ -223,7 +230,7 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
                     Barrel,
                     SpatialBundle {
                         transform: Transform::default()
-                            .with_translation(Vec3::new(-0.03, 0.2, -0.7)),
+                            .with_translation(Vec3::new(-0.01, 0.2, -0.9)),
                         ..Default::default()
                     },
                 ));

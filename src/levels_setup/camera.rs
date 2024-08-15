@@ -24,9 +24,10 @@ pub fn setup_cameras(mut commands: Commands) {
             Shake::default(),
             AtmosphereCamera::default(),
             SmoothedTransform {
-                smoothing: 0.5,
+                smoothing: 15.,
                 do_translate: true,
                 do_rotate: true,
+                rotation_mul: 3.,
                 ..Default::default()
             },
         ));
@@ -36,7 +37,7 @@ pub fn setup_cameras(mut commands: Commands) {
         .insert((Name::new("TPSCamera"), TPSCamera))
         .insert((
             SmoothedTransform {
-                smoothing: 0.2,
+                smoothing: 7.,
                 do_translate: true,
                 do_rotate: true,
                 ..Default::default()

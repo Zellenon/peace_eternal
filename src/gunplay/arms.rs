@@ -19,6 +19,7 @@ use leafwing_input_manager::action_state::ActionState;
 use crate::{
     character_control_systems::{camera_controls::Facing, keyboard_receive::PlayerAction},
     levels_setup::IsPlayer,
+    util::smoothing::SmoothedTransform,
 };
 
 #[derive(Event, Reflect)]
@@ -67,15 +68,15 @@ impl Default for Servo {
 }
 
 pub(crate) fn update_arm_position(
-    mut arms: Query<(&mut Transform, &Arm)>,
+    mut arms: Query<(&mut SmoothedTransform, &Arm)>,
     parents: Query<(&Transform, &Facing), Without<Arm>>,
 ) {
     for (mut arm_transform, Arm { parent, offset }) in arms.iter_mut() {
         if let Ok((parent_global, facing)) = parents.get(*parent) {
-            *arm_transform = parent_global.mul_transform(*offset);
-            arm_transform.look_to(facing.forward, Vec3::Y);
-            let pitch_axis = arm_transform.left();
-            arm_transform.rotate_around(
+            arm_transform.goal = parent_global.mul_transform(*offset);
+            arm_transform.goal.look_to(facing.forward, Vec3::Y);
+            let pitch_axis = arm_transform.goal.left();
+            arm_transform.goal.rotate_around(
                 parent_global.translation + -0.5 * Vec3::Y,
                 Quat::from_axis_angle(*pitch_axis, facing.pitch_angle),
             );
