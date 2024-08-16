@@ -209,10 +209,10 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
         Arm::new(&id),
         SpatialBundle::default(),
         SmoothedTransform {
-            smoothing: 8.,
+            smoothing: 20.,
             do_rotate: true,
             do_translate: true,
-            rotation_mul: 1.,
+            rotation_mul: 0.7,
             ..Default::default()
         },
     ));
