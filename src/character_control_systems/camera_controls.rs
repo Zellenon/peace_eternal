@@ -10,7 +10,7 @@ use bevy::{
     },
     math::{Quat, Vec2, Vec3},
     render::camera::Camera,
-    transform::components::{GlobalTransform, Transform},
+    transform::components::GlobalTransform,
     window::{PrimaryWindow, Window},
 };
 use bevy_tnua::math::{float_consts, AdjustPrecision, AsF32, Quaternion};

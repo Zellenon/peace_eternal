@@ -1,14 +1,13 @@
 use avian3d::{
     collision::{Collider, CollisionLayers, LayerMask},
     dynamics::rigid_body::{LockedAxes, RigidBody},
-    math::PI,
 };
 use bevy::{
     asset::AssetServer,
     core::Name,
     ecs::system::{Commands, Res},
     hierarchy::BuildChildren,
-    math::{Quat, Vec3},
+    math::Vec3,
     prelude::SpatialBundle,
     scene::SceneBundle,
     transform::components::Transform,
@@ -37,8 +36,9 @@ use crate::{
         },
     },
     gunplay::{
-        arms::{Arm, Servo},
+        arms::Arm,
         guns::{Barrel, Gun},
+        servo::Servo,
     },
     ui::{
         self, component_alterbation::CommandAlteringSelectors, info::InfoSource,
@@ -217,23 +217,30 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
         },
     ));
     arm.with_children(|w| {
-        w.spawn((Name::new("Gun"), Gun, Servo::default()))
-            .insert(SceneBundle {
-                scene: asset_server.load("gun.glb#Scene0"),
+        w.spawn((
+            Name::new("Gun"),
+            Gun,
+            Servo {
+                firemode: crate::gunplay::servo::FireMode::FullAuto,
+                // cooldown: todo!(),
                 ..Default::default()
-            })
-            .insert(GltfSceneHandler {
-                names_from: asset_server.load("gun.glb"),
-            })
-            .with_children(|gun| {
-                gun.spawn((
-                    Barrel,
-                    SpatialBundle {
-                        transform: Transform::default()
-                            .with_translation(Vec3::new(-0.01, 0.2, -0.9)),
-                        ..Default::default()
-                    },
-                ));
-            });
+            },
+        ))
+        .insert(SceneBundle {
+            scene: asset_server.load("gun.glb#Scene0"),
+            ..Default::default()
+        })
+        .insert(GltfSceneHandler {
+            names_from: asset_server.load("gun.glb"),
+        })
+        .with_children(|gun| {
+            gun.spawn((
+                Barrel,
+                SpatialBundle {
+                    transform: Transform::default().with_translation(Vec3::new(-0.01, 0.2, -0.9)),
+                    ..Default::default()
+                },
+            ));
+        });
     });
 }

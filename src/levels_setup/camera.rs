@@ -1,7 +1,4 @@
-use bevy::{
-    core::Name, core_pipeline::core_3d::Camera3dBundle, ecs::system::Commands, math::Vec3,
-    transform::components::Transform,
-};
+use bevy::{core::Name, core_pipeline::core_3d::Camera3dBundle, ecs::system::Commands};
 use bevy_atmosphere::plugin::AtmosphereCamera;
 
 use crate::{
