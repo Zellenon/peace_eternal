@@ -6,9 +6,9 @@ use primitives::{populate_primitive_resources, PrimitiveResources};
 pub mod audio;
 pub mod primitives;
 
-pub struct ResourcePlugin;
+pub struct AssetPlugin;
 
-impl Plugin for ResourcePlugin {
+impl Plugin for AssetPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.insert_resource(PrimitiveResources::default());
         app.init_collection::<PlaceholderAudio>();
