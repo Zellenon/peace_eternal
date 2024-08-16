@@ -4,6 +4,7 @@ use avian3d::{
 };
 use bevy::{
     asset::AssetServer,
+    audio::SpatialListener,
     core::Name,
     ecs::system::{Commands, Res},
     hierarchy::BuildChildren,
@@ -202,6 +203,8 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
         create_camera_action_input_manager_bundle(),
         create_ui_action_input_manager_bundle(),
     ));
+
+    player.insert(SpatialListener::new(2.0));
 
     let id = player.id();
     let mut arm = commands.spawn((

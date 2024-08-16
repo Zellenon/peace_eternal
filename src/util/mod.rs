@@ -1,3 +1,4 @@
+use audio::{spawn_audio_blips, AudioBlip, SpawnAudioBlip};
 use bevy::prelude::IntoSystemConfigs;
 use bevy::{
     app::{Plugin, PostUpdate, PreUpdate, Update},
@@ -10,6 +11,7 @@ use self::{
 };
 
 pub mod animating;
+pub mod audio;
 pub mod camera_shake;
 pub mod smoothing;
 
@@ -17,7 +19,9 @@ pub struct UtilPlugin;
 
 impl Plugin for UtilPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.register_type::<SmoothedTransform>();
+        app.register_type::<SmoothedTransform>()
+            .register_type::<SpawnAudioBlip>()
+            .register_type::<AudioBlip>();
 
         app.add_systems(Update, smooth_movement);
 
@@ -33,5 +37,8 @@ impl Plugin for UtilPlugin {
 
         app.add_event::<TraumaEvent>()
             .add_systems(PostUpdate, apply_trauma_events.before(shake));
+
+        app.add_event::<SpawnAudioBlip>()
+            .add_systems(Update, spawn_audio_blips);
     }
 }
