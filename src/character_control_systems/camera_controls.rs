@@ -1,6 +1,7 @@
 use bevy::ecs::system::ResMut;
 use bevy::prelude::Reflect;
 use bevy::prelude::Resource;
+use bevy::prelude::Visibility;
 use bevy::{
     ecs::{
         component::Component,
@@ -163,4 +164,17 @@ pub(crate) fn switch_first_third_person(
     for (mut camera, fps, tps) in cameras.iter_mut() {
         camera.is_active = (first_person && fps.is_some()) || (!first_person && tps.is_some());
     }
+}
+
+pub(crate) fn hide_player_in_fps(
+    camera_mode: Res<CameraData>,
+    mut player: Query<&mut Visibility, With<IsPlayer>>,
+) {
+    *player.get_single_mut().unwrap() = {
+        if camera_mode.is_first_person() {
+            Visibility::Hidden
+        } else {
+            Visibility::Visible
+        }
+    };
 }

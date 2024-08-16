@@ -4,6 +4,7 @@ use bevy::{
     app::{Plugin, Update},
     ecs::schedule::common_conditions::resource_changed,
 };
+use camera_controls::hide_player_in_fps;
 use leafwing_input_manager::plugin::InputManagerPlugin;
 
 use crate::util::camera_shake::shake;
@@ -51,7 +52,7 @@ impl Plugin for ControlPlugin {
                 (grab_mouse_on_click, release_mouse_in_inventory).before(sync_mouse_grab),
                 (apply_mouse_camera_movement, apply_scroll_zoom)
                     .run_if(mouse_should_control_camera),
-                (switch_first_third_person).after(apply_scroll_zoom),
+                (switch_first_third_person, hide_player_in_fps).after(apply_scroll_zoom),
             ),
         );
 
