@@ -39,9 +39,9 @@ Once all weapons for a class are unlocked, much less frequently unlock "super" w
 ## Enemies
 Each run, for each enemy, an "evolution tree" is built out of the modifiers. This tree represents the only champion variants of that enemy that are allowed to spawn. The tree has 4 tiers: 
 0th tier is just the basic enemy with 1 minor modifier
-1st tier has 2 branches with a major and minor modifier each
+1st tier has 2 branches with a new major, minor, and negative modifier each
 2nd tier has only 1 branch and adds 1 major modifier onto the branch before it
-3rd tier is an island with 3 major modifiers, prioritizing modifiers that aren't in the rest of the tree.
+3rd tier is branch off tier 0 with 3 major modifiers, 1 new minor, and 1 negative, prioritizing modifiers that aren't in the rest of the tree.
 
 The higher tiers become more common as the game progresses.
 

@@ -1,9 +1,9 @@
 
 # Modifiers
-   a
-Bc   De
-F    G
-  HIJ
+       a
+aBc1       aDe2
+aBcF1     aDeG2
+     aHIJk3
 
 ## Positive
 - 2x/3x Health
