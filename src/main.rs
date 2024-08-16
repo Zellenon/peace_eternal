@@ -1,4 +1,5 @@
 use app_setup_options::{AppSetupConfiguration, ScheduleToUse};
+use asset_setup::AssetPlugin;
 use avian3d::{
     schedule::{Physics, PhysicsSchedule},
     PhysicsPlugins,
@@ -98,7 +99,13 @@ fn main() {
         .add_systems(Update, animate_humanoids)
         .add_plugins(LevelMechanicsPlugin);
 
-    app.add_plugins((ControlPlugin, GunplayPlugin, OptionsPlugin, UtilPlugin));
+    app.add_plugins((
+        AssetPlugin,
+        ControlPlugin,
+        GunplayPlugin,
+        OptionsPlugin,
+        UtilPlugin,
+    ));
     app.add_plugins(DevModePlugin);
 
     app.add_systems(Update, sketchpad_system);
