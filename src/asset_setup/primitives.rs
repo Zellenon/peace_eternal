@@ -1,4 +1,5 @@
 use bevy::asset::Handle;
+use bevy::color::LinearRgba;
 use bevy::ecs::system::Resource;
 use bevy::prelude::default;
 use bevy::prelude::Meshable;
@@ -20,6 +21,7 @@ use bevy::{
 #[derive(Resource, Default)]
 pub struct PrimitiveResources {
     pub material: Handle<StandardMaterial>,
+    pub bloom_material: Handle<StandardMaterial>,
     pub cuboid: Handle<Mesh>,
     pub tetra: Handle<Mesh>,
     pub capsule: Handle<Mesh>,
@@ -40,6 +42,10 @@ pub(crate) fn populate_primitive_resources(
     primitives.material = materials.add(StandardMaterial {
         base_color_texture: Some(images.add(uv_debug_texture())),
         ..default()
+    });
+    primitives.bloom_material = materials.add(StandardMaterial {
+        emissive: LinearRgba::rgb(255., 255., 255.),
+        ..Default::default()
     });
 
     primitives.cuboid = meshes.add(Cuboid::default());

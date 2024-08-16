@@ -4,6 +4,7 @@ use bevy::{
     app::{Plugin, PostUpdate, PreUpdate, Update},
     transform::systems::{propagate_transforms, sync_simple_transforms},
 };
+use deathmarker::{destroy, kill_death_markers, Deathmarker, Destroy};
 
 use self::{
     camera_shake::{apply_trauma_events, restore, shake, Shake, ShakeSettings, TraumaEvent},
@@ -13,6 +14,7 @@ use self::{
 pub mod animating;
 pub mod audio;
 pub mod camera_shake;
+pub mod deathmarker;
 pub mod smoothing;
 
 pub struct UtilPlugin;
@@ -20,6 +22,7 @@ pub struct UtilPlugin;
 impl Plugin for UtilPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.register_type::<SmoothedTransform>()
+            .register_type::<Deathmarker>()
             .register_type::<SpawnAudioBlip>()
             .register_type::<AudioBlip>();
 
@@ -40,5 +43,9 @@ impl Plugin for UtilPlugin {
 
         app.add_event::<SpawnAudioBlip>()
             .add_systems(Update, spawn_audio_blips);
+
+        app.add_event::<Destroy>();
+        app.add_systems(Update, destroy)
+            .add_systems(PostUpdate, kill_death_markers);
     }
 }

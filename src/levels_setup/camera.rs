@@ -1,4 +1,8 @@
-use bevy::{core::Name, core_pipeline::core_3d::Camera3dBundle, ecs::system::Commands};
+use bevy::{
+    core::Name,
+    core_pipeline::{bloom::BloomSettings, core_3d::Camera3dBundle},
+    ecs::system::Commands,
+};
 use bevy_atmosphere::plugin::AtmosphereCamera;
 
 use crate::{
@@ -11,6 +15,7 @@ pub fn setup_cameras(mut commands: Commands) {
         .spawn(Camera3dBundle {
             camera: bevy::render::camera::Camera {
                 is_active: false,
+                hdr: true,
                 ..Default::default()
             },
             ..Default::default()
@@ -20,6 +25,7 @@ pub fn setup_cameras(mut commands: Commands) {
             FPSCamera,
             Shake::default(),
             AtmosphereCamera::default(),
+            BloomSettings::NATURAL,
             SmoothedTransform {
                 smoothing: 15.,
                 do_translate: true,
@@ -30,16 +36,24 @@ pub fn setup_cameras(mut commands: Commands) {
         ));
 
     commands
-        .spawn(Camera3dBundle::default())
-        .insert((Name::new("TPSCamera"), TPSCamera))
+        .spawn(Camera3dBundle {
+            camera: bevy::prelude::Camera {
+                hdr: true,
+                ..Default::default()
+            },
+            ..Default::default()
+        })
         .insert((
+            Name::new("TPSCamera"),
+            TPSCamera,
             SmoothedTransform {
                 smoothing: 7.,
                 do_translate: true,
                 do_rotate: true,
                 ..Default::default()
             },
+            BloomSettings::NATURAL,
             Shake::default(),
-        ))
-        .insert(AtmosphereCamera::default());
+            AtmosphereCamera::default(),
+        ));
 }

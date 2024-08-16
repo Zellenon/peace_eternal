@@ -9,16 +9,15 @@ use bevy::{
     hierarchy::Children,
     math::Vec3,
     pbr::PbrBundle,
-    prelude::{Entity, Parent},
+    prelude::Parent,
     reflect::Reflect,
     transform::components::{GlobalTransform, Transform},
 };
 
 use crate::{
     asset_setup::{audio::PlaceholderAudio, primitives::PrimitiveResources},
-    util::audio::SpawnAudioBlip,
+    util::{audio::SpawnAudioBlip, deathmarker::Deathmarker},
 };
-use crate::{levels_setup::IsPlayer, util::camera_shake::TraumaEvent};
 
 use super::{arms::Recoil, servo::ServoActivated};
 
@@ -50,12 +49,16 @@ pub fn fire_guns(
                 rotation: rot,
                 scale: Vec3::splat(0.2),
             };
-            commands.spawn(Name::new("Bullet")).insert(PbrBundle {
-                mesh: primitive_res.sphere.clone(),
-                material: primitive_res.material.clone(),
-                transform,
-                ..Default::default()
-            });
+            commands.spawn((
+                Name::new("Bullet"),
+                PbrBundle {
+                    mesh: primitive_res.sphere.clone(),
+                    material: primitive_res.bloom_material.clone(),
+                    transform,
+                    ..Default::default()
+                },
+                Deathmarker,
+            ));
 
             audio_send.send(SpawnAudioBlip {
                 handle: placeholder_audio.rifle1.clone(),
