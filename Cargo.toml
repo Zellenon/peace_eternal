@@ -38,7 +38,6 @@ serde = { version = "1", features = ["derive"] }
 anyhow = "1"
 
 # Bevy plugins
-bevy_kira_audio = "0.20"
 bevy_asset_loader = { version = "0.21", features = ["progress_tracking", "standard_dynamic_assets"] }
 bevy_common_assets = { version = "0.11", features = ["ron", "toml"] }
 bevy_egui = { version = "0.28",  features=["immutable_ctx"]}
