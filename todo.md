@@ -3,7 +3,7 @@
 
 # Gun Feel
 - (x) Screenshake
-- ( ) Fire sound
+- (x) Fire sound
 - ( ) Bullet wizz sound
 - ( ) Muzzle flash glow
 - ( ) Muzzle flash particles
