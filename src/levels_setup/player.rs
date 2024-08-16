@@ -221,7 +221,7 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
             Name::new("Gun"),
             Gun,
             Servo {
-                firemode: crate::gunplay::servo::FireMode::FullAuto,
+                firemode: crate::gunplay::servo::FireMode::SemiAuto,
                 // cooldown: todo!(),
                 ..Default::default()
             },
