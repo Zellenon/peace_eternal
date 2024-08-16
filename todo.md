@@ -2,6 +2,7 @@
 - I think guns are turned the wrong way? positive z should be forward
 
 # Gun Feel
+- (x) Screenshake
 - ( ) Fire sound
 - ( ) Bullet wizz sound
 - ( ) Muzzle flash glow
