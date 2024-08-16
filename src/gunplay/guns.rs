@@ -13,9 +13,9 @@ use bevy::{
     transform::components::{GlobalTransform, Transform},
 };
 
-use crate::util::{camera_shake::TraumaEvent, primitives::Primitive_Resources};
+use crate::util::{camera_shake::TraumaEvent, primitives::PrimitiveResources};
 
-use super::arms::ServoActivated;
+use super::servo::ServoActivated;
 
 #[derive(Component, Reflect)]
 pub struct Gun;
