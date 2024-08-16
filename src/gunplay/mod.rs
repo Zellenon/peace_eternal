@@ -6,8 +6,8 @@ use servo::{
     ArmServo, Servo, ServoActivated,
 };
 
+use crate::asset_setup::primitives::PrimitiveResources;
 use crate::character_control_systems::camera_controls::apply_mouse_camera_movement;
-use crate::util::primitives::PrimitiveResources;
 
 use self::guns::{fire_guns, Gun};
 

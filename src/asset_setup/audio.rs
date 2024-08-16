@@ -1,0 +1,130 @@
+use bevy::asset::Handle;
+use bevy::audio::AudioSource;
+use bevy::ecs::system::Resource;
+use bevy::prelude::Reflect;
+use bevy_asset_loader::asset_collection::AssetCollection;
+
+#[derive(AssetCollection, Resource, Reflect)]
+pub struct PlaceholderAudio {
+    #[asset(path = "audio/placeholder/bodyimpact.wav")]
+    pub body_impact: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/boing_01.wav")]
+    pub boing: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/death_01.wav")]
+    pub death1: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/death_02.wav")]
+    pub death2: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/footstep_01.wav")]
+    pub footstep1: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/footstep_02.wav")]
+    pub footstep2: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/footstep_03.wav")]
+    pub footstep3: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/footstep_04.wav")]
+    pub footstep4: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/get_armor.wav")]
+    pub get_armor: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/gun_load_01.wav")]
+    pub gun_load1: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/gun_load_02.wav")]
+    pub gun_load2: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/gun_machine.wav")]
+    pub machine_gun: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/gun_outofammo.wav")]
+    pub gun_outofammo: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/gun_rifle_01.wav")]
+    pub rifle1: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/gun_rifle_02.wav")]
+    pub rifle2: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/gun_shot.wav")]
+    pub gunshot: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/jump_01.wav")]
+    pub jump1: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/jump_02.wav")]
+    pub jump2: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/jump_03.wav")]
+    pub jump3: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/jump_04.wav")]
+    pub jump4: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/land.wav")]
+    pub land: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/pain_01.wav")]
+    pub pain1: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/pain_02.wav")]
+    pub pain2: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/pain_03.wav")]
+    pub pain3: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/powerup_01.wav")]
+    pub powerup1: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/powerup_02.wav")]
+    pub powerup2: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/powerup_03.wav")]
+    pub powerup3: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/powerup_04.wav")]
+    pub powerup4: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/punch_01.wav")]
+    pub punch1: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/punch_02.wav")]
+    pub punch2: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/splash_01.wav")]
+    pub splash1: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/splash_02.wav")]
+    pub splash2: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/splash_03.wav")]
+    pub splash3: Handle<AudioSource>,
+    #[asset(path = "audio/placeholder/teleport.wav")]
+    pub teleport: Handle<AudioSource>,
+}
+
+impl PlaceholderAudio {
+    pub fn death(&self) -> [Handle<AudioSource>; 2] {
+        [self.death1.clone(), self.death2.clone()]
+    }
+
+    pub fn footsteps(&self) -> [Handle<AudioSource>; 4] {
+        [
+            self.footstep1.clone(),
+            self.footstep2.clone(),
+            self.footstep3.clone(),
+            self.footstep4.clone(),
+        ]
+    }
+
+    pub fn powerups(&self) -> [Handle<AudioSource>; 4] {
+        [
+            self.powerup1.clone(),
+            self.powerup2.clone(),
+            self.powerup3.clone(),
+            self.powerup4.clone(),
+        ]
+    }
+
+    pub fn punches(&self) -> [Handle<AudioSource>; 2] {
+        [self.punch1.clone(), self.punch2.clone()]
+    }
+
+    pub fn splashes(&self) -> [Handle<AudioSource>; 3] {
+        [
+            self.splash1.clone(),
+            self.splash2.clone(),
+            self.splash3.clone(),
+        ]
+    }
+
+    pub fn pain(&self) -> [Handle<AudioSource>; 3] {
+        [self.pain1.clone(), self.pain2.clone(), self.pain3.clone()]
+    }
+
+    pub fn jumps(&self) -> [Handle<AudioSource>; 4] {
+        [
+            self.jump1.clone(),
+            self.jump2.clone(),
+            self.jump3.clone(),
+            self.jump4.clone(),
+        ]
+    }
+
+    pub fn rifles(&self) -> [Handle<AudioSource>; 2] {
+        [self.rifle1.clone(), self.rifle2.clone()]
+    }
+}

@@ -1,18 +1,16 @@
 use bevy::prelude::IntoSystemConfigs;
 use bevy::{
-    app::{Plugin, PostUpdate, PreUpdate, Startup, Update},
+    app::{Plugin, PostUpdate, PreUpdate, Update},
     transform::systems::{propagate_transforms, sync_simple_transforms},
 };
 
 use self::{
     camera_shake::{apply_trauma_events, restore, shake, Shake, ShakeSettings, TraumaEvent},
-    primitives::{populate_primitive_resources, PrimitiveResources},
     smoothing::{smooth_movement, SmoothedTransform},
 };
 
 pub mod animating;
 pub mod camera_shake;
-pub mod primitives;
 pub mod smoothing;
 
 pub struct UtilPlugin;
@@ -20,9 +18,6 @@ pub struct UtilPlugin;
 impl Plugin for UtilPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.register_type::<SmoothedTransform>();
-        app.insert_resource(PrimitiveResources::default());
-
-        app.add_systems(Startup, populate_primitive_resources);
 
         app.add_systems(Update, smooth_movement);
 

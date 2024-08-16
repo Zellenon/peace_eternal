@@ -13,7 +13,8 @@ use bevy::{
     transform::components::{GlobalTransform, Transform},
 };
 
-use crate::util::{camera_shake::TraumaEvent, primitives::PrimitiveResources};
+use crate::asset_setup::primitives::PrimitiveResources;
+use crate::util::camera_shake::TraumaEvent;
 
 use super::servo::ServoActivated;
 

@@ -34,6 +34,7 @@ use ui::DemoInfoUpdateSystemSet;
 use util::{animating::animation_patcher_system, UtilPlugin};
 
 mod app_setup_options;
+mod asset_setup;
 mod character_animating_systems;
 mod character_control_systems;
 mod dev;
