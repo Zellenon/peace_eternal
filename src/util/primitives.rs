@@ -4,10 +4,9 @@ use bevy::prelude::default;
 use bevy::prelude::Meshable;
 use bevy::{
     asset::Assets,
-    ecs::system::{Commands, ResMut},
+    ecs::system::ResMut,
     math::primitives::{
-        Annulus, Capsule2d, Capsule3d, Circle, Cone, ConicalFrustum, Cuboid, Cylinder, Ellipse,
-        Extrusion, Rectangle, RegularPolygon, Sphere, Tetrahedron, Torus, Triangle2d,
+        Capsule3d, Cone, ConicalFrustum, Cuboid, Cylinder, Sphere, Tetrahedron, Torus,
     },
     pbr::StandardMaterial,
     render::{
@@ -19,7 +18,7 @@ use bevy::{
 };
 
 #[derive(Resource, Default)]
-pub struct Primitive_Resources {
+pub struct PrimitiveResources {
     pub material: Handle<StandardMaterial>,
     pub cuboid: Handle<Mesh>,
     pub tetra: Handle<Mesh>,
@@ -35,7 +34,7 @@ pub struct Primitive_Resources {
 pub(crate) fn populate_primitive_resources(
     mut meshes: ResMut<Assets<Mesh>>,
     mut images: ResMut<Assets<Image>>,
-    mut primitives: ResMut<Primitive_Resources>,
+    mut primitives: ResMut<PrimitiveResources>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     primitives.material = materials.add(StandardMaterial {

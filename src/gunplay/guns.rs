@@ -29,7 +29,7 @@ pub fn fire_guns(
     mut recoil: EventWriter<TraumaEvent>,
     guns: Query<&Children, With<Gun>>,
     barrels: Query<&GlobalTransform>,
-    primitive_res: Res<Primitive_Resources>,
+    primitive_res: Res<PrimitiveResources>,
 ) {
     for ServoActivated(entity) in events.read() {
         if let Ok(children) = guns.get(*entity) {

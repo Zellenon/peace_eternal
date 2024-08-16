@@ -6,7 +6,7 @@ use bevy::{
 
 use self::{
     camera_shake::{apply_trauma_events, restore, shake, Shake, ShakeSettings, TraumaEvent},
-    primitives::{populate_primitive_resources, Primitive_Resources},
+    primitives::{populate_primitive_resources, PrimitiveResources},
     smoothing::{smooth_movement, SmoothedTransform},
 };
 
@@ -20,7 +20,7 @@ pub struct UtilPlugin;
 impl Plugin for UtilPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.register_type::<SmoothedTransform>();
-        app.insert_resource(Primitive_Resources::default());
+        app.insert_resource(PrimitiveResources::default());
 
         app.add_systems(Startup, populate_primitive_resources);
 
