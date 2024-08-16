@@ -1,6 +1,11 @@
+use crate::levels_setup::IsPlayer;
+use crate::util::camera_shake::TraumaEvent;
+use bevy::prelude::EventWriter;
+use bevy::prelude::With;
 use bevy::{
     ecs::{component::Component, entity::Entity, query::Without, system::Query},
     math::{Quat, Vec3},
+    prelude::{Event, EventReader},
     reflect::Reflect,
     transform::components::Transform,
 };
@@ -24,6 +29,12 @@ impl Arm {
     }
 }
 
+#[derive(Event, Debug, Reflect)]
+pub struct Recoil {
+    pub arm: Entity,
+    pub strength: f32,
+}
+
 pub(crate) fn update_arm_position(
     mut arms: Query<(&mut SmoothedTransform, &Arm)>,
     parents: Query<(&Transform, &Facing), Without<Arm>>,
@@ -39,4 +50,39 @@ pub(crate) fn update_arm_position(
             );
         }
     }
+}
+
+pub(super) fn do_arm_recoil(
+    mut recoils: EventReader<Recoil>,
+    mut arms: Query<(&Arm, &mut Transform)>,
+) {
+    for Recoil { arm, strength } in recoils.read() {
+        if let Ok((_arm, mut transform)) = arms.get_mut(*arm) {
+            let mut offset = Transform::default().with_translation(Vec3::Z);
+            offset.rotate_around(Vec3::ZERO, transform.rotation);
+            transform.translation += offset.translation * (*strength) * 0.3;
+            transform.rotation *= Quat::from_rotation_x(0.05) * (*strength);
+        }
+    }
+}
+
+pub fn do_shake_recoil(
+    mut recoils: EventReader<Recoil>,
+    arms: Query<&Arm>,
+    player_entity: Query<Entity, With<IsPlayer>>,
+    mut shake: EventWriter<TraumaEvent>,
+) {
+    let player_entity = player_entity.get_single().unwrap();
+    recoils
+        .read()
+        .filter(|w| {
+            if let Ok(Arm { parent, offset: _ }) = arms.get(w.arm) {
+                parent.index() == player_entity.index()
+            } else {
+                false
+            }
+        })
+        .for_each(|Recoil { arm: _, strength }| {
+            shake.send((strength * 0.1).into());
+        });
 }

@@ -71,11 +71,11 @@ impl Default for ShakeSettings {
 
 impl ShakeSettings {
     const DEFAULT: ShakeSettings = ShakeSettings {
-        trauma_power: 2.,
-        decay_per_second: 1.0,
-        amplitude: 5.,
-        frequency: 15.,
-        octaves: 1,
+        trauma_power: 3.,
+        decay_per_second: 0.8,
+        amplitude: 2.,
+        frequency: 12.,
+        octaves: 2,
     };
 }
 

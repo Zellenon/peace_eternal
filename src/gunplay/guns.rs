@@ -1,5 +1,4 @@
 use bevy::{
-    audio::{AudioBundle, PlaybackSettings, Volume},
     core::Name,
     ecs::{
         component::Component,
@@ -10,17 +9,18 @@ use bevy::{
     hierarchy::Children,
     math::Vec3,
     pbr::PbrBundle,
+    prelude::{Entity, Parent},
     reflect::Reflect,
     transform::components::{GlobalTransform, Transform},
 };
 
-use crate::util::camera_shake::TraumaEvent;
 use crate::{
     asset_setup::{audio::PlaceholderAudio, primitives::PrimitiveResources},
     util::audio::SpawnAudioBlip,
 };
+use crate::{levels_setup::IsPlayer, util::camera_shake::TraumaEvent};
 
-use super::servo::ServoActivated;
+use super::{arms::Recoil, servo::ServoActivated};
 
 #[derive(Component, Reflect)]
 pub struct Gun;
@@ -30,16 +30,16 @@ pub struct Barrel;
 
 pub fn fire_guns(
     mut commands: Commands,
-    mut events: EventReader<ServoActivated>,
-    mut recoil: EventWriter<TraumaEvent>,
-    guns: Query<&Children, With<Gun>>,
+    mut servo_activations: EventReader<ServoActivated>,
+    mut recoils: EventWriter<Recoil>,
+    mut audio_send: EventWriter<SpawnAudioBlip>,
+    guns: Query<(&Children, &Parent), With<Gun>>,
     barrels: Query<&GlobalTransform>,
     primitive_res: Res<PrimitiveResources>,
     placeholder_audio: Res<PlaceholderAudio>,
-    mut audio_send: EventWriter<SpawnAudioBlip>,
 ) {
-    for ServoActivated(entity) in events.read() {
-        if let Ok(children) = guns.get(*entity) {
+    for ServoActivated(entity) in servo_activations.read() {
+        if let Ok((children, parent)) = guns.get(*entity) {
             let barrel = children.iter().next().unwrap();
             let (_, rot, loc) = barrels
                 .get(*barrel)
@@ -56,13 +56,17 @@ pub fn fire_guns(
                 transform,
                 ..Default::default()
             });
-            recoil.send(0.1.into());
 
             audio_send.send(SpawnAudioBlip {
                 handle: placeholder_audio.rifle1.clone(),
                 location: loc,
                 volume: 1.0,
                 stick_to: Some(*barrel),
+            });
+
+            recoils.send(Recoil {
+                arm: parent.get(),
+                strength: 1.,
             });
         }
     }

@@ -1,4 +1,4 @@
-use arms::{update_arm_position, Arm};
+use arms::{do_arm_recoil, do_shake_recoil, update_arm_position, Arm, Recoil};
 use bevy::app::{Plugin, Update};
 use bevy::prelude::IntoSystemConfigs;
 use servo::{
@@ -19,7 +19,9 @@ pub struct GunplayPlugin;
 
 impl Plugin for GunplayPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_event::<ArmServo>().add_event::<ServoActivated>();
+        app.add_event::<ArmServo>()
+            .add_event::<ServoActivated>()
+            .add_event::<Recoil>();
         app.insert_resource(PrimitiveResources::default());
 
         app.register_type::<Servo>()
@@ -39,7 +41,15 @@ impl Plugin for GunplayPlugin {
             Update,
             (tick_cooldowns, receive_servo_arming_events).before(do_should_activate),
         )
-        .add_systems(Update, do_should_activate);
+        .add_systems(
+            Update,
+            (
+                do_should_activate,
+                fire_guns,
+                (do_arm_recoil, do_shake_recoil),
+            )
+                .chain(),
+        );
 
         app.add_systems(Update, fire_guns.after(do_should_activate));
     }
