@@ -19,6 +19,7 @@ aBcF1     aDeG2
 - Knockback (major only)
 - Tesla (damage aura, major only)
 - Cloaked (major only)
+- AoE Buff
 
 ## Negative
 - 0.6x Health
