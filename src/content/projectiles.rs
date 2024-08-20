@@ -22,7 +22,7 @@ pub fn basic_bullet(mesh: &Handle<Mesh>, material: &Handle<StandardMaterial>) ->
         },
         SweptCcd::default(),
         RigidBody::Dynamic,
-        // Lifespan::default(),
+        Lifespan::default(),
         Collider::sphere(0.5)
     )
 }

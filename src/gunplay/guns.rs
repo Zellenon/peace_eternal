@@ -46,21 +46,6 @@ pub fn fire_guns(
                 .get(*barrel)
                 .unwrap()
                 .to_scale_rotation_translation();
-            let transform = Transform {
-                translation: loc,
-                rotation: rot,
-                scale: Vec3::splat(0.1),
-            };
-            // commands.spawn((
-            //     Name::new("Bullet"),
-            //     PbrBundle {
-            //         mesh: primitive_res.sphere.clone(),
-            //         material: primitive_res.bloom_material.clone(),
-            //         transform,
-            //         ..Default::default()
-            //     },
-            //     DelayedDeathmarker,
-            // ));
             commands.spawn_complex(
                 basic_bullet(&primitives.sphere, &primitives.material)
                     + with_translation(loc, rot, 0.1)

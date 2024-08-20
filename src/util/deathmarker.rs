@@ -22,14 +22,14 @@ pub struct Destroy(Entity);
 pub struct Lifespan(pub Timer);
 
 impl Lifespan {
-    pub fn new(duration: Duration) -> Self {
-        Self(Timer::new(duration, TimerMode::Once))
+    pub fn new(duration: u64) -> Self {
+        Self(Timer::new(Duration::from_millis(duration), TimerMode::Once))
     }
 }
 
 impl Default for Lifespan {
     fn default() -> Self {
-        Self(Timer::new(Duration::from_millis(500), TimerMode::Once))
+        Self::new(400)
     }
 }
 
