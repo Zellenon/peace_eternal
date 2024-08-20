@@ -13,6 +13,7 @@ use self::guns::{fire_guns, Gun};
 
 pub mod arms;
 pub mod guns;
+pub mod projectiles;
 pub mod servo;
 
 pub struct GunplayPlugin;
@@ -50,7 +51,5 @@ impl Plugin for GunplayPlugin {
             )
                 .chain(),
         );
-
-        app.add_systems(Update, fire_guns.after(do_should_activate));
     }
 }

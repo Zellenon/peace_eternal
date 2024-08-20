@@ -23,6 +23,8 @@ use character_control_systems::{
     ControlPlugin,
 };
 use dev::DevModePlugin;
+use fx::FXPlugin;
+use guardrails::GuardrailsPlugin;
 use gunplay::GunplayPlugin;
 use level_mechanics::LevelMechanicsPlugin;
 use levels_setup::{
@@ -38,7 +40,10 @@ mod app_setup_options;
 mod asset_setup;
 mod character_animating_systems;
 mod character_control_systems;
+mod content;
 mod dev;
+mod fx;
+mod guardrails;
 mod gunplay;
 mod level_mechanics;
 mod levels_setup;
@@ -102,6 +107,8 @@ fn main() {
     app.add_plugins((
         AssetPlugin,
         ControlPlugin,
+        FXPlugin,
+        GuardrailsPlugin,
         GunplayPlugin,
         OptionsPlugin,
         UtilPlugin,

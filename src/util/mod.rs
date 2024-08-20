@@ -1,10 +1,12 @@
-use audio::{spawn_audio_blips, AudioBlip, SpawnAudioBlip};
 use bevy::prelude::IntoSystemConfigs;
 use bevy::{
     app::{Plugin, PostUpdate, PreUpdate, Update},
     transform::systems::{propagate_transforms, sync_simple_transforms},
 };
-use deathmarker::{destroy, kill_death_markers, Deathmarker, Destroy};
+use deathmarker::{
+    delayed_death_markers, despawn_destroyed_entities, destroy_death_markers, end_lifespan,
+    tick_lifespans, Deathmarker, Destroy, DestructionSet,
+};
 
 use self::{
     camera_shake::{apply_trauma_events, restore, shake, Shake, ShakeSettings, TraumaEvent},
@@ -12,8 +14,8 @@ use self::{
 };
 
 pub mod animating;
-pub mod audio;
 pub mod camera_shake;
+pub mod compose;
 pub mod deathmarker;
 pub mod smoothing;
 
@@ -22,9 +24,7 @@ pub struct UtilPlugin;
 impl Plugin for UtilPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.register_type::<SmoothedTransform>()
-            .register_type::<Deathmarker>()
-            .register_type::<SpawnAudioBlip>()
-            .register_type::<AudioBlip>();
+            .register_type::<Deathmarker>();
 
         app.add_systems(Update, smooth_movement);
 
@@ -41,11 +41,22 @@ impl Plugin for UtilPlugin {
         app.add_event::<TraumaEvent>()
             .add_systems(PostUpdate, apply_trauma_events.before(shake));
 
-        app.add_event::<SpawnAudioBlip>()
-            .add_systems(Update, spawn_audio_blips);
-
         app.add_event::<Destroy>();
-        app.add_systems(Update, destroy)
-            .add_systems(PostUpdate, kill_death_markers);
+        app.add_systems(
+            Update,
+            (
+                despawn_destroyed_entities,
+                destroy_death_markers,
+                delayed_death_markers,
+            )
+                .chain()
+                .in_set(DestructionSet),
+        )
+        .add_systems(
+            Update,
+            (tick_lifespans, end_lifespan)
+                .chain()
+                .in_set(DestructionSet),
+        );
     }
 }

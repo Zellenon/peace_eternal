@@ -3,13 +3,16 @@
 
 # Gun Feel
 - (x) Screenshake
-- (x) Fire sound
+- (x) Gunfire sound
+- ( ) Gunfire reverb
+- ( ) Ducking
 - ( ) Bullet wizz sound
 - ( ) Muzzle flash glow
-- ( ) Muzzle flash particles
+- ( ) Muzzle flash smoke particles
 - ( ) Muzzle flash blast image
 - ( ) Camera recoil
 - ( ) Gun recoil
 - ( ) Bullet impact sound
 - ( ) Bullet impact decal
 - ( ) Bullet impact particles
+- ( ) Shell ejection

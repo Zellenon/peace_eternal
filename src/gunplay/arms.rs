@@ -61,7 +61,7 @@ pub(super) fn do_arm_recoil(
             let mut offset = Transform::default().with_translation(Vec3::Z);
             offset.rotate_around(Vec3::ZERO, transform.rotation);
             transform.translation += offset.translation * (*strength) * 0.3;
-            transform.rotation *= Quat::from_rotation_x(0.05) * (*strength);
+            transform.rotation *= Quat::from_rotation_x(0.10) * (*strength);
         }
     }
 }

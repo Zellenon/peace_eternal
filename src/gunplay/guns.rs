@@ -1,5 +1,4 @@
 use bevy::{
-    core::Name,
     ecs::{
         component::Component,
         event::{EventReader, EventWriter},
@@ -8,15 +7,17 @@ use bevy::{
     },
     hierarchy::Children,
     math::Vec3,
-    pbr::PbrBundle,
     prelude::Parent,
     reflect::Reflect,
     transform::components::{GlobalTransform, Transform},
 };
+use bevy_composable::app_impl::ComplexSpawnable;
 
 use crate::{
     asset_setup::{audio::PlaceholderAudio, primitives::PrimitiveResources},
-    util::{audio::SpawnAudioBlip, deathmarker::Deathmarker},
+    content::projectiles::basic_bullet,
+    fx::{audio::SpawnAudioBlip, flash::SpawnFlash},
+    util::compose::{instant_force, with_translation},
 };
 
 use super::{arms::Recoil, servo::ServoActivated};
@@ -32,10 +33,11 @@ pub fn fire_guns(
     mut servo_activations: EventReader<ServoActivated>,
     mut recoils: EventWriter<Recoil>,
     mut audio_send: EventWriter<SpawnAudioBlip>,
+    mut flash_send: EventWriter<SpawnFlash>,
     guns: Query<(&Children, &Parent), With<Gun>>,
     barrels: Query<&GlobalTransform>,
-    primitive_res: Res<PrimitiveResources>,
     placeholder_audio: Res<PlaceholderAudio>,
+    primitives: Res<PrimitiveResources>,
 ) {
     for ServoActivated(entity) in servo_activations.read() {
         if let Ok((children, parent)) = guns.get(*entity) {
@@ -47,24 +49,34 @@ pub fn fire_guns(
             let transform = Transform {
                 translation: loc,
                 rotation: rot,
-                scale: Vec3::splat(0.2),
+                scale: Vec3::splat(0.1),
             };
-            commands.spawn((
-                Name::new("Bullet"),
-                PbrBundle {
-                    mesh: primitive_res.sphere.clone(),
-                    material: primitive_res.bloom_material.clone(),
-                    transform,
-                    ..Default::default()
-                },
-                Deathmarker,
-            ));
+            // commands.spawn((
+            //     Name::new("Bullet"),
+            //     PbrBundle {
+            //         mesh: primitive_res.sphere.clone(),
+            //         material: primitive_res.bloom_material.clone(),
+            //         transform,
+            //         ..Default::default()
+            //     },
+            //     DelayedDeathmarker,
+            // ));
+            commands.spawn_complex(
+                basic_bullet(&primitives.sphere, &primitives.material)
+                    + with_translation(loc, rot, 0.1)
+                    + instant_force(rot, 0.08),
+            );
 
             audio_send.send(SpawnAudioBlip {
                 handle: placeholder_audio.rifle1.clone(),
                 location: loc,
                 volume: 1.0,
                 stick_to: Some(*barrel),
+            });
+
+            flash_send.send(SpawnFlash {
+                location: loc,
+                size: 0.3,
             });
 
             recoils.send(Recoil {

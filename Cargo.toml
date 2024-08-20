@@ -44,14 +44,10 @@ bevy_egui = { version = "0.28",  features=["immutable_ctx"]}
 egui_plot = "0.28"
 egui_extras = { version = "0.28" }
 bevy_framepace = { version = "0.17", optional = true }
-# oxidized_navigation = { version = "0.11", default-features=false, features = ["xpbd", "parry3d_015"] }
 iyes_progress = "0.12"
 leafwing-input-manager = { version = "0.15", features = ["egui"] }
-# bevy_dolly = "0.0.4"
 bevy_editor_pls = { version = "0.9.0", optional = true }
 bevy_hanabi = { version = "0.12", default-features = false, features = ["3d"] }
-# bevy-tnua-xpbd3d = "0.5"
-# bevy_xpbd_3d = { version = "0.5", features = ["simd"] }
 bevy-tnua = { version = "0.19"}
 avian3d = {version = "^0.1", default-features = false, features = ["3d","debug-plugin", "parallel", "f32", "parry-f32"]}
 bevy-tnua-avian3d = { version = "0.1", default-features = false }
@@ -62,7 +58,8 @@ bevy_registry_export = "0.4"
 clap = { version = "4.5", features = ["derive"]}
 noisy_bevy = "0.7"
 
-
+bevy_composable = {git = "https://github.com/Zellenon/bevy_composable.git"}
+bevy_stats = {git = "https://github.com/Zellenon/bevy_stats.git"}
 
 
 

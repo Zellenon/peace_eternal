@@ -697,6 +697,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_composable"
+version = "0.1.0"
+source = "git+https://github.com/Zellenon/bevy_composable.git#7ae5bb41a0e3873251c46c6329044345f832e494"
+dependencies = [
+ "bevy",
+]
+
+[[package]]
 name = "bevy_core"
 version = "0.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1371,6 +1379,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.74",
+]
+
+[[package]]
+name = "bevy_stats"
+version = "0.0.2"
+source = "git+https://github.com/Zellenon/bevy_stats.git#82c6af0a56f691c37ad3c5be231068e200fd31d5"
+dependencies = [
+ "bevy",
 ]
 
 [[package]]
@@ -4144,12 +4160,14 @@ dependencies = [
  "bevy_asset_loader",
  "bevy_atmosphere",
  "bevy_common_assets",
+ "bevy_composable",
  "bevy_editor_pls",
  "bevy_egui",
  "bevy_framepace",
  "bevy_gltf_blueprints",
  "bevy_hanabi",
  "bevy_registry_export",
+ "bevy_stats",
  "clap",
  "egui_extras",
  "egui_plot",
