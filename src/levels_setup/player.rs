@@ -3,16 +3,18 @@ use avian3d::{
     dynamics::rigid_body::{LockedAxes, RigidBody},
 };
 use bevy::{
-    asset::AssetServer,
+    asset::{AssetServer, Assets},
     audio::SpatialListener,
     core::Name,
     ecs::system::{Commands, Res},
-    hierarchy::BuildChildren,
     math::Vec3,
-    prelude::SpatialBundle,
+    prelude::{ResMut, SpatialBundle, Transform},
     scene::SceneBundle,
-    transform::components::Transform,
 };
+use bevy_composable::tree::EntityCommandSet;
+use bevy_composable::CT;
+use bevy_composable::{app_impl::ComplexSpawnable, tree::ComponentTree};
+use bevy_hanabi::EffectAsset;
 use bevy_tnua::{
     builtins::{TnuaBuiltinCrouch, TnuaBuiltinJump, TnuaBuiltinWalk},
     control_helpers::{
@@ -25,6 +27,7 @@ use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_tnua_physics_integration_layer::math::{Float, Vector3};
 
 use crate::{
+    asset_setup::{models::ModelResources, particles::ParticleTextures},
     character_animating_systems::AnimationState,
     character_control_systems::{
         camera_controls::Facing,
@@ -36,11 +39,9 @@ use crate::{
             CharacterMotionConfigForPlatformerDemo, FallingThroughControlScheme,
         },
     },
-    gunplay::{
-        arms::Arm,
-        guns::{Barrel, Gun},
-        servo::Servo,
-    },
+    content::guns::basic_gun,
+    fx::{flags::MuzzleFlashFX, smokepuff::smoke_puff, sparks::basic_sparks},
+    gunplay::{arms::Arm, guns::Barrel},
     ui::{
         self, component_alterbation::CommandAlteringSelectors, info::InfoSource,
         plotting::PlotSource,
@@ -50,14 +51,20 @@ use crate::{
 
 use super::{IsPlayer, LayerNames};
 
-pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub(crate) fn setup_player(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    models: Res<ModelResources>,
+    mut effects: ResMut<Assets<EffectAsset>>,
+    particle_graphics: Res<ParticleTextures>,
+) {
     let mut player = commands.spawn((IsPlayer, Name::new("Player")));
     player.insert(SceneBundle {
-        scene: asset_server.load("player.glb#Scene0"),
+        scene: asset_server.load("models/player.glb#Scene0"),
         ..Default::default()
     });
     player.insert(GltfSceneHandler {
-        names_from: asset_server.load("player.glb"),
+        names_from: asset_server.load("models/player.glb"),
     });
 
     player.insert(RigidBody::Dynamic);
@@ -207,7 +214,7 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
     player.insert(SpatialListener::new(2.0));
 
     let id = player.id();
-    let mut arm = commands.spawn((
+    let arm = CT!(
         Name::new("PlayerArm"),
         Arm::new(&id),
         SpatialBundle::default(),
@@ -217,33 +224,15 @@ pub(crate) fn setup_player(mut commands: Commands, asset_server: Res<AssetServer
             do_translate: true,
             rotation_mul: 0.7,
             ..Default::default()
-        },
-    ));
-    arm.with_children(|w| {
-        w.spawn((
-            Name::new("Gun"),
-            Gun,
-            Servo {
-                firemode: crate::gunplay::servo::FireMode::SemiAuto,
-                // cooldown: todo!(),
+        }
+    ) << (basic_gun(models.gun_assets())
+        << (CT!(
+            Barrel,
+            SpatialBundle {
+                transform: Transform::default().with_translation(Vec3::new(-0.01, 0.2, -0.9)),
                 ..Default::default()
-            },
-        ))
-        .insert(SceneBundle {
-            scene: asset_server.load("gun.glb#Scene0"),
-            ..Default::default()
-        })
-        .insert(GltfSceneHandler {
-            names_from: asset_server.load("gun.glb"),
-        })
-        .with_children(|gun| {
-            gun.spawn((
-                Barrel,
-                SpatialBundle {
-                    transform: Transform::default().with_translation(Vec3::new(-0.01, 0.2, -0.9)),
-                    ..Default::default()
-                },
-            ));
-        });
-    });
+            }
+        ) << (CT!(MuzzleFlashFX) + basic_sparks(&mut effects))
+            << (CT!(MuzzleFlashFX) + smoke_puff(&mut effects, &particle_graphics.smoke))));
+    commands.spawn_complex(arm);
 }

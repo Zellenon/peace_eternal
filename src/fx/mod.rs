@@ -4,12 +4,19 @@ use bevy::{
     prelude::{IntoSystemConfigs, SystemSet},
     reflect::Reflect,
 };
+use bevy_hanabi::HanabiPlugin;
+use flags::update_fx_directions;
 use flash::{spawn_flash, SpawnFlash};
+use muzzle_flare::{spawn_flare, SpawnMuzzleFlare};
 
 use crate::util::deathmarker::DestructionSet;
 
 pub mod audio;
+pub mod flags;
 pub mod flash;
+pub mod muzzle_flare;
+pub mod smokepuff;
+pub mod sparks;
 
 #[derive(Hash, Debug, Reflect, PartialEq, Eq, Clone, Copy, SystemSet)]
 pub struct SpawnFXSet;
@@ -18,14 +25,20 @@ pub struct FXPlugin;
 
 impl Plugin for FXPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_event::<SpawnFlash>().add_event::<SpawnAudioBlip>();
+        app.add_event::<SpawnFlash>()
+            .add_event::<SpawnAudioBlip>()
+            .add_event::<SpawnMuzzleFlare>();
         app.register_type::<SpawnFlash>()
             .register_type::<AudioBlip>();
         app.add_systems(
             Update,
-            (spawn_audio_blips, spawn_flash)
+            (spawn_audio_blips, spawn_flash, spawn_flare)
                 .in_set(SpawnFXSet)
                 .before(DestructionSet),
         );
+
+        app.add_systems(Update, update_fx_directions);
+
+        app.add_plugins(HanabiPlugin);
     }
 }

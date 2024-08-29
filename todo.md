@@ -1,5 +1,6 @@
-- When turning quickly, camera zooms uncomfortably close to player face
+- When turning quickly in TPV, camera zooms uncomfortably close to player face
 - I think guns are turned the wrong way? positive z should be forward
+- flares and flashes shouldn't leave shadows
 
 # Gun Feel
 - (x) Screenshake
@@ -7,11 +8,11 @@
 - ( ) Gunfire reverb
 - ( ) Ducking
 - ( ) Bullet wizz sound
-- ( ) Muzzle flash glow
-- ( ) Muzzle flash smoke particles
-- ( ) Muzzle flash blast image
-- ( ) Camera recoil
-- ( ) Gun recoil
+- (x) Muzzle flash glow
+- (x) Muzzle flash smoke particles
+- (x) Muzzle flash blast image
+- (x) Camera recoil
+- (x) Gun recoil
 - ( ) Bullet impact sound
 - ( ) Bullet impact decal
 - ( ) Bullet impact particles

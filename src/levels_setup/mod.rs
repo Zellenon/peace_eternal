@@ -30,7 +30,7 @@ pub enum LayerNames {
 pub fn setup_level(mut helper: LevelSetupHelper3d) {
     helper.spawn(PositionPlayer::from(Vec3::new(0.0, 10.0, 0.0)));
 
-    helper.spawn_floor(css::WHITE);
+    helper.spawn_floor(css::GRAY);
 
     let mut obstacles_helper = helper.with_color(css::GRAY);
     obstacles_helper.spawn_cuboid(
@@ -79,7 +79,7 @@ pub fn setup_level(mut helper: LevelSetupHelper3d) {
     helper
         .spawn_scene_cuboid(
             "Collision Groups",
-            "collision-groups-text.glb#Scene0",
+            "models/collision-groups-text.glb#Scene0",
             Transform::from_xyz(10.0, 2.0, 1.0),
             Vector3::new(4.0, 2.0, 4.0),
         )
@@ -92,7 +92,7 @@ pub fn setup_level(mut helper: LevelSetupHelper3d) {
     helper
         .spawn_scene_cuboid(
             "Sensor",
-            "sensor-text.glb#Scene0",
+            "models/sensor-text.glb#Scene0",
             Transform::from_xyz(20.0, 2.0, 1.0),
             Vector3::new(4.0, 2.0, 4.0),
         )

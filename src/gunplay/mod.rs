@@ -45,9 +45,9 @@ impl Plugin for GunplayPlugin {
         .add_systems(
             Update,
             (
+                (do_arm_recoil, do_shake_recoil),
                 do_should_activate,
                 fire_guns,
-                (do_arm_recoil, do_shake_recoil),
             )
                 .chain(),
         );

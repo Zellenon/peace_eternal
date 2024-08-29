@@ -1,49 +1,60 @@
 use bevy::{
     core::Name,
-    core_pipeline::{bloom::BloomSettings, core_3d::Camera3dBundle},
+    core_pipeline::{bloom::BloomSettings, core_3d::Camera3dBundle, tonemapping::Tonemapping},
     ecs::system::Commands,
 };
 use bevy_atmosphere::plugin::AtmosphereCamera;
+use bevy_composable::tree::EntityCommandSet;
+use bevy_composable::CT;
+use bevy_composable::{app_impl::ComplexSpawnable, tree::ComponentTree};
 
 use crate::{
     character_control_systems::camera_controls::{FPSCamera, TPSCamera},
     util::{camera_shake::Shake, smoothing::SmoothedTransform},
 };
 
+fn basic_camera() -> ComponentTree {
+    CT!(
+        Shake::default(),
+        AtmosphereCamera::default(),
+        BloomSettings::NATURAL
+    )
+}
+
 pub fn setup_cameras(mut commands: Commands) {
-    commands
-        .spawn(Camera3dBundle {
-            camera: bevy::render::camera::Camera {
-                is_active: false,
-                hdr: true,
+    commands.spawn_complex(
+        CT!(
+            Camera3dBundle {
+                camera: bevy::render::camera::Camera {
+                    is_active: false,
+                    hdr: true,
+                    ..Default::default()
+                },
+                tonemapping: Tonemapping::None,
                 ..Default::default()
             },
-            ..Default::default()
-        })
-        .insert((
             Name::new("FPSCamera"),
             FPSCamera,
-            Shake::default(),
-            AtmosphereCamera::default(),
-            BloomSettings::NATURAL,
             SmoothedTransform {
                 smoothing: 15.,
                 do_translate: true,
                 do_rotate: true,
                 rotation_mul: 5.,
                 ..Default::default()
-            },
-        ));
+            }
+        ) + basic_camera(),
+    );
 
-    commands
-        .spawn(Camera3dBundle {
-            camera: bevy::prelude::Camera {
-                hdr: true,
+    commands.spawn_complex(
+        CT!(
+            Camera3dBundle {
+                camera: bevy::prelude::Camera {
+                    hdr: true,
+                    ..Default::default()
+                },
+                tonemapping: Tonemapping::None,
                 ..Default::default()
             },
-            ..Default::default()
-        })
-        .insert((
             Name::new("TPSCamera"),
             TPSCamera,
             SmoothedTransform {
@@ -51,9 +62,7 @@ pub fn setup_cameras(mut commands: Commands) {
                 do_translate: true,
                 do_rotate: true,
                 ..Default::default()
-            },
-            BloomSettings::NATURAL,
-            Shake::default(),
-            AtmosphereCamera::default(),
-        ));
+            }
+        ) + basic_camera(),
+    );
 }

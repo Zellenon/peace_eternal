@@ -7,16 +7,20 @@ use bevy::{
     },
     hierarchy::Children,
     math::Vec3,
-    prelude::Parent,
+    prelude::{Parent, Without},
     reflect::Reflect,
     transform::components::{GlobalTransform, Transform},
 };
 use bevy_composable::app_impl::ComplexSpawnable;
+use bevy_hanabi::EffectSpawner;
 
 use crate::{
     asset_setup::{audio::PlaceholderAudio, primitives::PrimitiveResources},
     content::projectiles::basic_bullet,
-    fx::{audio::SpawnAudioBlip, flash::SpawnFlash},
+    fx::{
+        audio::SpawnAudioBlip, flags::MuzzleFlashFX, flash::SpawnFlash,
+        muzzle_flare::SpawnMuzzleFlare,
+    },
     util::compose::{instant_force, with_translation},
 };
 
@@ -34,18 +38,17 @@ pub fn fire_guns(
     mut recoils: EventWriter<Recoil>,
     mut audio_send: EventWriter<SpawnAudioBlip>,
     mut flash_send: EventWriter<SpawnFlash>,
-    guns: Query<(&Children, &Parent), With<Gun>>,
-    barrels: Query<&GlobalTransform>,
+    mut flare_send: EventWriter<SpawnMuzzleFlare>,
+    guns: Query<(&Children, &Parent), (With<Gun>, Without<Barrel>)>,
+    mut muzzle_flash_particles: Query<&mut EffectSpawner, With<MuzzleFlashFX>>,
+    barrels: Query<(&GlobalTransform, &Children), Without<Gun>>,
     placeholder_audio: Res<PlaceholderAudio>,
     primitives: Res<PrimitiveResources>,
 ) {
     for ServoActivated(entity) in servo_activations.read() {
         if let Ok((children, parent)) = guns.get(*entity) {
-            let barrel = children.iter().next().unwrap();
-            let (_, rot, loc) = barrels
-                .get(*barrel)
-                .unwrap()
-                .to_scale_rotation_translation();
+            let (barrel, barrel_fx) = barrels.get(*children.iter().next().unwrap()).unwrap();
+            let (_, rot, loc) = barrel.to_scale_rotation_translation();
             commands.spawn_complex(
                 basic_bullet(&primitives.sphere, &primitives.material)
                     + with_translation(loc, rot, 0.1)
@@ -56,7 +59,7 @@ pub fn fire_guns(
                 handle: placeholder_audio.rifle1.clone(),
                 location: loc,
                 volume: 1.0,
-                stick_to: Some(*barrel),
+                stick_to: Some(parent.get()),
             });
 
             flash_send.send(SpawnFlash {
@@ -64,9 +67,19 @@ pub fn fire_guns(
                 size: 0.3,
             });
 
+            flare_send.send(SpawnMuzzleFlare {
+                location: loc,
+                size: 0.5,
+                direction: rot,
+            });
+
             recoils.send(Recoil {
                 arm: parent.get(),
                 strength: 1.,
+            });
+
+            barrel_fx.iter().for_each(|w| {
+                let _ = muzzle_flash_particles.get_mut(*w).map(|mut w2| w2.reset());
             });
         }
     }
