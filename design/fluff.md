@@ -105,6 +105,28 @@ Having the enemy simply being "space plagues" allows for a very wide variety of 
 # Robots vs Loose Experiments
 A scientist trapped in an R&D lab powers up robots to defend himself from escaped experiments.
 
+## Who is the faction backing the players? (The 'backing faction')
+The players are backed by the scientist who is trapped in the robotics lab.
+### What are examples of subgroups within the backing faction?
+As players
+## Who is the faction the players are fighting against? (The 'enemy faction')
+### What are examples of subgroups within the enemy faction?
+### What is an example of an enemy melee swarmer?
+### What is an example of an enemy melee heavy?
+### What is an example of an enemy ranged fighter?
+### What is an example of an enemy special unit?
+## Why does the backing faction want to the players to fight the enemy faction?
+## Who are the players?
+## What is the currency? 
+## What is the in-lore explanation for a "class", and when the player trades points to gain a level in a class, what are they doing?
+## What are the weapons?
+### Weapons from backing faction?
+### Weapons stolen from enemy faction?
+## When the player trades points to get a weapon, what are they doing?
+## What is the setting that players are fighting in?
+## What other advantages does this story idea have?
+
+
 # ??? vs Demonic Kids Toys
 
 # ?? vs Hazard Defence
