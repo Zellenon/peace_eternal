@@ -1,16 +1,15 @@
-use crate::{levels_setup::IsPlayer, util::camera_shake::TraumaEvent};
-use bevy::prelude::EventWriter;
-use bevy::prelude::With;
 use bevy::{
     ecs::{component::Component, entity::Entity, query::Without, system::Query},
     math::{Quat, Vec3},
-    prelude::{Event, EventReader},
+    prelude::{Event, EventReader, EventWriter, With},
     reflect::Reflect,
     transform::components::Transform,
 };
 
 use crate::{
-    character_control_systems::camera_controls::Facing, util::smoothing::SmoothedTransform,
+    character_control_systems::camera_controls::Facing,
+    levels_setup::IsPlayer,
+    util::{camera_shake::TraumaEvent, smoothing::SmoothedTransform},
 };
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]

@@ -1,7 +1,4 @@
-use bevy::asset::Handle;
-use bevy::audio::AudioSource;
-use bevy::ecs::system::Resource;
-use bevy::prelude::Reflect;
+use bevy::{asset::Handle, audio::AudioSource, ecs::system::Resource, prelude::Reflect};
 use bevy_asset_loader::asset_collection::AssetCollection;
 
 #[derive(AssetCollection, Resource, Reflect, Clone, Debug, PartialEq)]

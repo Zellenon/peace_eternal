@@ -1,20 +1,18 @@
-use bevy::app::PostUpdate;
-use bevy::prelude::IntoSystemConfigs;
 use bevy::{
-    app::{Plugin, Update},
+    app::{Plugin, PostUpdate, Update},
     ecs::schedule::common_conditions::resource_changed,
+    prelude::IntoSystemConfigs,
 };
-use camera_controls::hide_player_in_fps;
 use leafwing_input_manager::plugin::InputManagerPlugin;
 
 use crate::util::camera_shake::shake;
-
-use self::camera_controls::{
-    apply_mouse_camera_movement, apply_scroll_zoom, mouse_should_control_camera,
-    switch_first_third_person, update_fps_camera, update_tps_camera, CameraData, Facing,
+use camera_controls::{
+    apply_mouse_camera_movement, apply_scroll_zoom, hide_player_in_fps,
+    mouse_should_control_camera, switch_first_third_person, update_fps_camera, update_tps_camera,
+    CameraData, Facing,
 };
-use self::keyboard_receive::{CameraAction, PlayerAction, UiAction};
-use self::mouse_grabbing::{
+use keyboard_receive::{CameraAction, PlayerAction, UiAction};
+use mouse_grabbing::{
     grab_mouse_on_click, release_mouse_in_inventory, sync_mouse_grab, MouseGrabbed,
 };
 

@@ -1,18 +1,16 @@
-use bevy::prelude::IntoSystemConfigs;
-use bevy::reflect::Reflect;
 use bevy::{
     app::{Plugin, PostUpdate, PreUpdate, Update},
+    prelude::IntoSystemConfigs,
+    reflect::Reflect,
     transform::systems::{propagate_transforms, sync_simple_transforms},
 };
+
+use camera_shake::{apply_trauma_events, restore, shake, Shake, ShakeSettings, TraumaEvent};
 use deathmarker::{
     delayed_death_markers, despawn_destroyed_entities, destroy_death_markers, end_lifespan,
     tick_lifespans, Deathmarker, Destroy, DestructionSet,
 };
-
-use self::{
-    camera_shake::{apply_trauma_events, restore, shake, Shake, ShakeSettings, TraumaEvent},
-    smoothing::{smooth_movement, SmoothedTransform},
-};
+use smoothing::{smooth_movement, SmoothedTransform};
 
 pub mod animating;
 pub mod camera_shake;

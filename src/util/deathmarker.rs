@@ -1,5 +1,3 @@
-use std::time::Duration;
-
 use bevy::{
     prelude::{
         Commands, Component, DespawnRecursiveExt, Entity, Event, EventReader, EventWriter, Query,
@@ -8,6 +6,7 @@ use bevy::{
     reflect::Reflect,
     time::{Time, Timer, TimerMode},
 };
+use std::time::Duration;
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Deathmarker;

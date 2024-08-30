@@ -1,14 +1,18 @@
 use arms::{do_arm_recoil, do_shake_recoil, update_arm_position, Arm, Recoil};
-use bevy::app::{Plugin, Update};
-use bevy::prelude::IntoSystemConfigs;
-use bevy::reflect::Reflect;
+use bevy::{
+    app::{Plugin, Update},
+    prelude::IntoSystemConfigs,
+    reflect::Reflect,
+};
 use servo::{
     do_should_activate, player_servos_on_click, receive_servo_arming_events, tick_cooldowns,
     ArmServo, Servo, ServoActivated,
 };
 
-use crate::asset_setup::primitives::PrimitiveResources;
-use crate::character_control_systems::camera_controls::apply_mouse_camera_movement;
+use crate::{
+    asset_setup::primitives::PrimitiveResources,
+    character_control_systems::camera_controls::apply_mouse_camera_movement,
+};
 
 use self::guns::{fire_guns, Gun};
 

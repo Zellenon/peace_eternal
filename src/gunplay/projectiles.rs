@@ -1,8 +1,8 @@
 use avian3d::prelude::{CollisionStarted, Sensor};
 use bevy::prelude::{
-    Commands, Component, DespawnRecursiveExt, Entity, EventReader, EventWriter, Query, With,
+    Commands, Component, DespawnRecursiveExt, Entity, Event, EventReader, EventWriter, Query,
+    Reflect, With,
 };
-use bevy::prelude::{Event, Reflect};
 
 #[derive(Reflect, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ProjectileImpactBehavior {

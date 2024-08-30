@@ -1,10 +1,8 @@
+use avian3d::prelude as avian;
 use bevy::{
     ecs::system::{EntityCommands, SystemParam},
     prelude::*,
 };
-
-use avian3d::prelude as avian;
-
 use bevy_tnua::math::{AsF32, Float, Vector3};
 
 use crate::levels_setup::LevelObject;

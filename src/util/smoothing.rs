@@ -1,7 +1,12 @@
-use bevy::ecs::system::{Query, Res};
-use bevy::prelude::Transform;
-use bevy::time::Time;
-use bevy::{ecs::component::Component, reflect::Reflect};
+use bevy::{
+    ecs::{
+        component::Component,
+        system::{Query, Res},
+    },
+    prelude::Transform,
+    reflect::Reflect,
+    time::Time,
+};
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct SmoothedTransform {

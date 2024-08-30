@@ -1,6 +1,8 @@
-use bevy::asset::Handle;
-use bevy::ecs::system::Resource;
-use bevy::prelude::{Image, Reflect};
+use bevy::{
+    asset::Handle,
+    ecs::system::Resource,
+    prelude::{Image, Reflect},
+};
 use bevy_asset_loader::asset_collection::AssetCollection;
 
 #[derive(AssetCollection, Resource, Reflect, Clone, Debug, PartialEq)]

@@ -1,12 +1,12 @@
-use crate::util::deathmarker::Lifespan;
 use avian3d::prelude::{Collider, RigidBody, Sensor, SweptCcd};
 use bevy::{
     asset::Handle,
     pbr::{PbrBundle, StandardMaterial},
     prelude::{Mesh, Name},
 };
-use bevy_composable::app_impl::ComponentTreeable;
-use bevy_composable::tree::ComponentTree;
+use bevy_composable::{app_impl::ComponentTreeable, tree::ComponentTree};
+
+use crate::util::deathmarker::Lifespan;
 
 pub fn basic_bullet(mesh: &Handle<Mesh>, material: &Handle<StandardMaterial>) -> ComponentTree {
     let mesh = mesh.clone();

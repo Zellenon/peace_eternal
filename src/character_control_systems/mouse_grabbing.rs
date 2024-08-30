@@ -1,15 +1,14 @@
-use bevy::prelude::Reflect;
-use std::ops::Not;
-
 use bevy::{
     ecs::{
         query::With,
         system::{Query, Res, ResMut, Resource},
     },
     input::{mouse::MouseButton, ButtonInput},
+    prelude::Reflect,
     window::{CursorGrabMode, PrimaryWindow, Window},
 };
 use leafwing_input_manager::action_state::ActionState;
+use std::ops::Not;
 
 use super::keyboard_receive::UiAction;
 

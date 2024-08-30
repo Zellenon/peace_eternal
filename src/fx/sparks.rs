@@ -4,11 +4,7 @@ use bevy::{
     math::{Vec2, Vec3, Vec4},
     prelude::ResMut,
 };
-
-use bevy_composable::{
-    tree::{ComponentTree, EntityCommandSet},
-    CT,
-};
+use bevy_composable::{app_impl::ComponentTreeable, tree::ComponentTree};
 
 use bevy_hanabi::{
     Attribute, CloneModifier, ColorOverLifetimeModifier, EffectAsset, ExprWriter, Gradient,
@@ -132,12 +128,13 @@ pub fn basic_sparks(effects: &mut ResMut<Assets<EffectAsset>>) -> ComponentTree 
 
     let effect1 = effects.add(effect);
 
-    CT!(
+    (
         Name::new("sparks"),
         ParticleEffectBundle {
             effect: ParticleEffect::new(effect1.clone()),
             ..Default::default()
         },
-        DirectedFX
+        DirectedFX,
     )
+        .store()
 }

@@ -1,21 +1,16 @@
 use bevy::{
     asset::{Assets, Handle},
     core::Name,
-    math::{UVec2, Vec2, Vec3, VectorSpace},
+    math::{UVec2, Vec2, Vec3},
     prelude::{Image, ResMut},
 };
-
-use bevy_composable::{
-    tree::{ComponentTree, EntityCommandSet},
-    CT,
-};
-
+use bevy_composable::{app_impl::ComponentTreeable, tree::ComponentTree};
 use bevy_hanabi::{
     Attribute, ColorOverLifetimeModifier, EffectAsset, ExprWriter, FlipbookModifier, Gradient,
     ImageSampleMapping, LinearDragModifier, OrientMode, OrientModifier, ParticleEffect,
-    ParticleEffectBundle, ParticleGroupSet, ParticleTextureModifier, ScalarType,
-    SetAttributeModifier, SetPositionSphereModifier, SetVelocitySphereModifier, ShapeDimension,
-    SizeOverLifetimeModifier, Spawner,
+    ParticleEffectBundle, ParticleTextureModifier, ScalarType, SetAttributeModifier,
+    SetPositionSphereModifier, SetVelocitySphereModifier, ShapeDimension, SizeOverLifetimeModifier,
+    Spawner,
 };
 
 use crate::fx::flags::DirectedFX;
@@ -124,12 +119,13 @@ pub fn smoke_puff(
 
     let effect1 = effects.add(effect);
 
-    CT!(
+    (
         Name::new("smoke"),
         ParticleEffectBundle {
             effect: ParticleEffect::new(effect1.clone()),
             ..Default::default()
         },
-        DirectedFX
+        DirectedFX,
     )
+        .store()
 }

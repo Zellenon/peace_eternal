@@ -1,5 +1,3 @@
-pub use level_switching::{IsPlayer, LevelObject, PositionPlayer};
-
 use avian3d::prelude::PhysicsLayer;
 use avian3d::{
     collision::{Collider, CollisionLayers, Sensor},
@@ -12,8 +10,8 @@ use bevy_tnua::math::{AdjustPrecision, Vector3};
 use bevy_tnua::TnuaGhostPlatform;
 
 use crate::level_mechanics::MovingPlatform;
-
 use helper::{LevelSetupHelper3d, LevelSetupHelper3dEntityCommandsExtension};
+pub use level_switching::{IsPlayer, LevelObject, PositionPlayer};
 
 pub mod camera;
 mod helper;

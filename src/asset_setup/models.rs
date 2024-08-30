@@ -1,14 +1,14 @@
 use crate::util::animating::GltfSceneHandler;
-use bevy::asset::Handle;
-use bevy::ecs::system::Resource;
-use bevy::gltf::Gltf;
-use bevy::prelude::Reflect;
-use bevy::prelude::SceneBundle;
-use bevy::scene::Scene;
+use bevy::{
+    asset::Handle,
+    ecs::system::Resource,
+    gltf::Gltf,
+    prelude::{Reflect, SceneBundle},
+    scene::Scene,
+};
 use bevy_asset_loader::asset_collection::AssetCollection;
+use bevy_composable::app_impl::ComponentTreeable;
 use bevy_composable::tree::ComponentTree;
-use bevy_composable::tree::EntityCommandSet;
-use bevy_composable::CT;
 
 #[derive(AssetCollection, Resource, Reflect, Clone, Debug, PartialEq)]
 pub struct ModelResources {
@@ -26,14 +26,15 @@ impl ModelResources {
     pub fn gun_assets(&self) -> ComponentTree {
         let gun_scene = self.gun_scene.clone();
         let gun_names = self.gun_names.clone();
-        CT!(
+        (
             SceneBundle {
                 scene: gun_scene.clone(),
                 ..Default::default()
             },
             GltfSceneHandler {
                 names_from: gun_names.clone(),
-            }
+            },
         )
+            .store()
     }
 }

@@ -1,9 +1,8 @@
-use std::time::Duration;
-
 use bevy::{
     ecs::{query::QueryData, system::SystemId},
     prelude::*,
 };
+use std::time::Duration;
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct LevelObject;

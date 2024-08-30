@@ -1,18 +1,18 @@
-use crate::character_control_systems::camera_controls::Facing;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
-use bevy_tnua::builtins::{TnuaBuiltinCrouch, TnuaBuiltinCrouchState, TnuaBuiltinDash};
-use bevy_tnua::control_helpers::{
-    TnuaCrouchEnforcer, TnuaSimpleAirActionsCounter, TnuaSimpleFallThroughPlatformsHelper,
+use bevy_tnua::{
+    builtins::{TnuaBuiltinCrouch, TnuaBuiltinCrouchState, TnuaBuiltinDash},
+    control_helpers::{
+        TnuaCrouchEnforcer, TnuaSimpleAirActionsCounter, TnuaSimpleFallThroughPlatformsHelper,
+    },
+    math::{AdjustPrecision, AsF32, Float, Vector3},
+    prelude::*,
+    TnuaGhostSensor, TnuaProximitySensor,
 };
-use bevy_tnua::math::{AdjustPrecision, AsF32, Float, Vector3};
-use bevy_tnua::prelude::*;
-use bevy_tnua::{TnuaGhostSensor, TnuaProximitySensor};
 use leafwing_input_manager::action_state::ActionState;
 
-use crate::ui::tuning::UiTunable;
-
 use super::keyboard_receive::PlayerAction;
+use crate::{character_control_systems::camera_controls::Facing, ui::tuning::UiTunable};
 
 #[allow(clippy::type_complexity)]
 #[allow(clippy::useless_conversion)]

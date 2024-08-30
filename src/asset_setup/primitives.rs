@@ -1,16 +1,12 @@
-use bevy::asset::Handle;
-use bevy::color::LinearRgba;
-use bevy::ecs::system::Resource;
-use bevy::prelude::default;
-use bevy::prelude::Meshable;
-use bevy::prelude::Reflect;
 use bevy::{
-    asset::Assets,
-    ecs::system::ResMut,
+    asset::{Assets, Handle},
+    color::LinearRgba,
+    ecs::system::{ResMut, Resource},
     math::primitives::{
         Capsule3d, Cone, ConicalFrustum, Cuboid, Cylinder, Sphere, Tetrahedron, Torus,
     },
     pbr::StandardMaterial,
+    prelude::{default, Meshable, Reflect},
     render::{
         mesh::Mesh,
         render_asset::RenderAssetUsages,

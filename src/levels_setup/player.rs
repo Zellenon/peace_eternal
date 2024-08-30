@@ -11,8 +11,7 @@ use bevy::{
     prelude::{ResMut, SpatialBundle, Transform},
     scene::SceneBundle,
 };
-use bevy_composable::app_impl::ComplexSpawnable;
-use bevy_composable::app_impl::ComponentTreeable;
+use bevy_composable::app_impl::{ComplexSpawnable, ComponentTreeable};
 use bevy_hanabi::EffectAsset;
 use bevy_tnua::{
     builtins::{TnuaBuiltinCrouch, TnuaBuiltinJump, TnuaBuiltinWalk},
@@ -25,6 +24,7 @@ use bevy_tnua::{
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_tnua_physics_integration_layer::math::{Float, Vector3};
 
+use super::{IsPlayer, LayerNames};
 use crate::{
     asset_setup::{models::ModelResources, particles::ParticleTextures},
     character_animating_systems::AnimationState,
@@ -47,8 +47,6 @@ use crate::{
     },
     util::{animating::GltfSceneHandler, smoothing::SmoothedTransform},
 };
-
-use super::{IsPlayer, LayerNames};
 
 pub(crate) fn setup_player(
     mut commands: Commands,

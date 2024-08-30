@@ -1,6 +1,8 @@
-use bevy::prelude::Component;
-use bevy::prelude::Reflect;
-use bevy::{animation::AnimationPlayer, ecs::system::Query};
+use bevy::{
+    animation::AnimationPlayer,
+    ecs::system::Query,
+    prelude::{Component, Reflect},
+};
 use bevy_tnua::{
     builtins::{TnuaBuiltinCrouch, TnuaBuiltinJump, TnuaBuiltinJumpState, TnuaBuiltinWalk},
     controller::TnuaController,

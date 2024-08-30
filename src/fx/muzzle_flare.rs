@@ -1,12 +1,13 @@
-use crate::{
-    asset_setup::{models::ModelResources, primitives::PrimitiveResources},
-    util::{animating::GltfSceneHandler, deathmarker::DelayedDeathmarker},
-};
 use bevy::{
     math::{Quat, Vec3},
     prelude::{Commands, Event, EventReader, Name, Res, Transform},
     reflect::Reflect,
     scene::SceneBundle,
+};
+
+use crate::{
+    asset_setup::{models::ModelResources, primitives::PrimitiveResources},
+    util::{animating::GltfSceneHandler, deathmarker::DelayedDeathmarker},
 };
 
 #[derive(Event, Reflect, Clone, Debug, PartialEq)]

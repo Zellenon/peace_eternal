@@ -4,10 +4,10 @@ use bevy::{
     ecs::system::Commands,
 };
 use bevy_atmosphere::plugin::AtmosphereCamera;
-use bevy_composable::app_impl::ComponentTreeable;
-use bevy_composable::tree::EntityCommandSet;
-use bevy_composable::CT;
-use bevy_composable::{app_impl::ComplexSpawnable, tree::ComponentTree};
+use bevy_composable::{
+    app_impl::{ComplexSpawnable, ComponentTreeable},
+    tree::ComponentTree,
+};
 
 use crate::{
     character_control_systems::camera_controls::{FPSCamera, TPSCamera},
@@ -15,11 +15,12 @@ use crate::{
 };
 
 fn basic_camera() -> ComponentTree {
-    CT!(
+    (
         Shake::default(),
         AtmosphereCamera::default(),
-        BloomSettings::NATURAL
+        BloomSettings::NATURAL,
     )
+        .store()
 }
 
 pub fn setup_cameras(mut commands: Commands) {

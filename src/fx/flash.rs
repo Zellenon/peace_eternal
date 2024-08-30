@@ -1,9 +1,10 @@
-use crate::{asset_setup::primitives::PrimitiveResources, util::deathmarker::DelayedDeathmarker};
 use bevy::{
     math::Vec3,
     prelude::{Commands, Event, EventReader, Name, PbrBundle, Res, Transform},
     reflect::Reflect,
 };
+
+use crate::{asset_setup::primitives::PrimitiveResources, util::deathmarker::DelayedDeathmarker};
 
 #[derive(Event, Reflect, Clone, Debug, PartialEq)]
 pub struct SpawnFlash {

@@ -5,11 +5,11 @@ use bevy::{
     reflect::Reflect,
 };
 use bevy_hanabi::HanabiPlugin;
+
+use crate::util::deathmarker::DestructionSet;
 use flags::update_fx_directions;
 use flash::{spawn_flash, SpawnFlash};
 use muzzle_flare::{spawn_flare, SpawnMuzzleFlare};
-
-use crate::util::deathmarker::DestructionSet;
 
 pub mod audio;
 pub mod flags;

@@ -1,6 +1,8 @@
 use audio::PlaceholderAudio;
-use bevy::prelude::Reflect;
-use bevy::{app::Startup, prelude::Plugin};
+use bevy::{
+    app::Startup,
+    prelude::{Plugin, Reflect},
+};
 use bevy_asset_loader::asset_collection::AssetCollectionApp;
 use models::ModelResources;
 use particles::ParticleTextures;
