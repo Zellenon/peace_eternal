@@ -36,7 +36,7 @@ impl<C: Component + UiTunable> Default for DemoUi<C> {
 
 impl<C: Component + UiTunable> Plugin for DemoUi<C> {
     fn build(&self, app: &mut App) {
-        app.add_plugins(EguiPlugin);
+        // app.add_plugins(EguiPlugin);
         app.insert_resource(DemoUiPhysicsBackendActive(true));
         app.configure_sets(
             Update,

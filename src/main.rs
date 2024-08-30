@@ -32,6 +32,7 @@ use gameplay::{
 use graphics::{animate_humanoids, FXPlugin};
 use options::OptionsPlugin;
 use sketchpad::sketchpad_system;
+use ui::UIPlugin;
 use util::{animation_patcher_system, UtilPlugin};
 
 mod app_setup_options;
@@ -103,6 +104,7 @@ fn main() {
         GunplayPlugin,
         OptionsPlugin,
         UtilPlugin,
+        UIPlugin,
     ));
 
     app.add_plugins(DevModePlugin);
