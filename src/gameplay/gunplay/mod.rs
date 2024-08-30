@@ -5,8 +5,8 @@ use bevy::{
     reflect::Reflect,
 };
 use projectiles::{
-    catch_projectile_collisions, kill_projectiles_on_hit, Knockback, Projectile, ProjectileClash,
-    ProjectileCollision,
+    catch_projectile_collisions, debug_projectile_collisions, kill_projectiles_on_hit, Knockback,
+    Projectile, ProjectileClash, ProjectileCollision,
 };
 use servo::{
     do_should_activate, player_servos_on_click, receive_servo_arming_events, tick_cooldowns,
@@ -68,7 +68,12 @@ impl Plugin for GunplayPlugin {
 
         app.add_systems(
             Update,
-            (catch_projectile_collisions, kill_projectiles_on_hit).chain(),
+            (
+                catch_projectile_collisions,
+                debug_projectile_collisions,
+                kill_projectiles_on_hit,
+            )
+                .chain(),
         );
     }
 }
