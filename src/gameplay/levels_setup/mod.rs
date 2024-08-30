@@ -74,27 +74,27 @@ pub fn setup_level(mut helper: LevelSetupHelper3d) {
         cmd.insert(TnuaGhostPlatform);
     }
 
-    helper
-        .spawn_scene_cuboid(
-            "Collision Groups",
-            "models/collision-groups-text.glb#Scene0",
-            Transform::from_xyz(10.0, 2.0, 1.0),
-            Vector3::new(4.0, 2.0, 4.0),
-        )
-        .insert(((
-            RigidBody::Static,
-            Collider::cuboid(4.0, 2.0, 4.0),
-            CollisionLayers::new([LayerNames::PhaseThrough], [LayerNames::PhaseThrough]),
-        ),));
+    // helper
+    //     .spawn_scene_cuboid(
+    //         "Collision Groups",
+    //         "models/collision-groups-text.glb#Scene0",
+    //         Transform::from_xyz(10.0, 2.0, 1.0),
+    //         Vector3::new(4.0, 2.0, 4.0),
+    //     )
+    //     .insert(((
+    //         RigidBody::Static,
+    //         Collider::cuboid(4.0, 2.0, 4.0),
+    //         CollisionLayers::new([LayerNames::PhaseThrough], [LayerNames::PhaseThrough]),
+    //     ),));
 
-    helper
-        .spawn_scene_cuboid(
-            "Sensor",
-            "models/sensor-text.glb#Scene0",
-            Transform::from_xyz(20.0, 2.0, 1.0),
-            Vector3::new(4.0, 2.0, 4.0),
-        )
-        .insert((Sensor,));
+    // helper
+    //     .spawn_scene_cuboid(
+    //         "Sensor",
+    //         "models/sensor-text.glb#Scene0",
+    //         Transform::from_xyz(20.0, 2.0, 1.0),
+    //         Vector3::new(4.0, 2.0, 4.0),
+    //     )
+    //     .insert((Sensor,));
 
     // spawn moving and spinning platforms
     let mut moving_platform_helper = helper.with_color(css::BLUE);

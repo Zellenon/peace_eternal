@@ -14,14 +14,12 @@ use bevy::{
 use bevy_atmosphere::plugin::AtmospherePlugin;
 use bevy_tnua::{control_helpers::TnuaCrouchEnforcerPlugin, prelude::*};
 use bevy_tnua_avian3d::*;
+use dev::ui::DemoInfoUpdateSystemSet;
 use dev::DevModePlugin;
 use gameplay::{
     character_control_systems::{
         info_dumping_systems::character_control_info_dumping_system,
-        platformer_control_systems::{
-            apply_platformer_controls, CharacterMotionConfigForPlatformerDemo,
-        },
-        ControlPlugin,
+        platformer_control_systems::apply_platformer_controls, ControlPlugin,
     },
     guardrails::GuardrailsPlugin,
     level_mechanics::LevelMechanicsPlugin,
@@ -34,7 +32,6 @@ use gameplay::{
 use graphics::{animate_humanoids, FXPlugin};
 use options::OptionsPlugin;
 use sketchpad::sketchpad_system;
-use ui::DemoInfoUpdateSystemSet;
 use util::{animation_patcher_system, UtilPlugin};
 
 mod app_setup_options;
@@ -80,7 +77,6 @@ fn main() {
         Update,
         character_control_info_dumping_system.in_set(DemoInfoUpdateSystemSet),
     );
-    app.add_plugins(ui::DemoUi::<CharacterMotionConfigForPlatformerDemo>::default());
     app.add_plugins(AtmospherePlugin);
     app.add_plugins({
         LevelSwitchingPlugin::new(app_setup_configuration.level_to_load.as_ref())
@@ -108,6 +104,7 @@ fn main() {
         OptionsPlugin,
         UtilPlugin,
     ));
+
     app.add_plugins(DevModePlugin);
 
     app.add_systems(Update, sketchpad_system);

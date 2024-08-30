@@ -27,6 +27,10 @@ use bevy_tnua_physics_integration_layer::math::{Float, Vector3};
 use super::{IsPlayer, LayerNames};
 use crate::{
     asset_setup::{models::ModelResources, particles::ParticleTextures},
+    dev::ui::{
+        self, component_alterbation::CommandAlteringSelectors, info::InfoSource,
+        plotting::PlotSource,
+    },
     gameplay::{
         character_control_systems::{
             camera_controls::Facing,
@@ -42,10 +46,6 @@ use crate::{
         gunplay::{arms::Arm, guns::Barrel},
     },
     graphics::{basic_sparks, smoke_puff, AnimationState, MuzzleFlashFX},
-    ui::{
-        self, component_alterbation::CommandAlteringSelectors, info::InfoSource,
-        plotting::PlotSource,
-    },
     util::{GltfSceneHandler, SmoothedTransform},
 };
 

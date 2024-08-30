@@ -12,7 +12,7 @@ use bevy_tnua::{
 use leafwing_input_manager::action_state::ActionState;
 
 use super::{camera_controls::Facing, keyboard_receive::PlayerAction};
-use crate::ui::tuning::UiTunable;
+use crate::dev::ui::tuning::UiTunable;
 
 #[allow(clippy::type_complexity)]
 #[allow(clippy::useless_conversion)]

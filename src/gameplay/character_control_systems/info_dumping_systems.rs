@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_tnua::{TnuaGhostSensor, TnuaProximitySensor};
 
-use crate::ui::info::InfoSource;
+use crate::dev::ui::info::InfoSource;
 
 pub fn character_control_info_dumping_system(
     mut query: Query<(

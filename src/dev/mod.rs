@@ -6,8 +6,11 @@ use bevy::{
 use bevy_editor_pls::prelude::*;
 
 use self::editor::{set_cursor_grab_mode, DevEditorState, DevEditorWindow};
+use crate::gameplay::character_control_systems::platformer_control_systems::CharacterMotionConfigForPlatformerDemo;
+use ui::DemoUi;
 
 pub(crate) mod editor;
+pub(crate) mod ui;
 
 pub struct DevModePlugin;
 
@@ -30,6 +33,8 @@ impl Plugin for DevModePlugin {
                     ..default()
                 },
             );
+
+        app.add_plugins(DemoUi::<CharacterMotionConfigForPlatformerDemo>::default());
 
         app.init_resource::<DevEditorState>()
             .add_editor_window::<DevEditorWindow>()
