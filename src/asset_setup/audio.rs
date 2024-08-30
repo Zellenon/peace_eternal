@@ -4,7 +4,7 @@ use bevy::ecs::system::Resource;
 use bevy::prelude::Reflect;
 use bevy_asset_loader::asset_collection::AssetCollection;
 
-#[derive(AssetCollection, Resource, Reflect)]
+#[derive(AssetCollection, Resource, Reflect, Clone, Debug, PartialEq)]
 pub struct PlaceholderAudio {
     #[asset(path = "audio/placeholder/bodyimpact.ogg")]
     pub body_impact: Handle<AudioSource>,

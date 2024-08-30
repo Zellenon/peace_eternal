@@ -3,6 +3,7 @@ use bevy::color::LinearRgba;
 use bevy::ecs::system::Resource;
 use bevy::prelude::default;
 use bevy::prelude::Meshable;
+use bevy::prelude::Reflect;
 use bevy::{
     asset::Assets,
     ecs::system::ResMut,
@@ -18,7 +19,7 @@ use bevy::{
     },
 };
 
-#[derive(Resource, Default)]
+#[derive(Resource, Default, Reflect, Clone, Debug, PartialEq)]
 pub struct PrimitiveResources {
     pub material: Handle<StandardMaterial>,
     pub bloom_material: Handle<StandardMaterial>,

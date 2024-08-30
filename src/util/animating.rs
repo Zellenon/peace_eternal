@@ -2,13 +2,13 @@ use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 
-#[derive(Component)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct AnimationsHandler {
     pub player_entity: Entity,
     pub animations: HashMap<String, AnimationNodeIndex>,
 }
 
-#[derive(Component)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct GltfSceneHandler {
     pub names_from: Handle<Gltf>,
 }

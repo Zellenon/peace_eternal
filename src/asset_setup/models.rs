@@ -10,7 +10,7 @@ use bevy_composable::tree::ComponentTree;
 use bevy_composable::tree::EntityCommandSet;
 use bevy_composable::CT;
 
-#[derive(AssetCollection, Resource, Reflect)]
+#[derive(AssetCollection, Resource, Reflect, Clone, Debug, PartialEq)]
 pub struct ModelResources {
     #[asset(path = "models/gun.glb")]
     pub gun_names: Handle<Gltf>,

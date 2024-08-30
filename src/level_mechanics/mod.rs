@@ -4,6 +4,7 @@ use bevy::prelude::*;
 
 pub use moving_platform::MovingPlatform;
 
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct LevelMechanicsPlugin;
 
 impl Plugin for LevelMechanicsPlugin {

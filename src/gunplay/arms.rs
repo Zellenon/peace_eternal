@@ -1,5 +1,4 @@
-use crate::levels_setup::IsPlayer;
-use crate::util::camera_shake::TraumaEvent;
+use crate::{levels_setup::IsPlayer, util::camera_shake::TraumaEvent};
 use bevy::prelude::EventWriter;
 use bevy::prelude::With;
 use bevy::{
@@ -14,7 +13,7 @@ use crate::{
     character_control_systems::camera_controls::Facing, util::smoothing::SmoothedTransform,
 };
 
-#[derive(Component, Reflect)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Arm {
     pub parent: Entity,
     pub offset: Transform,
@@ -29,7 +28,7 @@ impl Arm {
     }
 }
 
-#[derive(Event, Debug, Reflect)]
+#[derive(Event, Reflect, Clone, Debug, PartialEq)]
 pub struct Recoil {
     pub arm: Entity,
     pub strength: f32,
@@ -60,7 +59,7 @@ pub(super) fn do_arm_recoil(
         if let Ok((_arm, mut transform)) = arms.get_mut(*arm) {
             let mut offset = Transform::default().with_translation(Vec3::Z);
             offset.rotate_around(Vec3::ZERO, transform.rotation);
-            transform.translation += offset.translation * (*strength) * 0.3;
+            transform.translation += offset.translation * (*strength) * 0.5;
             transform.rotation *= Quat::from_rotation_x(0.10) * (*strength);
         }
     }

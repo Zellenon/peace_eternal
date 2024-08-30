@@ -1,9 +1,10 @@
-use bevy::app::Plugin;
+use bevy::{app::Plugin, reflect::Reflect};
 
 use self::controls::ControlOptions;
 
 pub mod controls;
 
+#[derive(Reflect, Clone, Debug, PartialEq)]
 pub struct OptionsPlugin;
 
 impl Plugin for OptionsPlugin {

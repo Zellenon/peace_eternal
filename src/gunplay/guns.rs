@@ -6,10 +6,9 @@ use bevy::{
         system::{Commands, Query, Res},
     },
     hierarchy::Children,
-    math::Vec3,
     prelude::{Parent, Without},
     reflect::Reflect,
-    transform::components::{GlobalTransform, Transform},
+    transform::components::GlobalTransform,
 };
 use bevy_composable::app_impl::ComplexSpawnable;
 use bevy_hanabi::EffectSpawner;
@@ -26,10 +25,10 @@ use crate::{
 
 use super::{arms::Recoil, servo::ServoActivated};
 
-#[derive(Component, Reflect)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Gun;
 
-#[derive(Component, Reflect)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Barrel;
 
 pub fn fire_guns(
@@ -49,7 +48,7 @@ pub fn fire_guns(
         if let Ok((children, parent)) = guns.get(*entity) {
             let (barrel, barrel_fx) = barrels.get(*children.iter().next().unwrap()).unwrap();
             let (_, rot, loc) = barrel.to_scale_rotation_translation();
-            commands.spawn_complex(
+            commands.compose(
                 basic_bullet(&primitives.sphere, &primitives.material)
                     + with_translation(loc, rot, 0.1)
                     + instant_force(rot, 0.08),

@@ -9,16 +9,16 @@ use bevy::{
     time::{Time, Timer, TimerMode},
 };
 
-#[derive(Component, Debug, Reflect)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Deathmarker;
 
-#[derive(Component, Debug, Reflect)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct DelayedDeathmarker;
 
-#[derive(Event, Debug, Reflect)]
+#[derive(Event, Reflect, Clone, Debug, PartialEq)]
 pub struct Destroy(Entity);
 
-#[derive(Component)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Lifespan(pub Timer);
 
 impl Lifespan {

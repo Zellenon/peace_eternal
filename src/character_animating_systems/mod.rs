@@ -1,3 +1,5 @@
+use bevy::prelude::Component;
+use bevy::prelude::Reflect;
 use bevy::{animation::AnimationPlayer, ecs::system::Query};
 use bevy_tnua::{
     builtins::{TnuaBuiltinCrouch, TnuaBuiltinJump, TnuaBuiltinJumpState, TnuaBuiltinWalk},
@@ -8,7 +10,7 @@ use bevy_tnua::{
 
 use crate::util::animating::AnimationsHandler;
 
-#[derive(Debug)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub enum AnimationState {
     Standing,
     Walking(Float),

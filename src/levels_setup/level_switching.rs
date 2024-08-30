@@ -5,13 +5,13 @@ use bevy::{
     prelude::*,
 };
 
-#[derive(Component)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct LevelObject;
 
-#[derive(Component)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct IsPlayer;
 
-#[derive(Component)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct PositionPlayer {
     position: Vec3,
     ttl: Timer,

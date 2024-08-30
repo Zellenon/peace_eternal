@@ -1,4 +1,5 @@
 use audio::PlaceholderAudio;
+use bevy::prelude::Reflect;
 use bevy::{app::Startup, prelude::Plugin};
 use bevy_asset_loader::asset_collection::AssetCollectionApp;
 use models::ModelResources;
@@ -10,6 +11,7 @@ pub mod models;
 pub mod particles;
 pub mod primitives;
 
+#[derive(Reflect, Clone, Debug, PartialEq)]
 pub struct AssetPlugin;
 
 impl Plugin for AssetPlugin {

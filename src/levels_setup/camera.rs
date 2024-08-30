@@ -4,6 +4,7 @@ use bevy::{
     ecs::system::Commands,
 };
 use bevy_atmosphere::plugin::AtmosphereCamera;
+use bevy_composable::app_impl::ComponentTreeable;
 use bevy_composable::tree::EntityCommandSet;
 use bevy_composable::CT;
 use bevy_composable::{app_impl::ComplexSpawnable, tree::ComponentTree};
@@ -22,8 +23,8 @@ fn basic_camera() -> ComponentTree {
 }
 
 pub fn setup_cameras(mut commands: Commands) {
-    commands.spawn_complex(
-        CT!(
+    commands.compose(
+        (
             Camera3dBundle {
                 camera: bevy::render::camera::Camera {
                     is_active: false,
@@ -36,17 +37,19 @@ pub fn setup_cameras(mut commands: Commands) {
             Name::new("FPSCamera"),
             FPSCamera,
             SmoothedTransform {
-                smoothing: 15.,
+                smoothing: 25.,
                 do_translate: true,
                 do_rotate: true,
-                rotation_mul: 5.,
+                rotation_mul: 2.,
                 ..Default::default()
-            }
-        ) + basic_camera(),
+            },
+        )
+            .store()
+            + basic_camera(),
     );
 
-    commands.spawn_complex(
-        CT!(
+    commands.compose(
+        (
             Camera3dBundle {
                 camera: bevy::prelude::Camera {
                     hdr: true,
@@ -62,7 +65,9 @@ pub fn setup_cameras(mut commands: Commands) {
                 do_translate: true,
                 do_rotate: true,
                 ..Default::default()
-            }
-        ) + basic_camera(),
+            },
+        )
+            .store()
+            + basic_camera(),
     );
 }

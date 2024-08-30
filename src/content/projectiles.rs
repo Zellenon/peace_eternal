@@ -1,19 +1,17 @@
 use crate::util::deathmarker::Lifespan;
-use avian3d::prelude::{Collider, RigidBody, SweptCcd};
+use avian3d::prelude::{Collider, RigidBody, Sensor, SweptCcd};
 use bevy::{
     asset::Handle,
     pbr::{PbrBundle, StandardMaterial},
     prelude::{Mesh, Name},
 };
-use bevy_composable::{
-    tree::{ComponentTree, EntityCommandSet},
-    CT,
-};
+use bevy_composable::app_impl::ComponentTreeable;
+use bevy_composable::tree::ComponentTree;
 
 pub fn basic_bullet(mesh: &Handle<Mesh>, material: &Handle<StandardMaterial>) -> ComponentTree {
     let mesh = mesh.clone();
     let material = material.clone();
-    CT!(
+    (
         Name::new("Bullet"),
         PbrBundle {
             mesh: mesh.clone(),
@@ -23,6 +21,8 @@ pub fn basic_bullet(mesh: &Handle<Mesh>, material: &Handle<StandardMaterial>) ->
         SweptCcd::default(),
         RigidBody::Dynamic,
         Lifespan::default(),
-        Collider::sphere(0.5)
+        Collider::sphere(0.5),
+        Sensor,
     )
+        .store()
 }

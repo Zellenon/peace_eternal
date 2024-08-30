@@ -3,7 +3,7 @@ use bevy::prelude::Transform;
 use bevy::time::Time;
 use bevy::{ecs::component::Component, reflect::Reflect};
 
-#[derive(Component, Reflect)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct SmoothedTransform {
     pub smoothing: f32,
     pub goal: Transform,

@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy_tnua::math::{AdjustPrecision, Float, Vector3};
 
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct MovingPlatformPlugin;
 
 impl Plugin for MovingPlatformPlugin {
@@ -16,7 +17,7 @@ impl Plugin for MovingPlatformPlugin {
     }
 }
 
-#[derive(Component)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct MovingPlatform {
     pub current_leg: usize,
     pub speed: Float,

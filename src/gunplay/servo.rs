@@ -18,7 +18,7 @@ use crate::{character_control_systems::keyboard_receive::PlayerAction, levels_se
 
 use super::arms::Arm;
 
-#[derive(Event, Reflect)]
+#[derive(Event, Reflect, Clone, Debug, PartialEq)]
 pub struct ArmServo(pub Entity, pub bool);
 
 impl ArmServo {
@@ -43,17 +43,17 @@ impl From<&Entity> for ArmServo {
     }
 }
 
-#[derive(Event, Reflect)]
+#[derive(Event, Reflect, Clone, Debug, PartialEq)]
 pub struct ServoActivated(pub Entity);
 
-#[derive(Reflect, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Eq, PartialOrd, Ord, Component, Reflect, Clone, Debug, PartialEq)]
 pub enum FireMode {
     Manual,
     SemiAuto,
     FullAuto,
 }
 
-#[derive(Component, Reflect)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Servo {
     pub firemode: FireMode,
     pub cooldown: Timer,

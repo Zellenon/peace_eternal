@@ -9,10 +9,10 @@ use bevy::{
     reflect::Reflect,
 };
 
-#[derive(Component, Debug, Reflect)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct AudioBlip;
 
-#[derive(Event, Reflect, Debug)]
+#[derive(Event, Reflect, Debug, PartialEq)]
 pub struct SpawnAudioBlip {
     pub handle: Handle<AudioSource>,
     pub location: Vec3,

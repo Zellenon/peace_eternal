@@ -5,7 +5,7 @@ use bevy::{
     reflect::Reflect,
 };
 
-#[derive(Event, Debug, Reflect)]
+#[derive(Event, Reflect, Clone, Debug, PartialEq)]
 pub struct SpawnFlash {
     pub location: Vec3,
     pub size: f32,

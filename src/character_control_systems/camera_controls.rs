@@ -1,14 +1,11 @@
-use bevy::ecs::system::ResMut;
-use bevy::prelude::Reflect;
-use bevy::prelude::Resource;
-use bevy::prelude::Visibility;
 use bevy::{
     ecs::{
         component::Component,
         query::With,
-        system::{Query, Res},
+        system::{Query, Res, ResMut},
     },
     math::{Quat, Vec2, Vec3},
+    prelude::{Reflect, Resource, Visibility},
     render::camera::Camera,
     transform::components::GlobalTransform,
     window::{PrimaryWindow, Window},
@@ -17,13 +14,13 @@ use bevy_tnua::math::{float_consts, AdjustPrecision, AsF32, Quaternion};
 use bevy_tnua_physics_integration_layer::math::{Float, Vector3};
 use leafwing_input_manager::action_state::ActionState;
 
-use crate::levels_setup::IsPlayer;
-use crate::options::controls::ControlOptions;
-use crate::util::smoothing::SmoothedTransform;
+use crate::{
+    levels_setup::IsPlayer, options::controls::ControlOptions, util::smoothing::SmoothedTransform,
+};
 
 use super::keyboard_receive::CameraAction;
 
-#[derive(Component, Reflect)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Facing {
     pub forward: Vector3,
     pub pitch_angle: Float,
@@ -38,13 +35,13 @@ impl Default for Facing {
     }
 }
 
-#[derive(Component, Reflect)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct FPSCamera;
 
-#[derive(Component, Reflect)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct TPSCamera;
 
-#[derive(Resource, Reflect)]
+#[derive(Resource, Reflect, Clone, Debug, PartialEq)]
 pub struct CameraData {
     pub distance: f32,
     pub shoulder_shift: f32,

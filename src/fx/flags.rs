@@ -4,10 +4,10 @@ use bevy::{
 };
 use bevy_hanabi::EffectProperties;
 
-#[derive(Debug, Reflect, Component)]
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct DirectedFX;
 
-#[derive(Debug, Reflect, Component)]
+#[derive(Debug, Reflect, Component, Clone, PartialEq)]
 pub struct MuzzleFlashFX;
 
 pub(crate) fn update_fx_directions(

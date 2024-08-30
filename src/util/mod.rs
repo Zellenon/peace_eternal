@@ -1,4 +1,5 @@
 use bevy::prelude::IntoSystemConfigs;
+use bevy::reflect::Reflect;
 use bevy::{
     app::{Plugin, PostUpdate, PreUpdate, Update},
     transform::systems::{propagate_transforms, sync_simple_transforms},
@@ -19,6 +20,7 @@ pub mod compose;
 pub mod deathmarker;
 pub mod smoothing;
 
+#[derive(Reflect, Clone, Debug, PartialEq)]
 pub struct UtilPlugin;
 
 impl Plugin for UtilPlugin {

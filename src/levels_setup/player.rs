@@ -11,9 +11,8 @@ use bevy::{
     prelude::{ResMut, SpatialBundle, Transform},
     scene::SceneBundle,
 };
-use bevy_composable::tree::EntityCommandSet;
-use bevy_composable::CT;
-use bevy_composable::{app_impl::ComplexSpawnable, tree::ComponentTree};
+use bevy_composable::app_impl::ComplexSpawnable;
+use bevy_composable::app_impl::ComponentTreeable;
 use bevy_hanabi::EffectAsset;
 use bevy_tnua::{
     builtins::{TnuaBuiltinCrouch, TnuaBuiltinJump, TnuaBuiltinWalk},
@@ -214,7 +213,7 @@ pub(crate) fn setup_player(
     player.insert(SpatialListener::new(2.0));
 
     let id = player.id();
-    let arm = CT!(
+    let arm = (
         Name::new("PlayerArm"),
         Arm::new(&id),
         SpatialBundle::default(),
@@ -222,17 +221,21 @@ pub(crate) fn setup_player(
             smoothing: 20.,
             do_rotate: true,
             do_translate: true,
-            rotation_mul: 0.7,
+            rotation_mul: 0.6,
             ..Default::default()
-        }
-    ) << (basic_gun(models.gun_assets())
-        << (CT!(
-            Barrel,
-            SpatialBundle {
-                transform: Transform::default().with_translation(Vec3::new(-0.01, 0.2, -0.9)),
-                ..Default::default()
-            }
-        ) << (CT!(MuzzleFlashFX) + basic_sparks(&mut effects))
-            << (CT!(MuzzleFlashFX) + smoke_puff(&mut effects, &particle_graphics.smoke))));
-    commands.spawn_complex(arm);
+        },
+    )
+        .store()
+        << (basic_gun(models.gun_assets())
+            << ((
+                Barrel,
+                SpatialBundle {
+                    transform: Transform::default().with_translation(Vec3::new(-0.01, 0.2, -0.9)),
+                    ..Default::default()
+                },
+            )
+                .store()
+                << ((MuzzleFlashFX).store() + basic_sparks(&mut effects))
+                << ((MuzzleFlashFX).store() + smoke_puff(&mut effects, &particle_graphics.smoke))));
+    commands.compose(arm);
 }

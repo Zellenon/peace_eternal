@@ -1,6 +1,6 @@
-use bevy::ecs::{component::Component, system::Resource};
+use bevy::{ecs::system::Resource, reflect::Reflect};
 
-#[derive(Component, Resource)]
+#[derive(Resource, Reflect, Clone, Debug, PartialEq)]
 pub struct ControlOptions {
     pub mouse_sensitivity: f32,
     pub invert_y: bool,

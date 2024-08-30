@@ -1,3 +1,4 @@
+use bevy::prelude::Reflect;
 use std::ops::Not;
 
 use bevy::{
@@ -12,7 +13,7 @@ use leafwing_input_manager::action_state::ActionState;
 
 use super::keyboard_receive::UiAction;
 
-#[derive(Resource)]
+#[derive(Resource, Reflect, Clone, Debug, PartialEq)]
 pub struct MouseGrabbed(pub bool);
 
 pub(crate) fn sync_mouse_grab(

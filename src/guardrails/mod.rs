@@ -1,8 +1,10 @@
 use bevy::{
     app::{Plugin, Update},
     prelude::{Commands, DespawnRecursiveExt, Entity, Query, Transform},
+    reflect::Reflect,
 };
 
+#[derive(Reflect, Clone, Debug, PartialEq)]
 pub struct GuardrailsPlugin;
 
 impl Plugin for GuardrailsPlugin {

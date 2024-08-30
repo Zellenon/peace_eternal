@@ -1,6 +1,7 @@
 use arms::{do_arm_recoil, do_shake_recoil, update_arm_position, Arm, Recoil};
 use bevy::app::{Plugin, Update};
 use bevy::prelude::IntoSystemConfigs;
+use bevy::reflect::Reflect;
 use servo::{
     do_should_activate, player_servos_on_click, receive_servo_arming_events, tick_cooldowns,
     ArmServo, Servo, ServoActivated,
@@ -16,6 +17,7 @@ pub mod guns;
 pub mod projectiles;
 pub mod servo;
 
+#[derive(Reflect, Clone, Debug, PartialEq)]
 pub struct GunplayPlugin;
 
 impl Plugin for GunplayPlugin {
