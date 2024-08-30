@@ -41,10 +41,7 @@ use crate::{
         content::guns::basic_gun,
         gunplay::{arms::Arm, guns::Barrel},
     },
-    graphics::{
-        character_animating_systems::AnimationState,
-        fx::{basic_sparks, smoke_puff, MuzzleFlashFX},
-    },
+    graphics::{basic_sparks, smoke_puff, AnimationState, MuzzleFlashFX},
     ui::{
         self, component_alterbation::CommandAlteringSelectors, info::InfoSource,
         plotting::PlotSource,

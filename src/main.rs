@@ -24,14 +24,14 @@ use gameplay::{
         ControlPlugin,
     },
     guardrails::GuardrailsPlugin,
-    gunplay::GunplayPlugin,
     level_mechanics::LevelMechanicsPlugin,
     levels_setup::{
         self, camera::setup_cameras, level_switching::LevelSwitchingPlugin, player::setup_player,
         setup_lights,
     },
+    GunplayPlugin,
 };
-use graphics::{character_animating_systems::animate_humanoids, fx::FXPlugin};
+use graphics::{animate_humanoids, FXPlugin};
 use options::OptionsPlugin;
 use sketchpad::sketchpad_system;
 use ui::DemoInfoUpdateSystemSet;

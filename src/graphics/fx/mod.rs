@@ -1,4 +1,4 @@
-use audio::{spawn_audio_blips, AudioBlip};
+use audio::{spawn_audio_blips, AudioBlip, SpawnAudioBlip};
 use bevy::{
     app::{Plugin, Update},
     prelude::{IntoSystemConfigs, SystemSet},
@@ -8,22 +8,15 @@ use bevy_hanabi::HanabiPlugin;
 
 use crate::util::DestructionSet;
 use flags::update_fx_directions;
-use flash::spawn_flash;
-use muzzle_flare::spawn_flare;
+use flash::{spawn_flash, SpawnFlash};
+use muzzle_flare::{spawn_flare, SpawnMuzzleFlare};
 
-pub use audio::SpawnAudioBlip;
-pub use flags::{DirectedFX, MuzzleFlashFX};
-pub use flash::SpawnFlash;
-pub use muzzle_flare::SpawnMuzzleFlare;
-pub use smokepuff::smoke_puff;
-pub use sparks::basic_sparks;
-
-mod audio;
+pub(super) mod audio;
 pub(super) mod flags;
-mod flash;
-mod muzzle_flare;
-mod smokepuff;
-mod sparks;
+pub(super) mod flash;
+pub(super) mod muzzle_flare;
+pub(super) mod smokepuff;
+pub(super) mod sparks;
 
 #[derive(Hash, Debug, Reflect, PartialEq, Eq, Clone, Copy, SystemSet)]
 pub struct SpawnFXSet;

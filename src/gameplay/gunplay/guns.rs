@@ -16,7 +16,7 @@ use bevy_hanabi::EffectSpawner;
 use crate::{
     asset_setup::{audio::PlaceholderAudio, primitives::PrimitiveResources},
     gameplay::content::projectiles::basic_bullet,
-    graphics::fx::{MuzzleFlashFX, SpawnAudioBlip, SpawnFlash, SpawnMuzzleFlare},
+    graphics::{MuzzleFlashFX, SpawnAudioBlip, SpawnFlash, SpawnMuzzleFlare},
     util::{instant_force, with_translation},
 };
 
