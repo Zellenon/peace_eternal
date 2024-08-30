@@ -1,16 +1,19 @@
-use avian3d::prelude::{CollisionStarted, Sensor};
-use bevy::prelude::{
-    Commands, Component, DespawnRecursiveExt, Entity, Event, EventReader, EventWriter, Query,
-    Reflect, With,
+use avian3d::prelude::CollisionStarted;
+use bevy::{
+    core::Name,
+    prelude::{
+        Commands, Component, DespawnRecursiveExt, Entity, Event, EventReader, EventWriter, Query,
+        Reflect, With,
+    },
 };
 
-#[derive(Reflect, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Reflect, Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub enum ProjectileImpactBehavior {
     Die,
     Bounce,
 }
 
-#[derive(Component, Reflect, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Component, Reflect, Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub struct Projectile {
     pub on_hit: ProjectileImpactBehavior,
     pub on_impact: ProjectileImpactBehavior,
@@ -41,7 +44,7 @@ pub(super) fn catch_projectile_collisions(
     mut collision_event_reader: EventReader<CollisionStarted>,
     mut projectile_hits: EventWriter<ProjectileCollision>,
     mut projectile_clash: EventWriter<ProjectileClash>,
-    projectiles: Query<Entity, (With<Sensor>, With<Projectile>)>,
+    projectiles: Query<Entity, With<Projectile>>,
 ) {
     for CollisionStarted(e1, e2) in collision_event_reader.read() {
         match (projectiles.get(*e1), projectiles.get(*e2)) {
@@ -68,6 +71,7 @@ pub(super) fn catch_projectile_collisions(
 
 pub(super) fn kill_projectiles_on_hit(
     mut collisions: EventReader<ProjectileCollision>,
+    names: Query<&Name>,
     mut commands: Commands,
 ) {
     for collision in collisions.read() {
@@ -75,6 +79,7 @@ pub(super) fn kill_projectiles_on_hit(
         commands
             .get_entity(collision.bullet)
             .unwrap()
-            .despawn_recursive()
+            .despawn_recursive();
+        println!("Killing {}!", names.get(collision.bullet).unwrap())
     }
 }

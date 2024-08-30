@@ -1,4 +1,4 @@
-use avian3d::prelude::{Collider, RigidBody, Sensor, SweptCcd};
+use avian3d::prelude::{Collider, RigidBody, SweptCcd};
 use bevy::{
     asset::Handle,
     pbr::{PbrBundle, StandardMaterial},
@@ -6,13 +6,20 @@ use bevy::{
 };
 use bevy_composable::{app_impl::ComponentTreeable, tree::ComponentTree};
 
-use crate::util::deathmarker::Lifespan;
+use crate::{
+    gunplay::projectiles::{Projectile, ProjectileImpactBehavior},
+    util::deathmarker::Lifespan,
+};
 
 pub fn basic_bullet(mesh: &Handle<Mesh>, material: &Handle<StandardMaterial>) -> ComponentTree {
     let mesh = mesh.clone();
     let material = material.clone();
     (
         Name::new("Bullet"),
+        Projectile {
+            on_hit: ProjectileImpactBehavior::Die,
+            on_impact: ProjectileImpactBehavior::Die,
+        },
         PbrBundle {
             mesh: mesh.clone(),
             material: material.clone(),
@@ -22,7 +29,7 @@ pub fn basic_bullet(mesh: &Handle<Mesh>, material: &Handle<StandardMaterial>) ->
         RigidBody::Dynamic,
         Lifespan::default(),
         Collider::sphere(0.5),
-        Sensor,
+        // Sensor,
     )
         .store()
 }

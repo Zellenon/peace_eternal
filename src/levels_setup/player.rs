@@ -228,7 +228,7 @@ pub(crate) fn setup_player(
             << ((
                 Barrel,
                 SpatialBundle {
-                    transform: Transform::default().with_translation(Vec3::new(-0.01, 0.2, -0.9)),
+                    transform: Transform::default().with_translation(Vec3::new(-0.01, 0.2, -1.2)),
                     ..Default::default()
                 },
             )

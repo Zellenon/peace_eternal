@@ -4,6 +4,10 @@ use bevy::{
     prelude::IntoSystemConfigs,
     reflect::Reflect,
 };
+use projectiles::{
+    catch_projectile_collisions, kill_projectiles_on_hit, Knockback, Projectile, ProjectileClash,
+    ProjectileCollision,
+};
 use servo::{
     do_should_activate, player_servos_on_click, receive_servo_arming_events, tick_cooldowns,
     ArmServo, Servo, ServoActivated,
@@ -28,12 +32,16 @@ impl Plugin for GunplayPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_event::<ArmServo>()
             .add_event::<ServoActivated>()
-            .add_event::<Recoil>();
+            .add_event::<Recoil>()
+            .add_event::<ProjectileCollision>()
+            .add_event::<ProjectileClash>();
         app.insert_resource(PrimitiveResources::default());
 
         app.register_type::<Servo>()
             .register_type::<Arm>()
-            .register_type::<Gun>();
+            .register_type::<Gun>()
+            .register_type::<Projectile>()
+            .register_type::<Knockback>();
 
         app.add_systems(
             Update,
@@ -56,6 +64,11 @@ impl Plugin for GunplayPlugin {
                 fire_guns,
             )
                 .chain(),
+        );
+
+        app.add_systems(
+            Update,
+            (catch_projectile_collisions, kill_projectiles_on_hit).chain(),
         );
     }
 }
