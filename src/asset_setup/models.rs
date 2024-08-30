@@ -1,4 +1,4 @@
-use crate::util::animating::GltfSceneHandler;
+use crate::util::GltfSceneHandler;
 use bevy::{
     asset::Handle,
     ecs::system::Resource,

@@ -14,39 +14,34 @@ use bevy::{
 use bevy_atmosphere::plugin::AtmospherePlugin;
 use bevy_tnua::{control_helpers::TnuaCrouchEnforcerPlugin, prelude::*};
 use bevy_tnua_avian3d::*;
-use character_animating_systems::animate_humanoids;
-use character_control_systems::{
-    info_dumping_systems::character_control_info_dumping_system,
-    platformer_control_systems::{
-        apply_platformer_controls, CharacterMotionConfigForPlatformerDemo,
-    },
-    ControlPlugin,
-};
 use dev::DevModePlugin;
-use fx::FXPlugin;
-use guardrails::GuardrailsPlugin;
-use gunplay::GunplayPlugin;
-use level_mechanics::LevelMechanicsPlugin;
-use levels_setup::{
-    camera::setup_cameras, level_switching::LevelSwitchingPlugin, player::setup_player,
-    setup_lights,
+use gameplay::{
+    character_control_systems::{
+        info_dumping_systems::character_control_info_dumping_system,
+        platformer_control_systems::{
+            apply_platformer_controls, CharacterMotionConfigForPlatformerDemo,
+        },
+        ControlPlugin,
+    },
+    guardrails::GuardrailsPlugin,
+    gunplay::GunplayPlugin,
+    level_mechanics::LevelMechanicsPlugin,
+    levels_setup::{
+        self, camera::setup_cameras, level_switching::LevelSwitchingPlugin, player::setup_player,
+        setup_lights,
+    },
 };
+use graphics::{character_animating_systems::animate_humanoids, fx::FXPlugin};
 use options::OptionsPlugin;
 use sketchpad::sketchpad_system;
 use ui::DemoInfoUpdateSystemSet;
-use util::{animating::animation_patcher_system, UtilPlugin};
+use util::{animation_patcher_system, UtilPlugin};
 
 mod app_setup_options;
 mod asset_setup;
-mod character_animating_systems;
-mod character_control_systems;
-mod content;
 mod dev;
-mod fx;
-mod guardrails;
-mod gunplay;
-mod level_mechanics;
-mod levels_setup;
+mod gameplay;
+mod graphics;
 mod options;
 mod sketchpad;
 mod ui;

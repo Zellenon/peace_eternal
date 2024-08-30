@@ -9,7 +9,7 @@ use bevy::{color::palettes::css, prelude::*};
 use bevy_tnua::math::{AdjustPrecision, Vector3};
 use bevy_tnua::TnuaGhostPlatform;
 
-use crate::level_mechanics::MovingPlatform;
+use crate::gameplay::level_mechanics::moving_platform::MovingPlatform;
 use helper::{LevelSetupHelper3d, LevelSetupHelper3dEntityCommandsExtension};
 pub use level_switching::{IsPlayer, LevelObject, PositionPlayer};
 

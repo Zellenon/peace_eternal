@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 
-pub use moving_platform::MovingPlatform;
-
-mod moving_platform;
+pub mod moving_platform;
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct LevelMechanicsPlugin;

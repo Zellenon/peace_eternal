@@ -14,9 +14,7 @@ use bevy_tnua::math::{float_consts, AdjustPrecision, AsF32, Quaternion};
 use bevy_tnua_physics_integration_layer::math::{Float, Vector3};
 use leafwing_input_manager::action_state::ActionState;
 
-use crate::{
-    levels_setup::IsPlayer, options::controls::ControlOptions, util::smoothing::SmoothedTransform,
-};
+use crate::{levels_setup::IsPlayer, options::controls::ControlOptions, util::SmoothedTransform};
 
 use super::keyboard_receive::CameraAction;
 

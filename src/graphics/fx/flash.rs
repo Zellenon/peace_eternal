@@ -4,7 +4,7 @@ use bevy::{
     reflect::Reflect,
 };
 
-use crate::{asset_setup::primitives::PrimitiveResources, util::deathmarker::DelayedDeathmarker};
+use crate::{asset_setup::primitives::PrimitiveResources, util::DelayedDeathmarker};
 
 #[derive(Event, Reflect, Clone, Debug, PartialEq)]
 pub struct SpawnFlash {

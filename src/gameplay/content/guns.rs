@@ -1,14 +1,17 @@
 use bevy::prelude::Name;
 use bevy_composable::{app_impl::ComponentTreeable, tree::ComponentTree};
 
-use crate::gunplay::{guns::Gun, servo::Servo};
+use crate::gameplay::gunplay::{
+    guns::Gun,
+    servo::{FireMode, Servo},
+};
 
 pub fn basic_gun(gun_assets: ComponentTree) -> ComponentTree {
     (
         Name::new("Gun"),
         Gun,
         Servo {
-            firemode: crate::gunplay::servo::FireMode::SemiAuto,
+            firemode: FireMode::SemiAuto,
             // cooldown: todo!(),
             ..Default::default()
         },

@@ -15,7 +15,7 @@ use servo::{
 
 use crate::{
     asset_setup::primitives::PrimitiveResources,
-    character_control_systems::camera_controls::apply_mouse_camera_movement,
+    gameplay::character_control_systems::camera_controls::apply_mouse_camera_movement,
 };
 
 use self::guns::{fire_guns, Gun};

@@ -11,8 +11,8 @@ use bevy_tnua::{
 };
 use leafwing_input_manager::action_state::ActionState;
 
-use super::keyboard_receive::PlayerAction;
-use crate::{character_control_systems::camera_controls::Facing, ui::tuning::UiTunable};
+use super::{camera_controls::Facing, keyboard_receive::PlayerAction};
+use crate::ui::tuning::UiTunable;
 
 #[allow(clippy::type_complexity)]
 #[allow(clippy::useless_conversion)]

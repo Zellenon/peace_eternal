@@ -5,18 +5,25 @@ use bevy::{
     transform::systems::{propagate_transforms, sync_simple_transforms},
 };
 
-use camera_shake::{apply_trauma_events, restore, shake, Shake, ShakeSettings, TraumaEvent};
+use camera_shake::{apply_trauma_events, restore, shake, ShakeSettings};
 use deathmarker::{
     delayed_death_markers, despawn_destroyed_entities, destroy_death_markers, end_lifespan,
-    tick_lifespans, Deathmarker, Destroy, DestructionSet,
+    tick_lifespans, Destroy,
 };
-use smoothing::{smooth_movement, SmoothedTransform};
+use smoothing::smooth_movement;
 
-pub mod animating;
-pub mod camera_shake;
-pub mod compose;
-pub mod deathmarker;
-pub mod smoothing;
+pub use animating::{animation_patcher_system, AnimationsHandler, GltfSceneHandler};
+pub use camera_shake::{Shake, TraumaEvent};
+#[allow(unused_imports)]
+pub use compose::{instant_force, with_translation};
+pub use deathmarker::{Deathmarker, DelayedDeathmarker, DestructionSet, Lifespan};
+pub use smoothing::SmoothedTransform;
+
+mod animating;
+mod camera_shake;
+mod compose;
+mod deathmarker;
+mod smoothing;
 
 #[derive(Reflect, Clone, Debug, PartialEq)]
 pub struct UtilPlugin;

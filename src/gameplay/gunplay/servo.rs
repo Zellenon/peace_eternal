@@ -14,7 +14,9 @@ use leafwing_input_manager::action_state::ActionState;
 use std::time::Duration;
 
 use super::arms::Arm;
-use crate::{character_control_systems::keyboard_receive::PlayerAction, levels_setup::IsPlayer};
+use crate::gameplay::{
+    character_control_systems::keyboard_receive::PlayerAction, levels_setup::IsPlayer,
+};
 
 #[derive(Event, Reflect, Clone, Debug, PartialEq)]
 pub struct ArmServo(pub Entity, pub bool);

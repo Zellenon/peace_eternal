@@ -10,8 +10,8 @@ use bevy_composable::{
 };
 
 use crate::{
-    character_control_systems::camera_controls::{FPSCamera, TPSCamera},
-    util::{camera_shake::Shake, smoothing::SmoothedTransform},
+    gameplay::character_control_systems::camera_controls::{FPSCamera, TPSCamera},
+    util::{Shake, SmoothedTransform},
 };
 
 fn basic_camera() -> ComponentTree {

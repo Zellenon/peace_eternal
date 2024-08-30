@@ -27,25 +27,29 @@ use bevy_tnua_physics_integration_layer::math::{Float, Vector3};
 use super::{IsPlayer, LayerNames};
 use crate::{
     asset_setup::{models::ModelResources, particles::ParticleTextures},
-    character_animating_systems::AnimationState,
-    character_control_systems::{
-        camera_controls::Facing,
-        keyboard_receive::{
-            create_camera_action_input_manager_bundle, create_player_action_input_manager_bundle,
-            create_ui_action_input_manager_bundle,
+    gameplay::{
+        character_control_systems::{
+            camera_controls::Facing,
+            keyboard_receive::{
+                create_camera_action_input_manager_bundle,
+                create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
+            },
+            platformer_control_systems::{
+                CharacterMotionConfigForPlatformerDemo, FallingThroughControlScheme,
+            },
         },
-        platformer_control_systems::{
-            CharacterMotionConfigForPlatformerDemo, FallingThroughControlScheme,
-        },
+        content::guns::basic_gun,
+        gunplay::{arms::Arm, guns::Barrel},
     },
-    content::guns::basic_gun,
-    fx::{flags::MuzzleFlashFX, smokepuff::smoke_puff, sparks::basic_sparks},
-    gunplay::{arms::Arm, guns::Barrel},
+    graphics::{
+        character_animating_systems::AnimationState,
+        fx::{basic_sparks, smoke_puff, MuzzleFlashFX},
+    },
     ui::{
         self, component_alterbation::CommandAlteringSelectors, info::InfoSource,
         plotting::PlotSource,
     },
-    util::{animating::GltfSceneHandler, smoothing::SmoothedTransform},
+    util::{GltfSceneHandler, SmoothedTransform},
 };
 
 pub(crate) fn setup_player(

@@ -7,8 +7,8 @@ use bevy::{
 use bevy_composable::{app_impl::ComponentTreeable, tree::ComponentTree};
 
 use crate::{
-    gunplay::projectiles::{Projectile, ProjectileImpactBehavior},
-    util::deathmarker::Lifespan,
+    gameplay::gunplay::projectiles::{Projectile, ProjectileImpactBehavior},
+    util::Lifespan,
 };
 
 pub fn basic_bullet(mesh: &Handle<Mesh>, material: &Handle<StandardMaterial>) -> ComponentTree {

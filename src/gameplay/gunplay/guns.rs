@@ -15,12 +15,9 @@ use bevy_hanabi::EffectSpawner;
 
 use crate::{
     asset_setup::{audio::PlaceholderAudio, primitives::PrimitiveResources},
-    content::projectiles::basic_bullet,
-    fx::{
-        audio::SpawnAudioBlip, flags::MuzzleFlashFX, flash::SpawnFlash,
-        muzzle_flare::SpawnMuzzleFlare,
-    },
-    util::compose::{instant_force, with_translation},
+    gameplay::content::projectiles::basic_bullet,
+    graphics::fx::{MuzzleFlashFX, SpawnAudioBlip, SpawnFlash, SpawnMuzzleFlare},
+    util::{instant_force, with_translation},
 };
 
 use super::{arms::Recoil, servo::ServoActivated};

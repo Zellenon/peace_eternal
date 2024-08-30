@@ -7,7 +7,7 @@ use bevy::{
 
 use crate::{
     asset_setup::{models::ModelResources, primitives::PrimitiveResources},
-    util::{animating::GltfSceneHandler, deathmarker::DelayedDeathmarker},
+    util::{DelayedDeathmarker, GltfSceneHandler},
 };
 
 #[derive(Event, Reflect, Clone, Debug, PartialEq)]

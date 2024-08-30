@@ -10,7 +10,7 @@ use bevy_tnua::{
     TnuaAction, TnuaAnimatingState, TnuaAnimatingStateDirective,
 };
 
-use crate::util::animating::AnimationsHandler;
+use crate::util::AnimationsHandler;
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub enum AnimationState {

@@ -13,7 +13,7 @@ use bevy_hanabi::{
     ShapeDimension, SizeOverLifetimeModifier, Spawner,
 };
 
-use crate::fx::flags::DirectedFX;
+use super::flags::DirectedFX;
 
 pub fn basic_sparks(effects: &mut ResMut<Assets<EffectAsset>>) -> ComponentTree {
     let mut color_gradient1 = Gradient::new();

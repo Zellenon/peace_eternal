@@ -13,7 +13,7 @@ use bevy_hanabi::{
     Spawner,
 };
 
-use crate::fx::flags::DirectedFX;
+use super::flags::DirectedFX;
 
 pub fn smoke_puff(
     effects: &mut ResMut<Assets<EffectAsset>>,
