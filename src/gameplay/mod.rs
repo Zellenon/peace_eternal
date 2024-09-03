@@ -1,7 +1,8 @@
-pub mod character_control_systems;
 pub mod content;
+pub mod controls;
 pub mod guardrails;
 mod gunplay;
+pub mod inventory;
 pub mod level_mechanics;
 pub mod levels_setup;
 

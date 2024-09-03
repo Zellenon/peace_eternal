@@ -1,4 +1,4 @@
-use crate::util::GltfSceneHandler;
+use crate::util::{make_model, GltfSceneHandler};
 use bevy::{
     asset::Handle,
     ecs::system::Resource,
@@ -7,8 +7,7 @@ use bevy::{
     scene::Scene,
 };
 use bevy_asset_loader::asset_collection::AssetCollection;
-use bevy_composable::app_impl::ComponentTreeable;
-use bevy_composable::tree::ComponentTree;
+use bevy_composable::{app_impl::ComponentTreeable, tree::ComponentTree};
 
 #[derive(AssetCollection, Resource, Reflect, Clone, Debug, PartialEq)]
 pub struct ModelResources {
@@ -24,17 +23,6 @@ pub struct ModelResources {
 
 impl ModelResources {
     pub fn gun_assets(&self) -> ComponentTree {
-        let gun_scene = self.gun_scene.clone();
-        let gun_names = self.gun_names.clone();
-        (
-            SceneBundle {
-                scene: gun_scene.clone(),
-                ..Default::default()
-            },
-            GltfSceneHandler {
-                names_from: gun_names.clone(),
-            },
-        )
-            .store()
+        make_model(&self.gun_names, &self.gun_scene)
     }
 }

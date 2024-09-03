@@ -3,6 +3,7 @@ use bevy::{
     ecs::schedule::common_conditions::resource_changed,
     prelude::IntoSystemConfigs,
 };
+use inventory_controls::receive_hotbar_command;
 use leafwing_input_manager::plugin::InputManagerPlugin;
 
 // use crate::util::shake;
@@ -11,13 +12,14 @@ use camera_controls::{
     mouse_should_control_camera, switch_first_third_person, update_fps_camera, update_tps_camera,
     CameraData, Facing,
 };
-use keyboard_receive::{CameraAction, PlayerAction, UiAction};
+use keyboard_receive::{CameraAction, InventoryAction, PlayerAction, UiAction};
 use mouse_grabbing::{
     grab_mouse_on_click, release_mouse_in_inventory, sync_mouse_grab, MouseGrabbed,
 };
 
 pub mod camera_controls;
 pub mod info_dumping_systems;
+pub mod inventory_controls;
 pub mod keyboard_receive;
 pub mod mouse_grabbing;
 pub mod platformer_control_systems;
@@ -33,6 +35,7 @@ impl Plugin for ControlPlugin {
                 InputManagerPlugin::<PlayerAction>::default(),
                 InputManagerPlugin::<CameraAction>::default(),
                 InputManagerPlugin::<UiAction>::default(),
+                InputManagerPlugin::<InventoryAction>::default(),
             ));
 
         app.register_type::<Facing>().register_type::<CameraData>();
@@ -53,6 +56,8 @@ impl Plugin for ControlPlugin {
                 (switch_first_third_person, hide_player_in_fps).after(apply_scroll_zoom),
             ),
         );
+
+        app.add_systems(Update, receive_hotbar_command);
 
         app.add_systems(
             PostUpdate,

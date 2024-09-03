@@ -52,6 +52,20 @@ pub(crate) enum UiAction {
     ToggleInventory,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq, Hash, Actionlike, Reflect, Default)]
+pub(crate) enum InventoryAction {
+    ToSlot1,
+    ToSlot2,
+    ToSlot3,
+    ToSlot4,
+    ToSlot5,
+    #[default]
+    NextWeapon,
+    PreviousWeapon,
+    LastUsedWeapon,
+    Holster,
+}
+
 pub(crate) fn create_player_action_input_manager_bundle() -> InputManagerBundle<PlayerAction> {
     InputManagerBundle {
         input_map: InputMap::new([
@@ -82,6 +96,19 @@ pub(crate) fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAc
             (UiAction::ToggleInventory, KeyCode::Tab),
         ]),
         ..default()
+    }
+}
+
+pub(crate) fn create_weapon_swap_input_manager_bundle() -> InputManagerBundle<InventoryAction> {
+    InputManagerBundle {
+        input_map: InputMap::new([
+            (InventoryAction::ToSlot1, KeyCode::Digit1),
+            (InventoryAction::ToSlot2, KeyCode::Digit2),
+            (InventoryAction::ToSlot3, KeyCode::Digit3),
+            (InventoryAction::ToSlot4, KeyCode::Digit4),
+            (InventoryAction::ToSlot5, KeyCode::Digit5),
+        ]),
+        ..Default::default()
     }
 }
 

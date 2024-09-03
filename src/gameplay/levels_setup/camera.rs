@@ -10,7 +10,7 @@ use bevy_composable::{
 };
 
 use crate::{
-    gameplay::character_control_systems::camera_controls::{FPSCamera, TPSCamera},
+    gameplay::controls::camera_controls::{FPSCamera, TPSCamera},
     util::{Shake, SmoothedTransform},
 };
 

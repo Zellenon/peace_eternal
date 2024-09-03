@@ -8,7 +8,7 @@ use bevy_editor_pls::{
 use bevy_egui::egui;
 use serde::{Deserialize, Serialize};
 
-use crate::gameplay::character_control_systems::mouse_grabbing::MouseGrabbed;
+use crate::gameplay::controls::mouse_grabbing::MouseGrabbed;
 
 pub(crate) struct DevEditorWindow;
 

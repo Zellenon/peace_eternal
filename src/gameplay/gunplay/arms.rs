@@ -6,8 +6,10 @@ use bevy::{
     transform::components::Transform,
 };
 
-use crate::gameplay::{character_control_systems::camera_controls::Facing, levels_setup::IsPlayer};
-use crate::util::{SmoothedTransform, TraumaEvent};
+use crate::{
+    gameplay::{controls::camera_controls::Facing, levels_setup::IsPlayer},
+    util::{SmoothedTransform, TraumaEvent},
+};
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Arm {

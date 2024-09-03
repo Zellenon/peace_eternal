@@ -7,19 +7,54 @@ use bevy::{
         system::{Query, Res},
     },
     hierarchy::Children,
+    math::{Quat, Vec3},
+    prelude::{GlobalTransform, Parent, Transform},
     reflect::Reflect,
     time::{Time, Timer},
 };
 use leafwing_input_manager::action_state::ActionState;
 use std::time::Duration;
 
-use super::arms::Arm;
-use crate::gameplay::{
-    character_control_systems::keyboard_receive::PlayerAction, levels_setup::IsPlayer,
-};
+use super::{arms::Arm, dummy_gun::Barrel};
+use crate::gameplay::{controls::keyboard_receive::PlayerAction, levels_setup::IsPlayer};
+
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
+pub struct Servo {
+    pub firemode: FireMode,
+    pub cooldown: Timer,
+    pub wants_to_activate: bool,
+}
 
 #[derive(Event, Reflect, Clone, Debug, PartialEq)]
 pub struct ArmServo(pub Entity, pub bool);
+
+#[derive(Event, Reflect, Clone, Debug, PartialEq)]
+pub struct ServoActivated(pub Entity);
+
+#[derive(Event, Reflect, Clone, Debug, PartialEq)]
+pub struct DirectedServoActivated {
+    pub servo: Entity,
+    pub barrel: Entity,
+    pub location: Vec3,
+    pub rotation: Quat,
+}
+
+#[derive(Eq, PartialOrd, Ord, Component, Reflect, Clone, Debug, PartialEq)]
+pub enum FireMode {
+    Manual,
+    SemiAuto,
+    FullAuto,
+}
+
+impl Default for Servo {
+    fn default() -> Self {
+        Servo {
+            firemode: FireMode::SemiAuto,
+            cooldown: Timer::new(Duration::from_millis(750), bevy::time::TimerMode::Once),
+            wants_to_activate: false,
+        }
+    }
+}
 
 impl ArmServo {
     pub fn new(e: &Entity) -> Self {
@@ -40,33 +75,6 @@ impl From<Entity> for ArmServo {
 impl From<&Entity> for ArmServo {
     fn from(value: &Entity) -> Self {
         Self::new(&value)
-    }
-}
-
-#[derive(Event, Reflect, Clone, Debug, PartialEq)]
-pub struct ServoActivated(pub Entity);
-
-#[derive(Eq, PartialOrd, Ord, Component, Reflect, Clone, Debug, PartialEq)]
-pub enum FireMode {
-    Manual,
-    SemiAuto,
-    FullAuto,
-}
-
-#[derive(Component, Reflect, Clone, Debug, PartialEq)]
-pub struct Servo {
-    pub firemode: FireMode,
-    pub cooldown: Timer,
-    pub wants_to_activate: bool,
-}
-
-impl Default for Servo {
-    fn default() -> Self {
-        Servo {
-            firemode: FireMode::SemiAuto,
-            cooldown: Timer::new(Duration::from_millis(750), bevy::time::TimerMode::Once),
-            wants_to_activate: false,
-        }
     }
 }
 
@@ -98,15 +106,40 @@ pub fn tick_cooldowns(time: Res<Time>, mut cooldowns: Query<&mut Servo>) {
 
 pub fn do_should_activate(
     mut events: EventWriter<ServoActivated>,
-    mut activatables: Query<(Entity, &mut Servo)>,
+    mut servos: Query<(Entity, &mut Servo)>,
 ) {
-    for (entity, mut servo) in activatables.iter_mut() {
+    for (entity, mut servo) in servos.iter_mut() {
         if servo.cooldown.finished() && servo.wants_to_activate {
             events.send(ServoActivated(entity));
             servo.cooldown.reset();
             if servo.firemode != FireMode::FullAuto {
                 servo.wants_to_activate = false;
             }
+        }
+    }
+}
+
+pub fn do_directed_servos(
+    mut activations: EventReader<ServoActivated>,
+    mut directed_activations: EventWriter<DirectedServoActivated>,
+    servos: Query<&Children, With<Servo>>,
+    barrels: Query<(Entity, &GlobalTransform), With<Barrel>>,
+) {
+    for ServoActivated(entity) in activations.read() {
+        if let Ok(children) = servos.get(*entity) {
+            let (barrel, position) = children
+                .iter()
+                .filter_map(|w| barrels.get(*w).ok())
+                .next()
+                .unwrap();
+            let (_, rot, loc) = position.to_scale_rotation_translation();
+
+            directed_activations.send(DirectedServoActivated {
+                servo: *entity,
+                barrel,
+                location: loc,
+                rotation: rot,
+            });
         }
     }
 }

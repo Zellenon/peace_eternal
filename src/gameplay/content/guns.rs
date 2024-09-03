@@ -6,7 +6,7 @@ use crate::gameplay::gunplay::{
     servo::{FireMode, Servo},
 };
 
-pub fn basic_gun(gun_assets: ComponentTree) -> ComponentTree {
+pub fn basic_gun() -> ComponentTree {
     (
         Name::new("Gun"),
         Gun,
@@ -17,5 +17,4 @@ pub fn basic_gun(gun_assets: ComponentTree) -> ComponentTree {
         },
     )
         .store()
-        + gun_assets
 }

@@ -1,10 +1,17 @@
 use avian3d::prelude::CollisionStarted;
 use bevy::{
     core::Name,
+    math::{Quat, Vec3},
     prelude::{
         Commands, Component, DespawnRecursiveExt, Entity, Event, EventReader, EventWriter, Query,
-        Reflect, With,
+        Reflect, Res, With,
     },
+};
+use bevy_composable::{app_impl::ComplexSpawnable, tree::ComponentTree};
+
+use crate::{
+    asset_setup::primitives::PrimitiveResources,
+    util::{instant_force, with_translation},
 };
 
 #[derive(Reflect, Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
@@ -17,6 +24,13 @@ pub enum ProjectileImpactBehavior {
 pub struct Projectile {
     pub on_hit: ProjectileImpactBehavior,
     pub on_impact: ProjectileImpactBehavior,
+}
+
+#[derive(Event, Clone)]
+pub struct FireProjectile {
+    pub bullet: ComponentTree,
+    pub location: Vec3,
+    pub rotation: Quat,
 }
 
 impl Default for Projectile {
@@ -39,6 +53,21 @@ pub struct ProjectileClash(pub Entity, pub Entity);
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Knockback(pub f32);
+
+pub fn spawn_bullets(mut commands: Commands, mut bullets: EventReader<FireProjectile>) {
+    for FireProjectile {
+        bullet,
+        location: position,
+        rotation: orientation,
+    } in bullets.read()
+    {
+        commands.compose(
+            bullet.clone()
+                + with_translation(*position, *orientation, 0.1)
+                + instant_force(*orientation, 0.08),
+        );
+    }
+}
 
 pub(super) fn catch_projectile_collisions(
     mut collision_event_reader: EventReader<CollisionStarted>,

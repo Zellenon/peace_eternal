@@ -6,7 +6,7 @@ use bevy::{
 use bevy_editor_pls::prelude::*;
 
 use self::editor::{set_cursor_grab_mode, DevEditorState, DevEditorWindow};
-use crate::gameplay::character_control_systems::platformer_control_systems::CharacterMotionConfigForPlatformerDemo;
+use crate::gameplay::controls::platformer_control_systems::CharacterMotionConfigForPlatformerDemo;
 use ui::DemoUi;
 
 pub(crate) mod editor;

@@ -11,7 +11,10 @@ use bevy::{
     prelude::{ResMut, SpatialBundle, Transform},
     scene::SceneBundle,
 };
-use bevy_composable::app_impl::{ComplexSpawnable, ComponentTreeable};
+use bevy_composable::{
+    app_impl::{ComplexSpawnable, ComponentTreeable, FuncTreeable},
+    wrappers::name,
+};
 use bevy_hanabi::EffectAsset;
 use bevy_tnua::{
     builtins::{TnuaBuiltinCrouch, TnuaBuiltinJump, TnuaBuiltinWalk},
@@ -32,23 +35,35 @@ use crate::{
         plotting::PlotSource,
     },
     gameplay::{
-        character_control_systems::{
+        content::guns::basic_gun,
+        controls::{
             camera_controls::Facing,
             keyboard_receive::{
                 create_camera_action_input_manager_bundle,
                 create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
+                create_weapon_swap_input_manager_bundle,
             },
             platformer_control_systems::{
                 CharacterMotionConfigForPlatformerDemo, FallingThroughControlScheme,
             },
         },
-        content::guns::basic_gun,
-        gunplay::{arms::Arm, guns::Barrel},
+        gunplay::{
+            arms::Arm,
+            dummy_gun::{Barrel, DummyGun},
+        },
+        inventory::{
+            components::{
+                default_inventory, Inventory, InventorySlot, InventorySlotSettings,
+                InventorySlotSize,
+            },
+            swapping::HoldingInventoryItem,
+        },
     },
     graphics::{basic_sparks, smoke_puff, AnimationState, MuzzleFlashFX},
     util::{GltfSceneHandler, SmoothedTransform},
 };
 
+use InventorySlotSize::{Large, Medium, Small};
 pub(crate) fn setup_player(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -56,26 +71,37 @@ pub(crate) fn setup_player(
     mut effects: ResMut<Assets<EffectAsset>>,
     particle_graphics: Res<ParticleTextures>,
 ) {
-    let mut player = commands.spawn((IsPlayer, Name::new("Player")));
-    player.insert(SceneBundle {
-        scene: asset_server.load("models/player.glb#Scene0"),
-        ..Default::default()
-    });
-    player.insert(GltfSceneHandler {
-        names_from: asset_server.load("models/player.glb"),
-    });
+    let gun = commands.compose(basic_gun());
 
-    player.insert(RigidBody::Dynamic);
-    player.insert(Collider::capsule(0.5, 1.0));
+    let player_tree = name("Player")
+        + (
+            IsPlayer,
+            SceneBundle {
+                scene: asset_server.load("models/player.glb#Scene0"),
+                ..Default::default()
+            },
+            GltfSceneHandler {
+                names_from: asset_server.load("models/player.glb"),
+            },
+            RigidBody::Dynamic,
+            Collider::capsule(0.5, 1.0),
+            Inventory {
+                slots: vec![
+                    InventorySlot::new([Large, Medium]),
+                    InventorySlot {
+                        settings: InventorySlotSettings::new([Medium, Small]),
+                        contents: Some(gun),
+                    },
+                ],
+            },
+            Facing::default(),
+            SpatialListener::new(2.0),
+        )
+            .store();
 
-    // This bundle container `TnuaController` - the main interface of Tnua with the user code - as
-    // well as the main components used as API between the main plugin and the physics backend
-    // integration. These components (and the IO bundle, in case of backends that need one like
-    // Rapier) are the only mandatory Tnua components - but this example will also add some
-    // components used for more advanced features.
-    //
-    // Read examples/src/character_control_systems/platformer_control_systems.rs to see how
-    // `TnuaController` is used in this example.
+    let player = commands.compose(player_tree);
+    let mut player = commands.get_entity(player).unwrap();
+
     player.insert(TnuaControllerBundle::default());
 
     player.insert(CharacterMotionConfigForPlatformerDemo {
@@ -110,8 +136,6 @@ pub(crate) fn setup_player(
         one_way_platforms_min_proximity: 1.0,
         falling_through: FallingThroughControlScheme::SingleFall,
     });
-
-    player.insert(Facing::default());
 
     // An entity's Tnua behavior can be toggled individually with this component, if inserted.
     player.insert(TnuaToggle::default());
@@ -207,9 +231,8 @@ pub(crate) fn setup_player(
         create_player_action_input_manager_bundle(),
         create_camera_action_input_manager_bundle(),
         create_ui_action_input_manager_bundle(),
+        create_weapon_swap_input_manager_bundle(),
     ));
-
-    player.insert(SpatialListener::new(2.0));
 
     let id = player.id();
     let arm = (
@@ -223,17 +246,20 @@ pub(crate) fn setup_player(
             rotation_mul: 0.6,
             ..Default::default()
         },
+        HoldingInventoryItem::default(),
     )
         .store()
-        << (basic_gun(models.gun_assets())
-            << ((
-                Barrel,
-                SpatialBundle {
-                    transform: Transform::default().with_translation(Vec3::new(-0.01, 0.2, -1.2)),
-                    ..Default::default()
-                },
-            )
-                .store()
+        << (name("DummyGun") + DummyGun.store() + SpatialBundle::store_default()
+            << (name("Barrel")
+                + (
+                    Barrel,
+                    SpatialBundle {
+                        transform: Transform::default()
+                            .with_translation(Vec3::new(-0.01, 0.2, -1.2)),
+                        ..Default::default()
+                    },
+                )
+                    .store()
                 << ((MuzzleFlashFX).store() + basic_sparks(&mut effects))
                 << ((MuzzleFlashFX).store() + smoke_puff(&mut effects, &particle_graphics.smoke))));
     commands.compose(arm);

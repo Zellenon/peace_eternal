@@ -17,11 +17,12 @@ use bevy_tnua_avian3d::*;
 use dev::ui::DemoInfoUpdateSystemSet;
 use dev::DevModePlugin;
 use gameplay::{
-    character_control_systems::{
+    controls::{
         info_dumping_systems::character_control_info_dumping_system,
         platformer_control_systems::apply_platformer_controls, ControlPlugin,
     },
     guardrails::GuardrailsPlugin,
+    inventory::InventoryPlugin,
     level_mechanics::LevelMechanicsPlugin,
     levels_setup::{
         self, camera::setup_cameras, level_switching::LevelSwitchingPlugin, player::setup_player,
@@ -102,6 +103,7 @@ fn main() {
         FXPlugin,
         GuardrailsPlugin,
         GunplayPlugin,
+        InventoryPlugin,
         OptionsPlugin,
         UtilPlugin,
         UIPlugin,

@@ -1,4 +1,6 @@
 use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
+use bevy_composable::app_impl::ComponentTreeable;
+use bevy_composable::tree::ComponentTree;
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct AnimationsHandler {
@@ -51,4 +53,19 @@ pub fn animation_patcher_system(
             };
         }
     }
+}
+
+pub fn make_model(gltf: &Handle<Gltf>, scene: &Handle<Scene>) -> ComponentTree {
+    let scene = scene.clone();
+    let names = gltf.clone();
+    (
+        SceneBundle {
+            scene: scene.clone(),
+            ..Default::default()
+        },
+        GltfSceneHandler {
+            names_from: names.clone(),
+        },
+    )
+        .store()
 }
