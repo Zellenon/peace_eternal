@@ -58,6 +58,7 @@ use crate::{
             },
             swapping::HoldingInventoryItem,
         },
+        Servo,
     },
     graphics::{basic_sparks, smoke_puff, AnimationState, MuzzleFlashFX},
     util::{GltfSceneHandler, SmoothedTransform},
@@ -250,7 +251,10 @@ pub(crate) fn setup_player(
         HoldingInventoryItem::default(),
     )
         .store()
-        << (name("DummyGun") + DummyGun.store() + SpatialBundle::store_default()
+        << (name("DummyGun")
+            + DummyGun.store()
+            + SpatialBundle::store_default()
+            + Servo::store_default()
             << (name("Barrel")
                 + (
                     Barrel,
