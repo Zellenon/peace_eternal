@@ -10,8 +10,8 @@ use dummy_gun::{
 };
 use guns::FireGun;
 use projectiles::{
-    catch_projectile_collisions, kill_projectiles_on_hit, FireProjectile, Knockback, Projectile,
-    ProjectileClash, ProjectileCollision,
+    catch_projectile_collisions, kill_projectiles_on_hit, spawn_bullets, FireProjectile, Knockback,
+    Projectile, ProjectileClash, ProjectileCollision,
 };
 use servo::{
     do_directed_servos, do_should_activate, player_servos_on_click, receive_servo_arming_events,
@@ -106,6 +106,8 @@ impl Plugin for GunplayPlugin {
             )
                 .chain(),
         );
+
+        app.add_systems(Update, spawn_bullets.after(gunshots_to_bullet_spawn));
 
         app.add_systems(
             Update,
