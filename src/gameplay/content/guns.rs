@@ -4,6 +4,7 @@ use bevy_composable::{app_impl::ComponentTreeable, tree::ComponentTree};
 use crate::gameplay::gunplay::{
     guns::Gun,
     servo::{FireMode, Servo},
+    servo_components::ShootsBullet,
 };
 
 pub fn basic_gun() -> ComponentTree {
@@ -15,6 +16,7 @@ pub fn basic_gun() -> ComponentTree {
             // cooldown: todo!(),
             ..Default::default()
         },
+        ShootsBullet,
     )
         .store()
 }
