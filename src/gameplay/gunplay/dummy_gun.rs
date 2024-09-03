@@ -1,7 +1,7 @@
 use bevy::{
     math::{Quat, Vec3},
     prelude::{
-        Children, Commands, Component, Entity, Event, EventReader, EventWriter, Parent, Query, Res,
+        Children, Commands, Component, Entity, Event, EventReader, EventWriter, Query, Res,
         Transform, Visibility, With, Without,
     },
     reflect::Reflect,

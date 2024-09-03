@@ -8,7 +8,7 @@ use bevy::{
     },
     hierarchy::Children,
     math::{Quat, Vec3},
-    prelude::{GlobalTransform, Parent, Transform},
+    prelude::GlobalTransform,
     reflect::Reflect,
     time::{Time, Timer},
 };

@@ -4,15 +4,12 @@ use bevy::{
     math::{Quat, Vec3},
     prelude::{
         Commands, Component, DespawnRecursiveExt, Entity, Event, EventReader, EventWriter, Query,
-        Reflect, Res, With,
+        Reflect, With,
     },
 };
 use bevy_composable::{app_impl::ComplexSpawnable, tree::ComponentTree};
 
-use crate::{
-    asset_setup::primitives::PrimitiveResources,
-    util::{instant_force, with_translation},
-};
+use crate::util::{instant_force, with_translation};
 
 #[derive(Reflect, Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub enum ProjectileImpactBehavior {

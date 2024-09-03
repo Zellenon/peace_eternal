@@ -1,13 +1,7 @@
-use crate::util::{make_model, make_model_bundle, GltfSceneHandler};
-use bevy::{
-    asset::Handle,
-    ecs::system::Resource,
-    gltf::Gltf,
-    prelude::{Reflect, SceneBundle},
-    scene::Scene,
-};
+use crate::util::{make_model, make_model_bundle};
+use bevy::{asset::Handle, ecs::system::Resource, gltf::Gltf, prelude::Reflect, scene::Scene};
 use bevy_asset_loader::asset_collection::AssetCollection;
-use bevy_composable::{app_impl::ComponentTreeable, tree::ComponentTree};
+use bevy_composable::tree::ComponentTree;
 
 #[derive(AssetCollection, Resource, Reflect, Clone, Debug, PartialEq)]
 pub struct ModelResources {
