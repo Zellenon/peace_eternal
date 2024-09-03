@@ -1,8 +1,8 @@
 use bevy::{
     math::{Quat, Vec3},
     prelude::{
-        Children, Commands, Component, Entity, Event, EventReader, EventWriter, Mesh, Parent,
-        Query, Res, Transform, Visibility, With, Without,
+        Children, Commands, Component, Entity, Event, EventReader, EventWriter, Parent, Query, Res,
+        Transform, Visibility, With, Without,
     },
     reflect::Reflect,
 };
@@ -80,33 +80,35 @@ pub fn swap_held_dummy_model(
 
 pub fn hide_gun_on_empty_hand(
     mut changes: EventReader<ChangeHeldItem>,
-    mut dummy_guns: Query<(&mut Visibility, &Parent), With<DummyGun>>,
-    arms: Query<&Arm, Without<IsPlayer>>,
-    inventory: Query<&Inventory, Without<Arm>>,
+    mut dummy_guns: Query<&mut Visibility, With<DummyGun>>,
+    arms: Query<(&Arm, &Children), Without<IsPlayer>>,
+    inventories: Query<&Inventory, Without<Arm>>,
 ) {
     for change in changes.read() {
-        if let Ok((mut visibility, parent)) = dummy_guns.get_mut(change.arm) {
-            match change.slot {
-                Some(slot) => {
-                    *visibility = match (arms
-                        .get(parent.get())
-                        .ok()
-                        .map(|w| inventory.get(w.parent).ok())
-                        .flatten()
-                        .map(|inventory| inventory.slots.get(slot))
-                        .flatten()
-                        .map(|slot| slot.contents)
-                        .flatten()
-                        .is_some())
-                    {
-                        true => Visibility::Visible,
-                        false => Visibility::Hidden,
-                    }
+        if let Ok((arm, arm_children)) = arms.get(change.arm) {
+            arm_children.iter().for_each(|w| {
+                if let Ok(mut dummy) = dummy_guns.get_mut(*w) {
+                    match change.slot {
+                        Some(slot) => {
+                            let held_item = inventories
+                                .get(arm.parent)
+                                .ok()
+                                .map(|inventory| inventory.slots.get(slot))
+                                .flatten()
+                                .map(|slot| slot.contents)
+                                .flatten()
+                                .is_some();
+                            *dummy = match held_item {
+                                true => Visibility::Visible,
+                                false => Visibility::Hidden,
+                            }
+                        }
+                        None => {
+                            *dummy = Visibility::Hidden;
+                        }
+                    };
                 }
-                None => {
-                    *visibility = Visibility::Hidden;
-                }
-            };
+            })
         }
     }
 }

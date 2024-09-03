@@ -92,6 +92,7 @@ pub(crate) fn setup_player(
                         settings: InventorySlotSettings::new([Medium, Small]),
                         contents: Some(gun),
                     },
+                    InventorySlot::new([Small]),
                 ],
             },
             Facing::default(),

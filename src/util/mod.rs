@@ -12,7 +12,9 @@ use deathmarker::{
 };
 use smoothing::smooth_movement;
 
-pub use animating::{animation_patcher_system, make_model, AnimationsHandler, GltfSceneHandler};
+pub use animating::{
+    animation_patcher_system, make_model, make_model_bundle, AnimationsHandler, GltfSceneHandler,
+};
 pub use camera_shake::{Shake, TraumaEvent};
 #[allow(unused_imports)]
 pub use compose::{instant_force, with_translation};

@@ -107,6 +107,7 @@ pub(crate) fn create_weapon_swap_input_manager_bundle() -> InputManagerBundle<In
             (InventoryAction::ToSlot3, KeyCode::Digit3),
             (InventoryAction::ToSlot4, KeyCode::Digit4),
             (InventoryAction::ToSlot5, KeyCode::Digit5),
+            (InventoryAction::Holster, KeyCode::KeyH),
         ]),
         ..Default::default()
     }

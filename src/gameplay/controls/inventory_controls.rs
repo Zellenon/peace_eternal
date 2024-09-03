@@ -53,10 +53,9 @@ pub fn receive_hotbar_command(
                 }
             };
         if let Some(destination) = hotbar_destination {
-            println!("test");
             let arm_entity = arms
                 .iter()
-                .filter(|(entity, arm, held_item)| arm.parent == player_entity)
+                .filter(|(_entity, arm, _held_item)| arm.parent == player_entity)
                 .next()
                 .unwrap()
                 .0;

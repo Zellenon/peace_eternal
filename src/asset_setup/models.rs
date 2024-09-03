@@ -1,4 +1,4 @@
-use crate::util::{make_model, GltfSceneHandler};
+use crate::util::{make_model, make_model_bundle, GltfSceneHandler};
 use bevy::{
     asset::Handle,
     ecs::system::Resource,
@@ -24,5 +24,9 @@ pub struct ModelResources {
 impl ModelResources {
     pub fn gun_assets(&self) -> ComponentTree {
         make_model(&self.gun_names, &self.gun_scene)
+    }
+
+    pub fn gun_bundle(&self) -> ComponentTree {
+        make_model_bundle(&self.gun_names, &self.gun_scene)
     }
 }

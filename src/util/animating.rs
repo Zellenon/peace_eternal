@@ -55,7 +55,7 @@ pub fn animation_patcher_system(
     }
 }
 
-pub fn make_model(gltf: &Handle<Gltf>, scene: &Handle<Scene>) -> ComponentTree {
+pub fn make_model_bundle(gltf: &Handle<Gltf>, scene: &Handle<Scene>) -> ComponentTree {
     let scene = scene.clone();
     let names = gltf.clone();
     (
@@ -68,4 +68,10 @@ pub fn make_model(gltf: &Handle<Gltf>, scene: &Handle<Scene>) -> ComponentTree {
         },
     )
         .store()
+}
+
+pub fn make_model(gltf: &Handle<Gltf>, scene: &Handle<Scene>) -> ComponentTree {
+    let scene = scene.clone();
+    let names = gltf.clone();
+    (scene, names).store()
 }
