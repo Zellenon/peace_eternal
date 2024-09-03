@@ -1,31 +1,8 @@
 use bevy::{
-    ecs::{
-        component::Component,
-        event::{EventReader, EventWriter},
-        query::With,
-        system::{Commands, Query, Res},
-    },
-    hierarchy::Children,
+    ecs::component::Component,
     math::{Quat, Vec3},
-    prelude::{Entity, Event, Parent, Without},
+    prelude::{Entity, Event, EventReader, EventWriter},
     reflect::Reflect,
-    transform::components::GlobalTransform,
-};
-use bevy_composable::app_impl::ComplexSpawnable;
-use bevy_hanabi::EffectSpawner;
-
-use crate::{
-    asset_setup::{audio::PlaceholderAudio, primitives::PrimitiveResources},
-    gameplay::content::projectiles::basic_bullet,
-    graphics::{MuzzleFlashFX, SpawnAudioBlip, SpawnFlash, SpawnMuzzleFlare},
-    util::{instant_force, with_translation},
-};
-
-use super::{
-    arms::Recoil,
-    dummy_gun::Barrel,
-    projectiles::FireProjectile,
-    servo::{DirectedServoActivated, ServoActivated},
 };
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
@@ -37,6 +14,34 @@ pub struct FireGun {
     pub position: Vec3,
     pub orientation: Quat,
 }
+
+pub fn event_mirror_a<T: Event>(mut events: EventReader<T>, mut mirror: EventWriter<>)
+
+pub fn propagate_to_guns(
+    mut activations: EventReader<ServoActivated>,
+    mut directed_activations: EventWriter<DirectedServoActivated>,
+    servos: Query<&Children, With<Servo>>,
+    barrels: Query<(Entity, &GlobalTransform), With<Barrel>>,
+) {
+    for ServoActivated(entity) in activations.read() {
+        if let Ok(children) = servos.get(*entity) {
+            let (barrel, position) = children
+                .iter()
+                .filter_map(|w| barrels.get(*w).ok())
+                .next()
+                .unwrap();
+            let (_, rot, loc) = position.to_scale_rotation_translation();
+
+            directed_activations.send(DirectedServoActivated {
+                servo: *entity,
+                barrel,
+                location: loc,
+                rotation: rot,
+            });
+        }
+    }
+}
+
 
 // pub fn fire_guns(
 //     mut servo_activations: EventReader<DirectedServoActivated>,
