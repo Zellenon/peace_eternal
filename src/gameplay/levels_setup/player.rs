@@ -35,7 +35,7 @@ use crate::{
         plotting::PlotSource,
     },
     gameplay::{
-        content::guns::basic_gun,
+        content::guns::{autorifle, basic_gun, pistol},
         controls::{
             camera_controls::Facing,
             keyboard_receive::{
@@ -52,10 +52,7 @@ use crate::{
             dummy_gun::{Barrel, DummyGun},
         },
         inventory::{
-            components::{
-                default_inventory, Inventory, InventorySlot, InventorySlotSettings,
-                InventorySlotSize,
-            },
+            components::{Inventory, InventorySlot, InventorySlotSettings, InventorySlotSize},
             swapping::HoldingInventoryItem,
         },
         Servo,
@@ -72,7 +69,8 @@ pub(crate) fn setup_player(
     mut effects: ResMut<Assets<EffectAsset>>,
     particle_graphics: Res<ParticleTextures>,
 ) {
-    let gun = commands.compose(basic_gun());
+    let pistol = commands.compose(pistol());
+    let rifle = commands.compose(autorifle());
 
     let player_tree = name("Player")
         + (
@@ -91,9 +89,12 @@ pub(crate) fn setup_player(
                     InventorySlot::new([Large, Medium]),
                     InventorySlot {
                         settings: InventorySlotSettings::new([Medium, Small]),
-                        contents: Some(gun),
+                        contents: Some(rifle),
                     },
-                    InventorySlot::new([Small]),
+                    InventorySlot {
+                        settings: InventorySlotSettings::new([Small]),
+                        contents: Some(pistol),
+                    },
                 ],
             },
             Facing::default(),

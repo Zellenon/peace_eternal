@@ -8,7 +8,7 @@ use dummy_gun::{
     hide_gun_on_empty_hand, swap_dummygun_model, swap_held_dummy_model, Barrel, DummyGun,
     SwapDummyModel,
 };
-use guns::FireGun;
+use guns::{dummy_activations_to_inventory_guns, unmirror_gun_activations, DummyMirror, FireGun};
 use projectiles::{
     catch_projectile_collisions, kill_projectiles_on_hit, spawn_bullets, FireProjectile, Knockback,
     Projectile, ProjectileClash, ProjectileCollision,
@@ -50,6 +50,7 @@ impl Plugin for GunplayPlugin {
             .add_event::<FireProjectile>()
             .add_event::<ProjectileCollision>()
             .add_event::<SwapDummyModel>()
+            .add_event::<DummyMirror>()
             .add_event::<ProjectileClash>();
         app.insert_resource(PrimitiveResources::default());
 
@@ -95,6 +96,8 @@ impl Plugin for GunplayPlugin {
                 (do_arm_recoil, do_shake_recoil),
                 do_should_activate,
                 do_directed_servos,
+                dummy_activations_to_inventory_guns,
+                unmirror_gun_activations,
                 (
                     gunshots_to_bullet_spawn,
                     gunshots_to_muzzle_flare,

@@ -21,7 +21,7 @@ pub struct InventorySlotSettings {
     pub allowed_sizes: Vec<InventorySlotSize>,
 }
 
-#[derive(Reflect, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Component, Reflect, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum InventorySlotSize {
     Large,
     Medium,

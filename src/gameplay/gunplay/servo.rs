@@ -46,6 +46,16 @@ pub enum FireMode {
     FullAuto,
 }
 
+impl Servo {
+    pub fn new(firemode: FireMode, cooldown: u64) -> Self {
+        Self {
+            firemode,
+            cooldown: Timer::new(Duration::from_millis(cooldown), bevy::time::TimerMode::Once),
+            wants_to_activate: false,
+        }
+    }
+}
+
 impl Default for Servo {
     fn default() -> Self {
         Servo {

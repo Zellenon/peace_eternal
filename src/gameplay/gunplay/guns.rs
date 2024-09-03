@@ -1,9 +1,13 @@
 use bevy::{
     ecs::component::Component,
     math::{Quat, Vec3},
-    prelude::{Entity, Event, EventReader, EventWriter},
+    prelude::{Entity, Event, EventReader, EventWriter, Parent, Query, With},
     reflect::Reflect,
 };
+
+use crate::gameplay::inventory::{components::Inventory, swapping::HoldingInventoryItem};
+
+use super::{arms::Arm, dummy_gun::DummyGun, servo::DirectedServoActivated};
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Gun;
@@ -15,33 +19,75 @@ pub struct FireGun {
     pub orientation: Quat,
 }
 
-pub fn event_mirror_a<T: Event>(mut events: EventReader<T>, mut mirror: EventWriter<>)
+#[derive(Event, Debug, Reflect)]
+pub struct DummyMirror(pub DirectedServoActivated, pub Entity);
 
-pub fn propagate_to_guns(
-    mut activations: EventReader<ServoActivated>,
-    mut directed_activations: EventWriter<DirectedServoActivated>,
-    servos: Query<&Children, With<Servo>>,
-    barrels: Query<(Entity, &GlobalTransform), With<Barrel>>,
+pub fn dummy_activations_to_inventory_guns(
+    mut events: EventReader<DirectedServoActivated>,
+    mut mirror: EventWriter<DummyMirror>,
+    arms: Query<(&Arm, &HoldingInventoryItem)>,
+    dummy_gun: Query<&Parent, With<DummyGun>>,
+    inventories: Query<&Inventory>,
 ) {
-    for ServoActivated(entity) in activations.read() {
-        if let Ok(children) = servos.get(*entity) {
-            let (barrel, position) = children
-                .iter()
-                .filter_map(|w| barrels.get(*w).ok())
-                .next()
-                .unwrap();
-            let (_, rot, loc) = position.to_scale_rotation_translation();
-
-            directed_activations.send(DirectedServoActivated {
-                servo: *entity,
-                barrel,
-                location: loc,
-                rotation: rot,
+    events.read().for_each(|activation| {
+        dummy_gun
+            .get(activation.servo)
+            .ok()
+            .map(|parent| arms.get(parent.get()).ok())
+            .flatten()
+            .map(|(arm, held_item)| inventories.get(arm.parent).ok().zip(held_item.held_slot))
+            .flatten()
+            .map(|(inventory, slot)| {
+                inventory
+                    .slots
+                    .get(slot)
+                    .map(|w| w.contents)
+                    .flatten()
+                    .iter()
+                    .for_each(|item| {
+                        mirror.send(DummyMirror(activation.clone(), *item));
+                    });
             });
-        }
+    });
+}
+
+pub fn unmirror_gun_activations(
+    mut mirrors: EventReader<DummyMirror>,
+    mut events: EventWriter<DirectedServoActivated>,
+) {
+    for DummyMirror(original, new_entity) in mirrors.read() {
+        events.send({
+            let mut original = original.clone();
+            original.servo = *new_entity;
+            original
+        });
     }
 }
 
+// pub fn propagate_to_guns(
+//     mut activations: EventReader<ServoActivated>,
+//     mut directed_activations: EventWriter<DirectedServoActivated>,
+//     servos: Query<&Children, With<Servo>>,
+//     barrels: Query<(Entity, &GlobalTransform), With<Barrel>>,
+// ) {
+//     for ServoActivated(entity) in activations.read() {
+//         if let Ok(children) = servos.get(*entity) {
+//             let (barrel, position) = children
+//                 .iter()
+//                 .filter_map(|w| barrels.get(*w).ok())
+//                 .next()
+//                 .unwrap();
+//             let (_, rot, loc) = position.to_scale_rotation_translation();
+
+//             directed_activations.send(DirectedServoActivated {
+//                 servo: *entity,
+//                 barrel,
+//                 location: loc,
+//                 rotation: rot,
+//             });
+//         }
+//     }
+// }
 
 // pub fn fire_guns(
 //     mut servo_activations: EventReader<DirectedServoActivated>,
