@@ -7,13 +7,16 @@ use crate::{
         gunplay::{
             guns::Gun,
             servo::{FireMode, Servo},
-            servo_components::{MultiActivation, ShootsBullets},
+            servo_components::{
+                HasActivationSound, HasGunSmoke, HasMuzzleFlare, HasMuzzleFlash, HasRecoil,
+                MultiActivation, ShootsBullets,
+            },
         },
         inventory::components::{InventorySlotSize, Nickname},
     },
 };
 
-use super::LinkedModel;
+use super::{projectiles::basic_bullet, LinkedModel};
 
 pub fn basic_gun<T: Into<String>>(name: T) -> ComponentTree {
     (
@@ -43,6 +46,21 @@ pub fn pistol_1() -> ComponentTree {
             InventorySlotSize::Small,
             Nickname("EP-15S".to_owned()),
             LinkedModel::new(ModelResources::pistol1),
+            ShootsBullets {
+                projectile: basic_bullet(),
+                accuracy: 0.97,
+                scale: 0.5,
+                force: 0.5,
+            },
+            HasMuzzleFlare {
+                main_size: 1.,
+                petal_num: 4,
+                petal_coef: 0.1,
+            },
+            HasMuzzleFlash(1.),
+            HasGunSmoke,
+            HasRecoil(5.),
+            HasActivationSound,
         )
             .store()
 }
