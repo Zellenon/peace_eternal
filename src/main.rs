@@ -17,6 +17,7 @@ use bevy_tnua_avian3d::*;
 use dev::ui::DemoInfoUpdateSystemSet;
 use dev::DevModePlugin;
 use gameplay::{
+    content::ContentPlugin,
     controls::{
         info_dumping_systems::character_control_info_dumping_system,
         platformer_control_systems::apply_platformer_controls, ControlPlugin,
@@ -100,6 +101,7 @@ fn main() {
     app.add_plugins((
         AssetPlugin,
         ControlPlugin,
+        ContentPlugin,
         FXPlugin,
         GuardrailsPlugin,
         GunplayPlugin,

@@ -28,6 +28,12 @@ pub enum InventorySlotSize {
     Small,
 }
 
+#[derive(Component, Reflect, Debug, Clone, PartialEq)]
+pub struct Nickname(pub String);
+
+#[derive(Component, Reflect, Debug, Clone, PartialEq)]
+pub struct FlavorText(pub String);
+
 impl InventorySlotSettings {
     pub fn new<T: Into<Vec<InventorySlotSize>>>(sizes: T) -> Self {
         Self {

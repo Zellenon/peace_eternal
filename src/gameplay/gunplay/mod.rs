@@ -20,7 +20,7 @@ use servo::{
 use servo_components::{
     do_activation_sounds, gunshots_spawn_muzzlefx, gunshots_to_bullet_spawn,
     gunshots_to_muzzle_flare, gunshots_to_muzzle_flash, gunshots_to_recoil, HasGunSmoke,
-    HasMuzzleFlare, HasRecoil, ShootsBullet,
+    HasMuzzleFlare, HasRecoil, ShootsBullets,
 };
 
 use crate::{
@@ -61,7 +61,7 @@ impl Plugin for GunplayPlugin {
             .register_type::<Barrel>()
             .register_type::<DummyGun>()
             .register_type::<FireGun>()
-            .register_type::<ShootsBullet>()
+            // .register_type::<ShootsBullets>()
             .register_type::<HasMuzzleFlare>()
             .register_type::<HasGunSmoke>()
             .register_type::<HasRecoil>()

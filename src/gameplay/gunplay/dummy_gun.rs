@@ -11,12 +11,13 @@ use bevy_composable::{app_impl::ComplexSpawnable, tree::ComponentTree};
 use crate::{
     asset_setup::models::ModelResources,
     gameplay::{
+        content::LinkedModel,
         inventory::{components::Inventory, swapping::ChangeHeldItem},
         levels_setup::IsPlayer,
     },
 };
 
-use super::arms::Arm;
+use super::{arms::Arm, guns::Gun};
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct DummyGun;
@@ -59,23 +60,57 @@ pub fn swap_dummygun_model(
 pub fn swap_held_dummy_model(
     mut model_changes: EventWriter<SwapDummyModel>,
     mut changes: EventReader<ChangeHeldItem>,
-    arms: Query<&Children, With<Arm>>,
+    arms: Query<(&Arm, &Children)>,
+    inventories: Query<&Inventory, Without<Arm>>,
+    real_guns: Query<&LinkedModel, With<Gun>>,
     dummy_guns: Query<Entity, With<DummyGun>>,
     models: Res<ModelResources>,
 ) {
-    for change in changes.read() {
-        if let Ok(children) = arms.get(change.arm) {
-            for child in children {
-                if let Ok(dummy) = dummy_guns.get(*child) {
-                    model_changes.send(SwapDummyModel {
-                        entity: dummy,
-                        gunmesh: models.gun_assets(),
-                        barrel_position: (Vec3::new(-0.01, 0.2, -1.2), Quat::default()),
+    changes.read().for_each(|change| {
+        arms.get(change.arm)
+            .ok()
+            .map(|(arm, children)| {
+                inventories
+                    .get(arm.parent)
+                    .ok()
+                    .map(|inventory| {
+                        change
+                            .slot
+                            .map(|slot| inventory.slots.get(slot).map(|slot| slot.contents))
+                    })
+                    .flatten()
+                    .flatten()
+                    .flatten()
+                    .map(|gun| real_guns.get(gun).ok())
+                    .flatten()
+                    .map(|w| (w, children))
+            })
+            .flatten()
+            .map(|(linked_model, children)| {
+                children.iter().for_each(|child| {
+                    dummy_guns.get(*child).ok().map(|dummy| {
+                        model_changes.send(SwapDummyModel {
+                            entity: dummy,
+                            gunmesh: linked_model.0(&*models),
+                            barrel_position: (Vec3::new(-0.01, 0.2, -1.2), Quat::default()),
+                        })
                     });
-                }
-            }
-        }
-    }
+                })
+            });
+    });
+    // for change in changes.read() {
+    //     if let Ok((arm, children)) = arms.get(change.arm) {
+    //         for child in children {
+    //             if let Ok(dummy) = dummy_guns.get(*child) {
+    //                 model_changes.send(SwapDummyModel {
+    //                     entity: dummy,
+    //                     gunmesh: models.gun_assets(),
+    //                     barrel_position: (Vec3::new(-0.01, 0.2, -1.2), Quat::default()),
+    //                 });
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 pub fn hide_gun_on_empty_hand(

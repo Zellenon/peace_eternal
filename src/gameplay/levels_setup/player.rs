@@ -29,13 +29,13 @@ use bevy_tnua_physics_integration_layer::math::{Float, Vector3};
 
 use super::{IsPlayer, LayerNames};
 use crate::{
-    asset_setup::{models::ModelResources, particles::ParticleTextures},
+    asset_setup::particles::ParticleTextures,
     dev::ui::{
         self, component_alterbation::CommandAlteringSelectors, info::InfoSource,
         plotting::PlotSource,
     },
     gameplay::{
-        content::guns::{autorifle, basic_gun, pistol},
+        content::guns::{pistol_1, rifle_1},
         controls::{
             camera_controls::Facing,
             keyboard_receive::{
@@ -65,12 +65,11 @@ use InventorySlotSize::{Large, Medium, Small};
 pub(crate) fn setup_player(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    models: Res<ModelResources>,
     mut effects: ResMut<Assets<EffectAsset>>,
     particle_graphics: Res<ParticleTextures>,
 ) {
-    let pistol = commands.compose(pistol());
-    let rifle = commands.compose(autorifle());
+    let pistol = commands.compose(pistol_1());
+    let rifle = commands.compose(rifle_1());
 
     let player_tree = name("Player")
         + (

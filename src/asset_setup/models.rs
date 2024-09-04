@@ -112,4 +112,7 @@ impl ModelResources {
     pub fn shell_shotgun(&self) -> ComponentTree {
         make_model(&self.shell_shotgun_names, &self.shell_shotgun_scene)
     }
+    pub fn basic_bullet(&self) -> ComponentTree {
+        make_model(&self.basic_bullet_names, &self.basic_bullet_scene)
+    }
 }

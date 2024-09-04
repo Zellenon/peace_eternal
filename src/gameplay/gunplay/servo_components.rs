@@ -2,10 +2,11 @@ use bevy::{
     prelude::{Children, Component, EventReader, EventWriter, Query, Res, With},
     reflect::Reflect,
 };
+use bevy_composable::tree::ComponentTree;
 use bevy_hanabi::EffectSpawner;
 
 use crate::{
-    asset_setup::{audio::PlaceholderAudio, primitives::PrimitiveResources},
+    asset_setup::audio::PlaceholderAudio,
     gameplay::content::projectiles::basic_bullet,
     graphics::{MuzzleFlashFX, SpawnAudioBlip, SpawnFlash, SpawnMuzzleFlare},
 };
@@ -14,14 +15,17 @@ use super::{
     arms::Recoil, dummy_gun::Barrel, projectiles::FireProjectile, servo::DirectedServoActivated,
 };
 
-#[derive(Component, Reflect, Clone, Debug, PartialEq)]
-pub struct ShootsBullet;
+#[derive(Component, Clone)]
+pub struct ShootsBullets {
+    pub projectile: ComponentTree,
+    pub accuracy: f32,
+}
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct HasMuzzleFlare {
-    main_size: f32,
-    petal_num: usize,
-    petal_coef: f32,
+    pub main_size: f32,
+    pub petal_num: usize,
+    pub petal_coef: f32,
 }
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
@@ -36,18 +40,20 @@ pub struct HasRecoil;
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct HasActivationSound;
 
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
+pub struct MultiActivation(pub usize);
+
 pub fn gunshots_to_bullet_spawn(
     mut shots: EventReader<DirectedServoActivated>,
     mut fire_bullets: EventWriter<FireProjectile>,
-    shooters: Query<&ShootsBullet>,
-    primitives: Res<PrimitiveResources>,
+    shooters: Query<&ShootsBullets>,
 ) {
     shots
         .read()
         .filter_map(|w| shooters.get(w.servo).ok().map(|shooter| (shooter, w)))
         .for_each(
             |(
-                ShootsBullet,
+                ShootsBullets,
                 DirectedServoActivated {
                     servo: _,
                     barrel: _,
@@ -56,7 +62,7 @@ pub fn gunshots_to_bullet_spawn(
                 },
             )| {
                 fire_bullets.send(FireProjectile {
-                    bullet: basic_bullet(&primitives.sphere, &primitives.material),
+                    bullet: basic_bullet(),
                     location: *location,
                     rotation: *rotation,
                 });
