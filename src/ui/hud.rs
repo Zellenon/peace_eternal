@@ -4,7 +4,7 @@ use bevy::{
     reflect::Reflect,
 };
 use bevy_egui::{
-    egui::{self, Color32},
+    egui::{self, Color32, ProgressBar},
     EguiContexts,
 };
 
@@ -91,7 +91,7 @@ pub(crate) fn hud_ui(mut root: EguiContexts) {
         .show(root.ctx_mut(), |ui| {
             ui.horizontal(|ui| {
                 ui.label("Health:");
-                ui.colored_label(egui::Color32::from_rgb(100, 255, 100), "000000XX");
+                ui.add(ProgressBar::new(0.2));
             })
         });
 }
