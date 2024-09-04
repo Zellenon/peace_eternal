@@ -1,13 +1,14 @@
 use bevy::{
-    prelude::{Children, Component, EventReader, EventWriter, Query, Res, With},
+    math::{Quat, Vec3},
+    prelude::{Children, Component, EventReader, EventWriter, Query, Res, ResMut, Transform, With},
     reflect::Reflect,
 };
 use bevy_composable::tree::ComponentTree;
 use bevy_hanabi::EffectSpawner;
+use bevy_turborand::{DelegatedRng, GlobalRng};
 
 use crate::{
     asset_setup::audio::PlaceholderAudio,
-    gameplay::content::projectiles::basic_bullet,
     graphics::{MuzzleFlashFX, SpawnAudioBlip, SpawnFlash, SpawnMuzzleFlare},
 };
 
@@ -19,6 +20,8 @@ use super::{
 pub struct ShootsBullets {
     pub projectile: ComponentTree,
     pub accuracy: f32,
+    pub scale: f32,
+    pub force: f32,
 }
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
@@ -29,13 +32,13 @@ pub struct HasMuzzleFlare {
 }
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
-pub struct HasMuzzleFlash(f32);
+pub struct HasMuzzleFlash(pub f32);
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct HasGunSmoke;
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
-pub struct HasRecoil;
+pub struct HasRecoil(pub f32);
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct HasActivationSound;
@@ -47,13 +50,19 @@ pub fn gunshots_to_bullet_spawn(
     mut shots: EventReader<DirectedServoActivated>,
     mut fire_bullets: EventWriter<FireProjectile>,
     shooters: Query<&ShootsBullets>,
+    mut rng: ResMut<GlobalRng>,
 ) {
     shots
         .read()
         .filter_map(|w| shooters.get(w.servo).ok().map(|shooter| (shooter, w)))
         .for_each(
             |(
-                ShootsBullets,
+                ShootsBullets {
+                    projectile,
+                    accuracy,
+                    scale,
+                    force,
+                },
                 DirectedServoActivated {
                     servo: _,
                     barrel: _,
@@ -61,10 +70,18 @@ pub fn gunshots_to_bullet_spawn(
                     rotation,
                 },
             )| {
+                let mut spray_fn = || rng.f32_normalized() * (1. - accuracy);
                 fire_bullets.send(FireProjectile {
-                    bullet: basic_bullet(),
-                    location: *location,
-                    rotation: *rotation,
+                    bullet: projectile.clone(),
+                    transform: Transform {
+                        translation: *location,
+                        rotation: *rotation
+                            * ((Quat::from_rotation_x(spray_fn())
+                                + Quat::from_rotation_y(spray_fn()))
+                                * 0.5),
+                        scale: Vec3::splat(*scale),
+                    },
+                    force: *force,
                 });
             },
         );
@@ -180,7 +197,7 @@ pub fn gunshots_to_recoil(
         .filter_map(|w| recoilers.get(w.servo).ok().map(|recoil| (recoil, w)))
         .for_each(
             |(
-                HasRecoil,
+                HasRecoil(strength),
                 DirectedServoActivated {
                     servo,
                     barrel,
@@ -190,7 +207,7 @@ pub fn gunshots_to_recoil(
             )| {
                 recoils.send(Recoil {
                     arm: *servo,
-                    strength: 1.,
+                    strength: *strength,
                 });
             },
         );

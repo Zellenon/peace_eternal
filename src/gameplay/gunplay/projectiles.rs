@@ -1,15 +1,17 @@
 use avian3d::prelude::CollisionStarted;
 use bevy::{
     core::Name,
-    math::{Quat, Vec3},
     prelude::{
         Commands, Component, DespawnRecursiveExt, Entity, Event, EventReader, EventWriter, Query,
-        Reflect, With,
+        Reflect, Transform, With,
     },
 };
-use bevy_composable::{app_impl::ComplexSpawnable, tree::ComponentTree};
+use bevy_composable::{
+    app_impl::{ComplexSpawnable, ComponentTreeable},
+    tree::ComponentTree,
+};
 
-use crate::util::{instant_force, with_translation};
+use crate::util::instant_force;
 
 #[derive(Reflect, Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub enum ProjectileImpactBehavior {
@@ -26,8 +28,8 @@ pub struct Projectile {
 #[derive(Event, Clone)]
 pub struct FireProjectile {
     pub bullet: ComponentTree,
-    pub location: Vec3,
-    pub rotation: Quat,
+    pub transform: Transform,
+    pub force: f32,
 }
 
 impl Default for Projectile {
@@ -54,14 +56,12 @@ pub struct Knockback(pub f32);
 pub fn spawn_bullets(mut commands: Commands, mut bullets: EventReader<FireProjectile>) {
     for FireProjectile {
         bullet,
-        location: position,
-        rotation: orientation,
+        transform,
+        force,
     } in bullets.read()
     {
         commands.compose(
-            bullet.clone()
-                + with_translation(*position, *orientation, 0.1)
-                + instant_force(*orientation, 0.08),
+            bullet.clone() + transform.store() + instant_force(transform.rotation, *force),
         );
     }
 }

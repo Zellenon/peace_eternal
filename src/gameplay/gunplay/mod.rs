@@ -19,8 +19,8 @@ use servo::{
 };
 use servo_components::{
     do_activation_sounds, gunshots_spawn_muzzlefx, gunshots_to_bullet_spawn,
-    gunshots_to_muzzle_flare, gunshots_to_muzzle_flash, gunshots_to_recoil, HasGunSmoke,
-    HasMuzzleFlare, HasRecoil, ShootsBullets,
+    gunshots_to_muzzle_flare, gunshots_to_muzzle_flash, gunshots_to_recoil, HasActivationSound,
+    HasGunSmoke, HasMuzzleFlare, HasMuzzleFlash, HasRecoil, MultiActivation, ShootsBullets,
 };
 
 use crate::{
@@ -63,7 +63,11 @@ impl Plugin for GunplayPlugin {
             .register_type::<FireGun>()
             // .register_type::<ShootsBullets>()
             .register_type::<HasMuzzleFlare>()
+            .register_type::<HasMuzzleFlash>()
             .register_type::<HasGunSmoke>()
+            .register_type::<HasRecoil>()
+            .register_type::<HasActivationSound>()
+            .register_type::<MultiActivation>()
             .register_type::<HasRecoil>()
             .register_type::<Knockback>();
 
@@ -114,7 +118,11 @@ impl Plugin for GunplayPlugin {
 
         app.add_systems(
             Update,
-            (catch_projectile_collisions, kill_projectiles_on_hit).chain(),
+            (
+                catch_projectile_collisions,
+                // kill_projectiles_on_hit
+            )
+                .chain(),
         );
     }
 }

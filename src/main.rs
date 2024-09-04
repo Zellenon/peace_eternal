@@ -14,6 +14,7 @@ use bevy::{
 use bevy_atmosphere::plugin::AtmospherePlugin;
 use bevy_tnua::{control_helpers::TnuaCrouchEnforcerPlugin, prelude::*};
 use bevy_tnua_avian3d::*;
+use bevy_turborand::prelude::RngPlugin;
 use dev::ui::DemoInfoUpdateSystemSet;
 use dev::DevModePlugin;
 use gameplay::{
@@ -80,7 +81,7 @@ fn main() {
         Update,
         character_control_info_dumping_system.in_set(DemoInfoUpdateSystemSet),
     );
-    app.add_plugins(AtmospherePlugin);
+    app.add_plugins((AtmospherePlugin, RngPlugin::default()));
     app.add_plugins({
         LevelSwitchingPlugin::new(app_setup_configuration.level_to_load.as_ref())
             .with("Default", levels_setup::setup_level)
