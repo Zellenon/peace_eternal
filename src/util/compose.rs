@@ -5,7 +5,7 @@ use bevy::{
 };
 use bevy_composable::{app_impl::ComponentTreeable, tree::ComponentTree};
 
-pub fn with_translation(loc: Vec3, rot: Quat, scale: f32) -> ComponentTree {
+pub fn with_transform(loc: Vec3, rot: Quat, scale: f32) -> ComponentTree {
     (Transform {
         translation: loc,
         rotation: rot,
@@ -15,5 +15,5 @@ pub fn with_translation(loc: Vec3, rot: Quat, scale: f32) -> ComponentTree {
 }
 
 pub fn instant_force(direction: Quat, force: f32) -> ComponentTree {
-    (ExternalImpulse::new(direction * Vec3::NEG_Z * force)).store()
+    (ExternalImpulse::new(direction * Vec3::NEG_Z * force * 0.01)).store()
 }
