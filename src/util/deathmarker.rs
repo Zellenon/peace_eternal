@@ -28,7 +28,7 @@ impl Lifespan {
 
 impl Default for Lifespan {
     fn default() -> Self {
-        Self::new(400)
+        Self::new(800)
     }
 }
 
