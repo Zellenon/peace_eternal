@@ -17,7 +17,7 @@ pub use animating::{
 };
 pub use camera_shake::{Shake, TraumaEvent};
 #[allow(unused_imports)]
-pub use compose::{instant_force, with_translation};
+pub use compose::{instant_force, with_transform};
 pub use deathmarker::{Deathmarker, DelayedDeathmarker, DestructionSet, Lifespan};
 pub use smoothing::SmoothedTransform;
 
