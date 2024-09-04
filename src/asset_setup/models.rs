@@ -62,6 +62,10 @@ pub struct ModelResources {
     pub shotgun_pump_names: Handle<Gltf>,
     #[asset(path = "models/shotgun_pump.glb#Scene0")]
     pub shotgun_pump_scene: Handle<Scene>,
+    #[asset(path = "models/grenade_launcher_1.glb")]
+    pub grenade_launcher_1_names: Handle<Gltf>,
+    #[asset(path = "models/grenade_launcher_1.glb#Scene0")]
+    pub grenade_launcher_1_scene: Handle<Scene>,
 }
 
 impl ModelResources {
@@ -112,6 +116,14 @@ impl ModelResources {
     pub fn shell_shotgun(&self) -> ComponentTree {
         make_model(&self.shell_shotgun_names, &self.shell_shotgun_scene)
     }
+
+    pub fn grenade_launcher_1(&self) -> ComponentTree {
+        make_model(
+            &self.grenade_launcher_1_names,
+            &self.grenade_launcher_1_scene,
+        )
+    }
+
     pub fn basic_bullet(&self) -> ComponentTree {
         make_model(&self.basic_bullet_names, &self.basic_bullet_scene)
     }
