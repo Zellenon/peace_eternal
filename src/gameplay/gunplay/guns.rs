@@ -5,9 +5,16 @@ use bevy::{
     reflect::Reflect,
 };
 
-use crate::gameplay::inventory::{components::Inventory, swapping::HoldingInventoryItem};
+use crate::gameplay::inventory::{
+    components::Inventory,
+    swapping::{HeldBy, HoldingInventoryItem},
+};
 
-use super::{arms::Arm, dummy_gun::DummyGun, servo::DirectedServoActivated};
+use super::{
+    arms::{Arm, Recoil},
+    dummy_gun::DummyGun,
+    servo::DirectedServoActivated,
+};
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Gun;
@@ -21,6 +28,9 @@ pub struct FireGun {
 
 #[derive(Event, Debug, Reflect)]
 pub struct DummyMirror(pub DirectedServoActivated, pub Entity);
+
+#[derive(Event, Debug, Reflect)]
+pub struct RecoilMirror(pub Recoil);
 
 pub fn dummy_activations_to_inventory_guns(
     mut events: EventReader<DirectedServoActivated>,
@@ -64,80 +74,23 @@ pub fn unmirror_gun_activations(
     }
 }
 
-// pub fn propagate_to_guns(
-//     mut activations: EventReader<ServoActivated>,
-//     mut directed_activations: EventWriter<DirectedServoActivated>,
-//     servos: Query<&Children, With<Servo>>,
-//     barrels: Query<(Entity, &GlobalTransform), With<Barrel>>,
-// ) {
-//     for ServoActivated(entity) in activations.read() {
-//         if let Ok(children) = servos.get(*entity) {
-//             let (barrel, position) = children
-//                 .iter()
-//                 .filter_map(|w| barrels.get(*w).ok())
-//                 .next()
-//                 .unwrap();
-//             let (_, rot, loc) = position.to_scale_rotation_translation();
+pub fn gun_recoil_to_arm(
+    mut reader: EventReader<Recoil>,
+    mut writer: EventWriter<RecoilMirror>,
+    guns: Query<&HeldBy>,
+) {
+    for recoil in reader.read() {
+        if let Ok(gun) = guns.get(recoil.arm) {
+            writer.send(RecoilMirror(Recoil {
+                arm: gun.0,
+                strength: recoil.strength,
+            }));
+        }
+    }
+}
 
-//             directed_activations.send(DirectedServoActivated {
-//                 servo: *entity,
-//                 barrel,
-//                 location: loc,
-//                 rotation: rot,
-//             });
-//         }
-//     }
-// }
-
-// pub fn fire_guns(
-//     mut servo_activations: EventReader<DirectedServoActivated>,
-//     mut recoils: EventWriter<Recoil>,
-//     mut audio_send: EventWriter<SpawnAudioBlip>,
-//     mut flash_send: EventWriter<SpawnFlash>,
-//     mut flare_send: EventWriter<SpawnMuzzleFlare>,
-//     mut gunshots: EventWriter<FireGun>,
-//     guns: Query<(&Children, &Parent), (With<Gun>, Without<Barrel>)>,
-//     mut muzzle_flash_particles: Query<&mut EffectSpawner, With<MuzzleFlashFX>>,
-//     barrels: Query<(&GlobalTransform, &Children), Without<Gun>>,
-//     placeholder_audio: Res<PlaceholderAudio>,
-// ) {
-//     for ServoActivated(entity) in servo_activations.read() {
-//         if let Ok((children, parent)) = guns.get(*entity) {
-//             let (barrel, barrel_fx) = barrels.get(*children.iter().next().unwrap()).unwrap();
-//             let (_, rot, loc) = barrel.to_scale_rotation_translation();
-
-//             audio_send.send(SpawnAudioBlip {
-//                 handle: placeholder_audio.rifle1.clone(),
-//                 location: loc,
-//                 volume: 1.0,
-//                 stick_to: Some(parent.get()),
-//             });
-
-//             flash_send.send(SpawnFlash {
-//                 location: loc,
-//                 size: 0.3,
-//             });
-
-//             flare_send.send(SpawnMuzzleFlare {
-//                 location: loc,
-//                 size: 0.5,
-//                 direction: rot,
-//             });
-
-//             recoils.send(Recoil {
-//                 arm: parent.get(),
-//                 strength: 1.,
-//             });
-
-//             barrel_fx.iter().for_each(|w| {
-//                 let _ = muzzle_flash_particles.get_mut(*w).map(|mut w2| w2.reset());
-//             });
-
-//             gunshots.send(FireGun {
-//                 entity: *entity,
-//                 position: loc,
-//                 orientation: rot,
-//             });
-//         }
-//     }
-// }
+pub fn gun_recoil_to_arm2(mut reader: EventReader<RecoilMirror>, mut writer: EventWriter<Recoil>) {
+    for RecoilMirror(recoil) in reader.read() {
+        writer.send(recoil.clone());
+    }
+}

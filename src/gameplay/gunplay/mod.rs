@@ -8,10 +8,13 @@ use dummy_gun::{
     hide_gun_on_empty_hand, swap_dummygun_model, swap_held_dummy_model, Barrel, DummyGun,
     SwapDummyModel,
 };
-use guns::{dummy_activations_to_inventory_guns, unmirror_gun_activations, DummyMirror, FireGun};
+use guns::{
+    dummy_activations_to_inventory_guns, gun_recoil_to_arm, gun_recoil_to_arm2,
+    unmirror_gun_activations, DummyMirror, FireGun, RecoilMirror,
+};
 use projectiles::{
-    catch_projectile_collisions, kill_projectiles_on_hit, spawn_bullets, FireProjectile, Knockback,
-    Projectile, ProjectileClash, ProjectileCollision,
+    catch_projectile_collisions, spawn_bullets, FireProjectile, Knockback, Projectile,
+    ProjectileClash, ProjectileCollision,
 };
 use servo::{
     do_directed_servos, do_should_activate, player_servos_on_click, receive_servo_arming_events,
@@ -20,7 +23,7 @@ use servo::{
 use servo_components::{
     do_activation_sounds, gunshots_spawn_muzzlefx, gunshots_to_bullet_spawn,
     gunshots_to_muzzle_flare, gunshots_to_muzzle_flash, gunshots_to_recoil, HasActivationSound,
-    HasGunSmoke, HasMuzzleFlare, HasMuzzleFlash, HasRecoil, MultiActivation, ShootsBullets,
+    HasGunSmoke, HasMuzzleFlare, HasMuzzleFlash, HasRecoil, MultiActivation,
 };
 
 use crate::{
@@ -51,6 +54,7 @@ impl Plugin for GunplayPlugin {
             .add_event::<ProjectileCollision>()
             .add_event::<SwapDummyModel>()
             .add_event::<DummyMirror>()
+            .add_event::<RecoilMirror>()
             .add_event::<ProjectileClash>();
         app.insert_resource(PrimitiveResources::default());
 
@@ -88,17 +92,22 @@ impl Plugin for GunplayPlugin {
 
         app.add_systems(
             Update,
-            player_servos_on_click.before(receive_servo_arming_events),
-        )
-        .add_systems(
-            Update,
-            (tick_cooldowns, receive_servo_arming_events).before(do_should_activate),
+            (
+                player_servos_on_click,
+                (tick_cooldowns, receive_servo_arming_events),
+                do_should_activate.before(do_directed_servos),
+            )
+                .chain(),
         )
         .add_systems(
             Update,
             (
-                (do_arm_recoil, do_shake_recoil),
-                do_should_activate,
+                (
+                    gun_recoil_to_arm,
+                    gun_recoil_to_arm2,
+                    (do_arm_recoil, do_shake_recoil),
+                )
+                    .chain(),
                 do_directed_servos,
                 dummy_activations_to_inventory_guns,
                 unmirror_gun_activations,
