@@ -23,6 +23,7 @@ pub(super) fn out_of_bounds_killer(mut commands: Commands, entities: Query<(Enti
         .iter()
         .any(|w| w > &1000.)
         {
+            println!("Had to despawn out-of-bounds entity");
             commands.get_entity(entity).map(|w| w.despawn_recursive());
         }
     }
