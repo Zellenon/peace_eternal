@@ -17,7 +17,7 @@ impl TraumaEvent {
 #[derive(Component, Reflect, Default, Clone, Debug)]
 pub struct Shake {
     trauma: f32,
-    reference_translation: Option<Vec3>,
+    reference_rotation: Option<Quat>,
 }
 
 impl Shake {
@@ -107,7 +107,7 @@ pub fn shake(
             return;
         }
 
-        shake.reference_translation = Some(transform.translation);
+        shake.reference_rotation = Some(transform.rotation);
 
         let lacunarity = 2.;
         let gain = 0.5;
@@ -119,17 +119,20 @@ pub fn shake(
                 fbm_simplex_2d(noise_pos + vec2(0., 2.), settings.octaves, lacunarity, gain),
             );
 
-        transform.translation.x += offset.x;
-        transform.translation.y += offset.y;
+        transform.rotation = transform.rotation
+            * Quat::from_rotation_x(offset.y * 0.5)
+            * Quat::from_rotation_y(offset.x * 0.5);
+        // transform.translation.x += offset.x;
+        // transform.translation.y += offset.y;
     }
 }
 
 pub(crate) fn restore(mut shakes: Query<(&mut Shake, &mut Transform)>) {
     for (mut shake, mut transform) in &mut shakes {
         // avoid change detection
-        if shake.reference_translation.is_some() {
-            let translation = shake.reference_translation.take().unwrap();
-            transform.translation = translation;
+        if shake.reference_rotation.is_some() {
+            let rotation = shake.reference_rotation.take().unwrap();
+            transform.rotation = rotation;
         }
     }
 }

@@ -8,7 +8,7 @@ use bevy::{
 use camera_shake::{apply_trauma_events, restore, shake, ShakeSettings};
 use deathmarker::{
     delayed_death_markers, despawn_destroyed_entities, destroy_death_markers, end_lifespan,
-    tick_lifespans, Destroy,
+    kill_small_enough, shrink_death, tick_lifespans, Destroy,
 };
 use smoothing::smooth_movement;
 
@@ -18,7 +18,7 @@ pub use animating::{
 pub use camera_shake::{Shake, TraumaEvent};
 #[allow(unused_imports)]
 pub use compose::{instant_force, with_transform};
-pub use deathmarker::{Deathmarker, DelayedDeathmarker, DestructionSet, Lifespan};
+pub use deathmarker::{Deathmarker, DelayedDeathmarker, DestructionSet, Lifespan, ShrinkDeath};
 pub use smoothing::SmoothedTransform;
 
 mod animating;
@@ -66,6 +66,7 @@ impl Plugin for UtilPlugin {
             (tick_lifespans, end_lifespan)
                 .chain()
                 .in_set(DestructionSet),
-        );
+        )
+        .add_systems(Update, (shrink_death, kill_small_enough));
     }
 }

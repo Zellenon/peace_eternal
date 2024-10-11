@@ -139,6 +139,8 @@ pub fn gunshots_to_muzzle_flare(
                     location: *location,
                     size: *main_size,
                     direction: *rotation,
+                    petals: *petal_num,
+                    petal_coef: *petal_coef,
                 });
             },
         );

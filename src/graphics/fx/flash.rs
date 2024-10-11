@@ -4,7 +4,7 @@ use bevy::{
     reflect::Reflect,
 };
 
-use crate::{asset_setup::primitives::PrimitiveResources, util::DelayedDeathmarker};
+use crate::{asset_setup::primitives::PrimitiveResources, util::ShrinkDeath};
 
 #[derive(Event, Reflect, Clone, Debug, PartialEq)]
 pub struct SpawnFlash {
@@ -26,7 +26,7 @@ pub(super) fn spawn_flash(
                 transform: Transform::from_translation(*location).with_scale(Vec3::splat(*size)),
                 ..Default::default()
             },
-            DelayedDeathmarker,
+            ShrinkDeath(4.),
         ));
     }
 }

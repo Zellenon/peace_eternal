@@ -1,7 +1,8 @@
+use avian3d::parry::{na::ComplexField, transformation::utils::transform};
 use bevy::{
     prelude::{
         Commands, Component, DespawnRecursiveExt, Entity, Event, EventReader, EventWriter, Query,
-        Res, SystemSet, With,
+        Res, SystemSet, Transform, With,
     },
     reflect::Reflect,
     time::{Time, Timer, TimerMode},
@@ -19,6 +20,9 @@ pub struct Destroy(Entity);
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Lifespan(pub Timer);
+
+#[derive(Component, Reflect, Clone, Debug, PartialEq)]
+pub struct ShrinkDeath(pub f32);
 
 impl Lifespan {
     pub fn new(duration: u64) -> Self {
@@ -72,6 +76,34 @@ pub(super) fn end_lifespan(
     for (e, Lifespan(timer)) in lifespans.iter() {
         if timer.finished() {
             events.send(Destroy(e));
+        }
+    }
+}
+
+pub(super) fn shrink_death(mut shrinkers: Query<(&ShrinkDeath, &mut Transform)>, time: Res<Time>) {
+    for (shrink, mut transform) in shrinkers.iter_mut() {
+        let modified_speed = (100. - shrink.0) / 100.;
+        transform.scale *= (modified_speed).powf(1000. * time.delta_seconds());
+    }
+}
+
+pub(super) fn kill_small_enough(
+    shrinkers: Query<(Entity, &Transform), With<ShrinkDeath>>,
+    mut commands: Commands,
+) {
+    for (
+        entity,
+        Transform {
+            translation,
+            rotation,
+            scale,
+        },
+    ) in shrinkers.iter()
+    {
+        if scale.length() < 0.05 {
+            if let Some(mut commands) = commands.get_entity(entity) {
+                commands.insert(Deathmarker);
+            }
         }
     }
 }

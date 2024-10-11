@@ -49,17 +49,17 @@ pub fn pistol_1() -> ComponentTree {
             ShootsBullets {
                 projectile: basic_bullet(),
                 accuracy: 0.97,
-                scale: 0.5,
-                force: 0.5,
+                scale: 0.7,
+                force: 2.5,
             },
             HasMuzzleFlare {
                 main_size: 1.,
-                petal_num: 4,
+                petal_num: 3,
                 petal_coef: 0.1,
             },
-            HasMuzzleFlash(1.),
+            HasMuzzleFlash(0.4),
             HasGunSmoke,
-            HasRecoil(5.),
+            HasRecoil(2.),
             HasActivationSound,
         )
             .store()
