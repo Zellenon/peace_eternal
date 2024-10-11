@@ -74,54 +74,58 @@ pub struct PlaceholderAudio {
 }
 
 impl PlaceholderAudio {
-    pub fn death(&self) -> [Handle<AudioSource>; 2] {
-        [self.death1.clone(), self.death2.clone()]
+    pub fn death(&self) -> Vec<Handle<AudioSource>> {
+        [self.death1.clone(), self.death2.clone()].to_vec()
     }
 
-    pub fn footsteps(&self) -> [Handle<AudioSource>; 4] {
+    pub fn footsteps(&self) -> Vec<Handle<AudioSource>> {
         [
             self.footstep1.clone(),
             self.footstep2.clone(),
             self.footstep3.clone(),
             self.footstep4.clone(),
         ]
+        .to_vec()
     }
 
-    pub fn powerups(&self) -> [Handle<AudioSource>; 4] {
+    pub fn powerups(&self) -> Vec<Handle<AudioSource>> {
         [
             self.powerup1.clone(),
             self.powerup2.clone(),
             self.powerup3.clone(),
             self.powerup4.clone(),
         ]
+        .to_vec()
     }
 
-    pub fn punches(&self) -> [Handle<AudioSource>; 2] {
-        [self.punch1.clone(), self.punch2.clone()]
+    pub fn punches(&self) -> Vec<Handle<AudioSource>> {
+        [self.punch1.clone(), self.punch2.clone()].to_vec()
     }
 
-    pub fn splashes(&self) -> [Handle<AudioSource>; 3] {
+    pub fn splashes(&self) -> Vec<Handle<AudioSource>> {
         [
             self.splash1.clone(),
             self.splash2.clone(),
             self.splash3.clone(),
         ]
+        .to_vec()
     }
 
-    pub fn pain(&self) -> [Handle<AudioSource>; 3] {
-        [self.pain1.clone(), self.pain2.clone(), self.pain3.clone()]
+    pub fn pain(&self) -> Vec<Handle<AudioSource>> {
+        [self.pain1.clone(), self.pain2.clone(), self.pain3.clone()].to_vec()
     }
 
-    pub fn jumps(&self) -> [Handle<AudioSource>; 4] {
+    pub fn jumps(&self) -> Vec<Handle<AudioSource>> {
         [
             self.jump1.clone(),
             self.jump2.clone(),
             self.jump3.clone(),
             self.jump4.clone(),
         ]
+        .to_vec()
     }
 
-    pub fn rifles(&self) -> [Handle<AudioSource>; 2] {
-        [self.rifle1.clone(), self.rifle2.clone()]
+    pub fn rifles(&self) -> Vec<Handle<AudioSource>> {
+        [self.rifle1.clone(), self.rifle2.clone()].to_vec()
     }
 }
