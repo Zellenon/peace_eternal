@@ -29,13 +29,13 @@ use bevy_tnua_physics_integration_layer::math::{Float, Vector3};
 
 use super::{IsPlayer, LayerNames};
 use crate::{
-    asset_setup::particles::ParticleTextures,
+    asset_setup::{particles::ParticleTextures, primitives::PrimitiveResources},
     dev::ui::{
         self, component_alterbation::CommandAlteringSelectors, info::InfoSource,
         plotting::PlotSource,
     },
     gameplay::{
-        content::guns::{pistol_1, rifle_1},
+        content::guns::{pistol_1, pistol_2, rifle_1},
         controls::{
             camera_controls::Facing,
             keyboard_receive::{
@@ -67,9 +67,11 @@ pub(crate) fn setup_player(
     asset_server: Res<AssetServer>,
     mut effects: ResMut<Assets<EffectAsset>>,
     particle_graphics: Res<ParticleTextures>,
+    primitives: Res<PrimitiveResources>,
 ) {
-    let pistol = commands.compose(pistol_1());
-    let rifle = commands.compose(rifle_1());
+    let pistol = commands.compose(pistol_1().tree());
+    let pistol2 = commands.compose(pistol_2().tree());
+    let rifle = commands.compose(rifle_1().tree());
 
     let player_tree = name("Player")
         + (
@@ -85,14 +87,17 @@ pub(crate) fn setup_player(
             Collider::capsule(0.5, 1.0),
             Inventory {
                 slots: vec![
-                    InventorySlot::new([Large, Medium]),
+                    InventorySlot {
+                        settings: InventorySlotSettings::new([Large, Medium]),
+                        contents: Some(pistol),
+                    },
                     InventorySlot {
                         settings: InventorySlotSettings::new([Medium, Small]),
                         contents: Some(rifle),
                     },
                     InventorySlot {
                         settings: InventorySlotSettings::new([Small]),
-                        contents: Some(pistol),
+                        contents: Some(pistol2),
                     },
                 ],
             },
@@ -266,6 +271,15 @@ pub(crate) fn setup_player(
                 )
                     .store()
                 << ((MuzzleFlashFX).store() + basic_sparks(&mut effects))
-                << ((MuzzleFlashFX).store() + smoke_puff(&mut effects, &particle_graphics.smoke))));
+                << ((MuzzleFlashFX).store() + smoke_puff(&mut effects, &particle_graphics.smoke))
+                << (
+                    primitives.material.clone(),
+                    primitives.sphere.clone(),
+                    SpatialBundle {
+                        transform: Transform::from_scale(Vec3::new(0.1, 0.1, 0.1)),
+                        ..Default::default()
+                    },
+                )
+                    .store()));
     commands.compose(arm);
 }
