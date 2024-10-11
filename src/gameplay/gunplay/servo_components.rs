@@ -1,4 +1,8 @@
+use bevy::prelude::Handle;
+use std::sync::Arc;
+
 use bevy::{
+    audio::AudioSource,
     math::{Quat, Vec3},
     prelude::{Children, Component, EventReader, EventWriter, Query, Res, ResMut, Transform, With},
     reflect::Reflect,
@@ -24,11 +28,32 @@ pub struct ShootsBullets {
     pub force: f32,
 }
 
+impl ShootsBullets {
+    pub const fn new(projectile: ComponentTree, accuracy: f32, scale: f32, force: f32) -> Self {
+        Self {
+            projectile,
+            accuracy,
+            scale,
+            force,
+        }
+    }
+}
+
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct HasMuzzleFlare {
     pub main_size: f32,
     pub petal_num: usize,
     pub petal_coef: f32,
+}
+
+impl HasMuzzleFlare {
+    pub const fn new(main_size: f32, petal_num: usize, petal_coef: f32) -> Self {
+        Self {
+            main_size,
+            petal_num,
+            petal_coef,
+        }
+    }
 }
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
@@ -40,8 +65,18 @@ pub struct HasGunSmoke;
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct HasRecoil(pub f32);
 
-#[derive(Component, Reflect, Clone, Debug, PartialEq)]
-pub struct HasActivationSound;
+#[derive(Component, Clone)]
+pub struct HasActivationSound(
+    pub Arc<dyn Sync + Send + Fn(&PlaceholderAudio) -> Vec<Handle<AudioSource>>>,
+);
+
+impl HasActivationSound {
+    pub fn new<T: 'static + Sync + Send + Fn(&PlaceholderAudio) -> Vec<Handle<AudioSource>>>(
+        f: T,
+    ) -> Self {
+        Self(Arc::new(f))
+    }
+}
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct MultiActivation(pub usize);
@@ -165,13 +200,14 @@ pub fn do_activation_sounds(
     mut blip_spawns: EventWriter<SpawnAudioBlip>,
     blippers: Query<&HasActivationSound>,
     placeholder_audio: Res<PlaceholderAudio>,
+    mut rng: ResMut<GlobalRng>,
 ) {
     shots
         .read()
         .filter_map(|w| blippers.get(w.servo).ok().map(|blip| (blip, w)))
         .for_each(
             |(
-                HasActivationSound,
+                HasActivationSound(sound),
                 DirectedServoActivated {
                     servo: _,
                     barrel,
@@ -180,7 +216,7 @@ pub fn do_activation_sounds(
                 },
             )| {
                 blip_spawns.send(SpawnAudioBlip {
-                    handle: placeholder_audio.rifle1.clone(),
+                    handle: rng.sample(&sound(&*placeholder_audio)).unwrap().clone(),
                     location: *location,
                     volume: 1.0,
                     stick_to: Some(*barrel),
