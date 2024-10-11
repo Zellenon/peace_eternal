@@ -48,7 +48,7 @@ fn muzzle_flare(
         GltfSceneHandler {
             names_from: models.flare_names.clone(),
         },
-        // ShrinkDeath(0.1),
+        ShrinkDeath(2.),
     ))
         .store()
 }
