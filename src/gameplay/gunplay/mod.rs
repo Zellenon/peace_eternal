@@ -70,7 +70,6 @@ impl Plugin for GunplayPlugin {
             .register_type::<HasMuzzleFlash>()
             .register_type::<HasGunSmoke>()
             .register_type::<HasRecoil>()
-            .register_type::<HasActivationSound>()
             .register_type::<MultiActivation>()
             .register_type::<HasRecoil>()
             .register_type::<Knockback>();
