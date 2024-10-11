@@ -16,8 +16,12 @@ use super::{
     servo::DirectedServoActivated,
 };
 
+pub type BarrelPos = (Vec3, Quat);
+
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
-pub struct Gun;
+pub struct Gun {
+    pub barrel_pos: BarrelPos,
+}
 
 #[derive(Event, Reflect, Clone, Debug, PartialEq)]
 pub struct FireGun {

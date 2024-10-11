@@ -62,7 +62,7 @@ pub fn swap_held_dummy_model(
     mut changes: EventReader<ChangeHeldItem>,
     arms: Query<(&Arm, &Children)>,
     inventories: Query<&Inventory, Without<Arm>>,
-    real_guns: Query<&LinkedModel, With<Gun>>,
+    real_guns: Query<(&LinkedModel, &Gun)>,
     dummy_guns: Query<Entity, With<DummyGun>>,
     models: Res<ModelResources>,
 ) {
@@ -86,31 +86,18 @@ pub fn swap_held_dummy_model(
                     .map(|w| (w, children))
             })
             .flatten()
-            .map(|(linked_model, children)| {
+            .map(|((linked_model, barrel_position), children)| {
                 children.iter().for_each(|child| {
                     dummy_guns.get(*child).ok().map(|dummy| {
                         model_changes.send(SwapDummyModel {
                             entity: dummy,
                             gunmesh: linked_model.0(&*models),
-                            barrel_position: (Vec3::new(-0.01, 0.2, -1.2), Quat::default()),
+                            barrel_position: barrel_position.barrel_pos,
                         })
                     });
                 })
             });
     });
-    // for change in changes.read() {
-    //     if let Ok((arm, children)) = arms.get(change.arm) {
-    //         for child in children {
-    //             if let Ok(dummy) = dummy_guns.get(*child) {
-    //                 model_changes.send(SwapDummyModel {
-    //                     entity: dummy,
-    //                     gunmesh: models.gun_assets(),
-    //                     barrel_position: (Vec3::new(-0.01, 0.2, -1.2), Quat::default()),
-    //                 });
-    //             }
-    //         }
-    //     }
-    // }
 }
 
 pub fn hide_gun_on_empty_hand(
