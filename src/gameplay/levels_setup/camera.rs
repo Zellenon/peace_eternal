@@ -2,6 +2,8 @@ use bevy::{
     core::Name,
     core_pipeline::{bloom::BloomSettings, core_3d::Camera3dBundle, tonemapping::Tonemapping},
     ecs::system::Commands,
+    math::{Quat, Vec3},
+    prelude::Transform,
 };
 use bevy_atmosphere::plugin::AtmosphereCamera;
 use bevy_composable::{
@@ -11,7 +13,7 @@ use bevy_composable::{
 
 use crate::{
     gameplay::controls::camera_controls::{FPSCamera, TPSCamera},
-    util::{Shake, SmoothedTransform},
+    util::{Shake, Smoothed},
 };
 
 fn basic_camera() -> ComponentTree {
@@ -37,14 +39,12 @@ pub fn setup_cameras(mut commands: Commands) {
             },
             Name::new("FPSCamera"),
             FPSCamera,
-            SmoothedTransform {
-                smoothing: 25.,
-                do_translate: true,
-                do_rotate: true,
-                rotation_mul: 2.,
-                ..Default::default()
-            },
         )
+            .store()
+            + Smoothed::<Transform, Vec3, "translation"> {
+                speed: 20.,
+                ..Default::default()
+            }
             .store()
             + basic_camera(),
     );
@@ -61,10 +61,12 @@ pub fn setup_cameras(mut commands: Commands) {
             },
             Name::new("TPSCamera"),
             TPSCamera,
-            SmoothedTransform {
-                smoothing: 7.,
-                do_translate: true,
-                do_rotate: true,
+            Smoothed::<Transform, Vec3, "translation"> {
+                speed: 10.,
+                ..Default::default()
+            },
+            Smoothed::<Transform, Quat, "rotation"> {
+                speed: 18.,
                 ..Default::default()
             },
         )

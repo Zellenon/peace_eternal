@@ -7,7 +7,7 @@ use bevy::{
     audio::SpatialListener,
     core::Name,
     ecs::system::{Commands, Res},
-    math::Vec3,
+    math::{Quat, Vec3},
     prelude::{ResMut, SpatialBundle, Transform},
     scene::SceneBundle,
 };
@@ -58,7 +58,7 @@ use crate::{
         Servo,
     },
     graphics::{basic_sparks, smoke_puff, AnimationState, MuzzleFlashFX},
-    util::{GltfSceneHandler, SmoothedTransform},
+    util::{GltfSceneHandler, Smoothed},
 };
 
 use InventorySlotSize::{Large, Medium, Small};
@@ -246,11 +246,12 @@ pub(crate) fn setup_player(
         Name::new("PlayerArm"),
         Arm::new(&id),
         SpatialBundle::default(),
-        SmoothedTransform {
-            smoothing: 20.,
-            do_rotate: true,
-            do_translate: true,
-            rotation_mul: 0.6,
+        Smoothed::<Transform, Vec3, "translation"> {
+            speed: 20.,
+            ..Default::default()
+        },
+        Smoothed::<Transform, Quat, "rotation"> {
+            speed: 12.,
             ..Default::default()
         },
         HoldingInventoryItem::default(),

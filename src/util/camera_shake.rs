@@ -127,7 +127,7 @@ pub fn shake(
     }
 }
 
-pub(crate) fn restore(mut shakes: Query<(&mut Shake, &mut Transform)>) {
+pub(crate) fn restore_from_shake(mut shakes: Query<(&mut Shake, &mut Transform)>) {
     for (mut shake, mut transform) in &mut shakes {
         // avoid change detection
         if shake.reference_rotation.is_some() {

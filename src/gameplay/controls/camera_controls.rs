@@ -5,7 +5,7 @@ use bevy::{
         system::{Query, Res, ResMut},
     },
     math::{Quat, Vec2, Vec3},
-    prelude::{Reflect, Resource, Visibility},
+    prelude::{Reflect, Resource, Transform, Visibility},
     render::camera::Camera,
     transform::components::GlobalTransform,
     window::{PrimaryWindow, Window},
@@ -14,7 +14,7 @@ use bevy_tnua::math::{float_consts, AdjustPrecision, AsF32, Quaternion};
 use bevy_tnua_physics_integration_layer::math::{Float, Vector3};
 use leafwing_input_manager::action_state::ActionState;
 
-use crate::{levels_setup::IsPlayer, options::controls::ControlOptions, util::SmoothedTransform};
+use crate::{levels_setup::IsPlayer, options::controls::ControlOptions};
 
 use super::keyboard_receive::CameraAction;
 
@@ -106,14 +106,14 @@ pub fn apply_scroll_zoom(
 
 pub(crate) fn update_fps_camera(
     player_character_query: Query<(&GlobalTransform, &Facing), With<IsPlayer>>,
-    mut camera_query: Query<&mut SmoothedTransform, With<FPSCamera>>,
+    mut camera_query: Query<&mut Transform, With<FPSCamera>>,
 ) {
     if let Ok((player_transform, facing)) = player_character_query.get_single() {
         for mut camera in camera_query.iter_mut() {
-            camera.goal.translation = player_transform.translation() + 0.7 * Vec3::Y;
-            camera.goal.look_to(facing.forward.f32(), Vec3::Y);
-            let pitch_axis = camera.goal.left();
-            camera.goal.rotate_around(
+            camera.translation = player_transform.translation() + 0.7 * Vec3::Y;
+            camera.look_to(facing.forward.f32(), Vec3::Y);
+            let pitch_axis = camera.left();
+            camera.rotate_around(
                 player_transform.translation() + -0.5 * Vec3::Y,
                 Quat::from_axis_angle(*pitch_axis, facing.pitch_angle.f32()),
             );
@@ -124,7 +124,7 @@ pub(crate) fn update_fps_camera(
 pub(crate) fn update_tps_camera(
     player_character_query: Query<(&GlobalTransform, &Facing), With<IsPlayer>>,
     camera_data: Res<CameraData>,
-    mut camera_query: Query<&mut SmoothedTransform, With<TPSCamera>>,
+    mut camera_query: Query<&mut Transform, With<TPSCamera>>,
 ) {
     if let Ok((player_transform, facing)) = player_character_query.get_single() {
         if camera_data.is_first_person() {
@@ -134,13 +134,13 @@ pub(crate) fn update_tps_camera(
                 let shoulder_shift = camera_data.shoulder_shift
                     * camera_data.distance
                     * facing.forward.cross(Vec3::Y).f32();
-                camera.goal.translation = player_transform.translation()
+                camera.translation = player_transform.translation()
                     + distance_from_player
                     + shoulder_shift
                     + 0.7 * Vec3::Y;
-                camera.goal.look_to(facing.forward.f32(), Vec3::Y);
-                let pitch_axis = camera.goal.left();
-                camera.goal.rotate_around(
+                camera.look_to(facing.forward.f32(), Vec3::Y);
+                let pitch_axis = camera.left();
+                camera.rotate_around(
                     player_transform.translation() + -0.5 * Vec3::Y,
                     Quat::from_axis_angle(*pitch_axis, facing.pitch_angle.f32()),
                 );

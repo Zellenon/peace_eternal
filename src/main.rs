@@ -1,3 +1,6 @@
+#![feature(const_trait_impl)]
+#![feature(unsized_const_params)]
+#![feature(adt_const_params)]
 use app_setup_options::{AppSetupConfiguration, ScheduleToUse};
 use asset_setup::AssetPlugin;
 use avian3d::{

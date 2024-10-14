@@ -60,7 +60,7 @@ impl Plugin for ControlPlugin {
         app.add_systems(Update, receive_hotbar_command);
 
         app.add_systems(
-            PostUpdate,
+            Update,
             (update_fps_camera, update_tps_camera)
                 // .before(shake)
                 .before(bevy::transform::TransformSystem::TransformPropagate)
