@@ -1,4 +1,4 @@
-use crate::util::{make_model, make_model_bundle};
+use crate::util::make_model;
 use bevy::{asset::Handle, ecs::system::Resource, gltf::Gltf, prelude::Reflect, scene::Scene};
 use bevy_asset_loader::asset_collection::AssetCollection;
 use bevy_composable::tree::ComponentTree;
