@@ -22,7 +22,6 @@ pub use deathmarker::{Deathmarker, DestructionSet, Lifespan, ShrinkDeath};
 use smoothing::SmoothingPlugin;
 pub use smoothing::{Smoothable, Smoothed};
 
-mod ab;
 mod animating;
 mod camera_shake;
 mod compose;
