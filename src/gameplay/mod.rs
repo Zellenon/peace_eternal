@@ -1,3 +1,4 @@
+pub mod characters;
 pub mod content;
 pub mod controls;
 pub mod guardrails;

@@ -35,6 +35,7 @@ use crate::{
         plotting::PlotSource,
     },
     gameplay::{
+        characters::{character_base, player_character_ingredients},
         content::guns::{pistol_1, pistol_2, rifle_1},
         controls::{
             camera_controls::Facing,
@@ -73,37 +74,15 @@ pub(crate) fn setup_player(
     let pistol2 = commands.compose(pistol_2().tree());
     let rifle = commands.compose(rifle_1().tree());
 
-    let player_tree = name("Player")
-        + (
-            IsPlayer,
-            SceneBundle {
-                scene: asset_server.load("models/player.glb#Scene0"),
-                ..Default::default()
-            },
-            GltfSceneHandler {
-                names_from: asset_server.load("models/player.glb"),
-            },
-            RigidBody::Dynamic,
-            Collider::capsule(0.5, 1.0),
-            Inventory {
-                slots: vec![
-                    InventorySlot {
-                        settings: InventorySlotSettings::new([Large, Medium]),
-                        contents: Some(pistol),
-                    },
-                    InventorySlot {
-                        settings: InventorySlotSettings::new([Medium, Small]),
-                        contents: Some(rifle),
-                    },
-                    InventorySlot {
-                        settings: InventorySlotSettings::new([Small]),
-                        contents: Some(pistol2),
-                    },
-                ],
-            },
-            Facing::default(),
-            SpatialListener::new(2.0),
-        )
+    let player_tree = character_base(
+        asset_server.load("models/player.glb#Scene0"),
+        asset_server.load("models/player.glb"),
+    ) + player_character_ingredients()
+        + (Inventory::with_contents(&[
+            (vec![Large, Medium], Some(pistol)),
+            (vec![Medium, Small], Some(rifle)),
+            (vec![Small], Some(pistol2)),
+        ]),)
             .store();
 
     let player = commands.compose(player_tree);
@@ -119,7 +98,6 @@ pub(crate) fn setup_player(
             turning_angvel: Float::INFINITY,
             acceleration: 50.,
             air_acceleration: 10.,
-
             // cling_distance: todo!(),
             // spring_strengh: todo!(),
             // spring_dampening: todo!(),
@@ -257,7 +235,7 @@ pub(crate) fn setup_player(
         HoldingInventoryItem::default(),
     )
         .store()
-        << (name("DummyGun")
+        << (name("Player DummyGun")
             + DummyGun.store()
             + SpatialBundle::store_default()
             + Servo::store_default()

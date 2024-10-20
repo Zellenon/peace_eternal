@@ -1,5 +1,5 @@
 use bevy::{
-    prelude::{Changed, Commands, Component, Entity, Query},
+    prelude::{Changed, Commands, Component, Entity, IntoSystem, Query},
     reflect::{Reflect, TypeData},
 };
 use bevy_composable::app_impl::ComponentTreeable;
@@ -50,6 +50,30 @@ impl InventorySlot {
         Self {
             settings: InventorySlotSettings::new(sizes),
             contents: None,
+        }
+    }
+}
+
+impl Inventory {
+    pub fn new<T: Into<Vec<InventorySlot>>>(slots: T) -> Self {
+        Self {
+            slots: slots.into(),
+        }
+    }
+
+    pub fn with_contents<T: Clone + Into<Vec<InventorySlotSize>>>(
+        slots: &[(T, Option<Entity>)],
+    ) -> Self {
+        Inventory {
+            slots: slots
+                .into_iter()
+                .map(|(sizes, e)| InventorySlot {
+                    settings: InventorySlotSettings {
+                        allowed_sizes: sizes.clone().into(),
+                    },
+                    contents: *e,
+                })
+                .collect(),
         }
     }
 }
