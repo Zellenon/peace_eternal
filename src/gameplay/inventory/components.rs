@@ -1,6 +1,6 @@
 use bevy::{
     prelude::{Changed, Commands, Component, Entity, IntoSystem, Query},
-    reflect::{Reflect, TypeData},
+    reflect::Reflect,
 };
 use bevy_composable::app_impl::ComponentTreeable;
 use bevy_composable::tree::ComponentTree;
@@ -27,12 +27,6 @@ pub enum InventorySlotSize {
     Medium,
     Small,
 }
-
-#[derive(Component, Reflect, Debug, Clone, PartialEq)]
-pub struct Nickname(pub String);
-
-#[derive(Component, Reflect, Debug, Clone, PartialEq)]
-pub struct FlavorText(pub String);
 
 #[derive(Component, Reflect, Debug, Clone, PartialEq)]
 pub struct InInventory(pub Entity);

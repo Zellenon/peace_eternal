@@ -64,6 +64,7 @@ pub(crate) enum InventoryAction {
     PreviousWeapon,
     LastUsedWeapon,
     Holster,
+    DropWeapon,
 }
 
 pub(crate) fn create_player_action_input_manager_bundle() -> InputManagerBundle<PlayerAction> {
@@ -108,6 +109,7 @@ pub(crate) fn create_weapon_swap_input_manager_bundle() -> InputManagerBundle<In
             (InventoryAction::ToSlot4, KeyCode::Digit4),
             (InventoryAction::ToSlot5, KeyCode::Digit5),
             (InventoryAction::Holster, KeyCode::KeyH),
+            (InventoryAction::DropWeapon, KeyCode::KeyG),
         ]),
         ..Default::default()
     }

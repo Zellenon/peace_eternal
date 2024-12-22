@@ -1,8 +1,6 @@
 use super::{projectiles::basic_bullet, LinkedModel};
 use crate::{
-    asset_setup::{
-        audio::PlaceholderAudio, models::ModelResources, primitives::PrimitiveResources,
-    },
+    asset_setup::{audio::PlaceholderAudio, models::ModelResources},
     gameplay::{
         gunplay::{
             guns::Gun,
@@ -12,7 +10,7 @@ use crate::{
                 MultiActivation, ShootsBullets,
             },
         },
-        inventory::components::{InventorySlotSize, Nickname},
+        inventory::{components::InventorySlotSize, items::Nickname},
     },
 };
 use bevy::{

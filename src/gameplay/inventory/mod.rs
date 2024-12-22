@@ -3,22 +3,26 @@ use bevy::{
     prelude::IntoSystemConfigs,
 };
 use components::{
-    add_in_inventory, remove_old_in_inventory, FlavorText, InInventory, Inventory, InventorySlot,
-    InventorySlotSettings, InventorySlotSize, Nickname,
+    add_in_inventory, remove_old_in_inventory, InInventory, Inventory, InventorySlot,
+    InventorySlotSettings, InventorySlotSize,
 };
+use items::{FlavorText, Nickname};
+use pickups::{Pickup, SpawnPickup};
 use swapping::{
-    add_held_by, do_change_held_item, remove_old_held_by, ChangeHeldItem, HeldBy,
+    add_held_by, do_change_held_item, remove_old_held_by, ChangeHeldInventoryItem, HeldBy,
     HoldingInventoryItem,
 };
 
 pub mod components;
+pub mod items;
+pub mod pickups;
 pub mod swapping;
 
 pub struct InventoryPlugin;
 
 impl Plugin for InventoryPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_event::<ChangeHeldItem>();
+        app.add_event::<ChangeHeldInventoryItem>();
 
         app.register_type::<Inventory>()
             .register_type::<InventorySlot>()
@@ -26,6 +30,8 @@ impl Plugin for InventoryPlugin {
             .register_type::<InventorySlotSize>()
             .register_type::<Nickname>()
             .register_type::<FlavorText>()
+            .register_type::<Pickup>()
+            .register_type::<SpawnPickup>()
             .register_type::<InInventory>()
             .register_type::<HeldBy>()
             .register_type::<HoldingInventoryItem>();

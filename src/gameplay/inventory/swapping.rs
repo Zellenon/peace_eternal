@@ -7,11 +7,14 @@ use crate::gameplay::Arm;
 
 use super::components::Inventory;
 
-#[derive(Component, Reflect, Debug, Clone, PartialEq)]
+#[derive(Component, Reflect, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct HoldingInventoryItem {
-    pub held_slot: Option<usize>,
+    pub held: Option<(usize, Entity)>,
     pub last_held_item: usize,
 }
+
+#[derive(Component, Reflect, Debug, Clone, Copy, PartialEq, Eq)]
+pub struct HoldingItem(pub Entity);
 
 #[derive(Component, Reflect, Debug, Clone, PartialEq)]
 pub struct HeldBy(pub Entity);
@@ -19,7 +22,7 @@ pub struct HeldBy(pub Entity);
 impl HoldingInventoryItem {
     pub fn new() -> Self {
         Self {
-            held_slot: None,
+            held: None,
             last_held_item: 0,
         }
     }
@@ -32,19 +35,23 @@ impl Default for HoldingInventoryItem {
 }
 
 #[derive(Event, Reflect, Debug, Clone, PartialEq)]
-pub struct ChangeHeldItem {
+pub struct ChangeHeldInventoryItem {
     pub arm: Entity,
     pub slot: Option<usize>,
 }
 
 pub fn do_change_held_item(
-    mut events: EventReader<ChangeHeldItem>,
-    mut item_holders: Query<&mut HoldingInventoryItem>,
+    mut events: EventReader<ChangeHeldInventoryItem>,
+    mut item_holders: Query<(&mut HoldingInventoryItem, &Arm)>,
+    inventories: Query<&Inventory>,
 ) {
-    for ChangeHeldItem { arm, slot } in events.read() {
-        if let Ok(mut holder) = item_holders.get_mut(*arm) {
-            holder.last_held_item = holder.held_slot.unwrap_or(holder.last_held_item);
-            holder.held_slot = *slot;
+    for ChangeHeldInventoryItem { arm, slot } in events.read() {
+        if let Ok((mut holder, arm)) = item_holders.get_mut(*arm) {
+            if let Ok(inventory) = inventories.get(arm.parent) {
+                holder.last_held_item =
+                    holder.held.map(|(a, b)| a).unwrap_or(holder.last_held_item);
+                holder.held = (*slot, holder.held.1.map(|w| inventory.slots.get(w)));
+            }
         }
     }
 }
@@ -52,10 +59,10 @@ pub fn do_change_held_item(
 pub fn add_held_by(
     inventories: Query<&Inventory>,
     arms: Query<&Arm>,
-    mut events: EventReader<ChangeHeldItem>,
+    mut events: EventReader<ChangeHeldInventoryItem>,
     mut commands: Commands,
 ) {
-    for ChangeHeldItem {
+    for ChangeHeldInventoryItem {
         arm: arm_entity,
         slot,
     } in events.read()
@@ -78,11 +85,11 @@ pub fn add_held_by(
 }
 
 pub fn remove_old_held_by(
-    mut events: EventReader<ChangeHeldItem>,
+    mut events: EventReader<ChangeHeldInventoryItem>,
     mut commands: Commands,
     items: Query<(Entity, &HeldBy)>,
 ) {
-    for ChangeHeldItem { arm, slot } in events.read() {
+    for ChangeHeldInventoryItem { arm, slot } in events.read() {
         items.iter().filter(|w| w.0 == *arm).for_each(|(item, _)| {
             if let Some(mut commands) = commands.get_entity(item) {
                 commands.remove::<HeldBy>();

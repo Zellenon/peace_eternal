@@ -1,8 +1,8 @@
 use bevy::{
     math::{Quat, Vec3},
     prelude::{
-        Children, Commands, Component, Entity, Event, EventReader, EventWriter, Query, Res,
-        Transform, Visibility, With, Without,
+        Changed, Children, Commands, Component, Entity, Event, EventReader, EventWriter, Query,
+        Res, Transform, Visibility, With, Without,
     },
     reflect::Reflect,
 };
@@ -12,7 +12,7 @@ use crate::{
     asset_setup::models::ModelResources,
     gameplay::{
         content::LinkedModel,
-        inventory::{components::Inventory, swapping::ChangeHeldItem},
+        inventory::{components::Inventory, swapping::ChangeHeldInventoryItem},
         levels_setup::IsPlayer,
     },
 };
@@ -20,53 +20,45 @@ use crate::{
 use super::{arms::Arm, guns::Gun};
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
-pub struct DummyGun;
+pub struct DummyGun {
+    representing: Option<Entity>,
+}
 
 #[derive(Component, Reflect, Clone, Debug, PartialEq)]
 pub struct Barrel;
 
-#[derive(Event, Clone)]
-pub struct SwapDummyModel {
-    pub entity: Entity,
-    pub gunmesh: ComponentTree,
-    pub barrel_position: (Vec3, Quat),
-}
-
+/// If the dummy changes the object it represents, swap the model
 pub fn swap_dummygun_model(
     mut commands: Commands,
-    mut swap_events: EventReader<SwapDummyModel>,
-    guns: Query<&Children, With<DummyGun>>,
+    dummies: Query<(Entity, &DummyGun, &Children), Changed<DummyGun>>,
+    guns: Query<(&Gun, &LinkedModel)>,
     mut barrels: Query<&mut Transform, With<Barrel>>,
+    models: Res<ModelResources>,
 ) {
-    for SwapDummyModel {
-        entity,
-        gunmesh,
-        barrel_position,
-    } in swap_events.read()
-    {
-        if let Some(mut dummy_entity) = commands.get_entity(*entity) {
-            dummy_entity.compose(gunmesh.clone());
-
-            for maybe_barrel in guns.get(*entity).unwrap() {
+    for (dummy_entity, dummy, children) in dummies.iter() {
+        if let (Some((gun, linked_model)), Some(mut dummy_entity)) = (
+            dummy.representing.map(|w| guns.get(w).ok()).flatten(),
+            commands.get_entity(dummy_entity),
+        ) {
+            dummy_entity.compose(linked_model.0(&*models));
+            for maybe_barrel in children {
                 if let Ok(mut barrel_transform) = barrels.get_mut(*maybe_barrel) {
-                    barrel_transform.translation = barrel_position.0;
-                    barrel_transform.rotation = barrel_position.1;
+                    barrel_transform.translation = gun.barrel_pos.0;
+                    barrel_transform.rotation = gun.barrel_pos.1;
                 }
             }
         }
     }
 }
 
+/// When the arm changes which item it's holding, change the dummy
 pub fn swap_held_dummy_model(
-    mut model_changes: EventWriter<SwapDummyModel>,
-    mut changes: EventReader<ChangeHeldItem>,
+    mut changes: EventReader<ChangeHeldInventoryItem>,
     arms: Query<(&Arm, &Children)>,
     inventories: Query<&Inventory, Without<Arm>>,
-    real_guns: Query<(&LinkedModel, &Gun)>,
-    dummy_guns: Query<Entity, With<DummyGun>>,
-    models: Res<ModelResources>,
+    mut dummy_guns: Query<&DummyGun>,
 ) {
-    changes.read().for_each(|change| {
+    for change in changes.read() {
         arms.get(change.arm)
             .ok()
             .map(|(arm, children)| {
@@ -97,11 +89,11 @@ pub fn swap_held_dummy_model(
                     });
                 })
             });
-    });
+    }
 }
 
 pub fn hide_gun_on_empty_hand(
-    mut changes: EventReader<ChangeHeldItem>,
+    mut changes: EventReader<ChangeHeldInventoryItem>,
     mut dummy_guns: Query<&mut Visibility, With<DummyGun>>,
     arms: Query<(&Arm, &Children), Without<IsPlayer>>,
     inventories: Query<&Inventory, Without<Arm>>,
