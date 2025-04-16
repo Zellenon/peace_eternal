@@ -13,8 +13,8 @@ use guns::{
     unmirror_gun_activations, DummyMirror, FireGun, RecoilMirror,
 };
 use projectiles::{
-    catch_projectile_collisions, spawn_bullets, FireProjectile, Knockback, Projectile,
-    ProjectileClash, ProjectileCollision,
+    catch_projectile_collisions, debug_projectile_collisions, kill_projectiles_on_hit, Knockback,
+    Projectile, ProjectileClash, ProjectileCollision,
 };
 use servo::{
     do_directed_servos, do_should_activate, player_servos_on_click, receive_servo_arming_events,
@@ -128,7 +128,8 @@ impl Plugin for GunplayPlugin {
             Update,
             (
                 catch_projectile_collisions,
-                // kill_projectiles_on_hit
+                debug_projectile_collisions,
+                kill_projectiles_on_hit,
             )
                 .chain(),
         );

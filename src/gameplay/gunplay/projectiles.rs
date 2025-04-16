@@ -1,17 +1,18 @@
 use avian3d::prelude::CollisionStarted;
 use bevy::{
     core::Name,
+    pbr::PbrBundle,
     prelude::{
         Commands, Component, DespawnRecursiveExt, Entity, Event, EventReader, EventWriter, Query,
-        Reflect, Transform, With,
+        Reflect, Res, Transform, With,
     },
 };
 use bevy_composable::{
-    app_impl::{ComplexSpawnable, ComponentTreeable},
+    app_impl::{ComplexSpawnable, ComponentTreeable, FuncTreeable},
     tree::ComponentTree,
 };
 
-use crate::util::instant_force;
+use crate::{asset_setup::primitives::PrimitiveResources, util::instant_force};
 
 #[derive(Reflect, Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub enum ProjectileImpactBehavior {
@@ -107,5 +108,19 @@ pub(super) fn kill_projectiles_on_hit(
             .unwrap()
             .despawn_recursive();
         println!("Killing {}!", names.get(collision.bullet).unwrap())
+    }
+}
+
+pub(super) fn debug_projectile_collisions(
+    primitives: Res<PrimitiveResources>,
+    mut collisions: EventReader<ProjectileCollision>,
+    collision_location: Query<&Transform>,
+    mut commands: Commands,
+) {
+    for collision in collisions.read() {
+        let location = collision_location.get(collision.bullet).unwrap();
+        commands.compose(
+            PbrBundle::default().store() + primitives.sphere.clone().store() + location.store(),
+        );
     }
 }
